@@ -4,5 +4,5 @@ export type userType = {
     prenom : string
     email : string
     password : string
-    role : "admin" | "Enseignant" | "parent" | "élève"
+    role : "admin" | "Enseignant" | "parent" | "élève" | undefined
 }

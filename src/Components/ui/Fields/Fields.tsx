@@ -28,7 +28,6 @@ export default function Fields({icons,label,error,register,show,type}: Props) {
                   { TypeRealy === "password" ? <FaEyeSlash onClick={() => setChange("text")  } /> : <BsEyeFill onClick={() => setChange("password")  } /> }
                 </div>}  
       { error && <p className=' max-w-64 text-xs text-red-500'>{error} </p>  }
-    
     </div>
   )
 }

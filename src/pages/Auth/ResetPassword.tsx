@@ -5,41 +5,32 @@ import TitleForm from "../../Components/ui/Text/TitleForm";
 import ImgFont from "../../assets/classroom.jpg"
 import { HiOutlineMail } from "react-icons/hi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { LoginUser } from "../../api/Auth";
+import { ResetPasswordUser } from "../../api/Auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type FormDataLoginType } from "../../Zod-Validation/Auth";
 import type { ErrorServerForm } from "../../typescript/ErrorServer";
-import { BiLock } from "react-icons/bi";
-import ButtonLink from "../../Components/ui/Button/ButtonLink";
-import { useDispatch } from "react-redux";
-import { setAlert, setToken, setUsers } from "../../store/Users/Users";
+import { resetPassword, type FormDataResetPasswordType } from "../../Zod-Validation/Auth";
 
-export default function Login() {
-  const { register, formState: { errors }, handleSubmit } = useForm<FormDataLoginType>({
-    resolver : zodResolver(loginSchema)
+
+export default function ResetPassword() {
+  const { register, formState: { errors }, handleSubmit } = useForm<FormDataResetPasswordType>({
+    resolver : zodResolver(resetPassword)
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
 
   const [errorServer, setErrorServer] = useState<string>("");
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     {
-      mutationFn: (newUser : FormDataLoginType) => LoginUser(newUser),
-      onSuccess: (value) => {
-        console.log(value.token,value.user);
+      mutationFn: (newUser : FormDataResetPasswordType) => ResetPasswordUser(newUser),
+      onSuccess: () => {
         setErrorServer("");
         queryClient.invalidateQueries({ queryKey: ['users'] });
-        dispatch(setToken(value.token))
-        dispatch(setUsers(value.user))
-        dispatch(setAlert(true))
-        navigate("/admin/users");
+        navigate("/load-verification");
       },
       onError: (error : ErrorServerForm ) => {
-        console.log(error);
         if (error.response && error.response.data) {
           setErrorServer(error.response.data.message);
         } else {
@@ -48,33 +39,27 @@ export default function Login() {
       }
   });
 
-  const onSubmit = async (formData: FormDataLoginType) => {
+  const onSubmit = async (formData: FormDataResetPasswordType) => {
     setErrorServer("");
     mutation.mutate(formData);
   }
+
 
   return (
     <div className="w-full h-screen flex justify-center items-center" >
         <img src={ImgFont} className="-z-10 absolute bottom-0  w-full h-screen object-cover" alt="" />
         <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-          <TitleForm title="Login" />
-          <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-          {errorServer  && <p className="bg-red-400 w-full text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+          <TitleForm title="Mot de passe oublie" title2="Entrer une email valide" />
+          <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-24 px-8">
+            <p className="text-center ">  </p>
+            {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
             <Fields 
               icons={<HiOutlineMail size={24} />} 
               label="Email" 
               register={register("email")}
               error={errors.email?.message}/>
-            <Fields 
-              icons={<BiLock size={24} />} 
-              label="Password" 
-              register={register("password")}
-              show={true}
-              type="password"
-              error={errors.password?.message}/>
               <div className="lg:flex gap-8 justify-between items-start mb-8">
-                <Button text="Login" type="submit" />
-                <ButtonLink text="Mot de passe Oublie ?" style={3} link="/reset-password"/>
+                <Button text="Continue" type="submit" />
               </div>
           </div>
         </form>

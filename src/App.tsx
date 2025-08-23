@@ -4,7 +4,6 @@ function App() {
       <div className="bg-red-500 p-8">
           test
       </div>
-    
     </>
   )
 }

@@ -7,4 +7,38 @@
   --color-second: #00e1ff; 
   --color-second-transparent: #00e1ff75;
   --color-merge: ( #009dff , #009dff); 
+
+  --white : white ;
+  --black : black ;
+  --font : rgb(230, 230, 230) ;
+}
+
+.animate-in {
+  animation: entermenu .5s ease ;
+  transform: translateX(0px);
+}
+
+@keyframes entermenu {
+    0% {
+      transform: translateX(-200px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
+}
+
+.animate-out {
+  animation: leavemenu .5s ease ;
+}
+
+@keyframes leavemenu {
+  0% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-200px);
+    opacity: 0;
+    display: none;
+  }
 }
