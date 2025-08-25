@@ -55,29 +55,29 @@ export default function Login() {
 
   return (
     <div className="w-full h-screen flex justify-center items-center" >
-        <img src={ImgFont} className="-z-10 absolute bottom-0  w-full h-screen object-cover" alt="" />
-        <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-          <TitleForm title="Login" />
-          <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-          {errorServer  && <p className="bg-red-400 w-full text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-            <Fields 
-              icons={<HiOutlineMail size={24} />} 
-              label="Email" 
-              register={register("email")}
-              error={errors.email?.message}/>
-            <Fields 
-              icons={<BiLock size={24} />} 
-              label="Password" 
-              register={register("password")}
-              show={true}
-              type="password"
-              error={errors.password?.message}/>
-              <div className="lg:flex gap-8 justify-between items-start mb-8">
-                <Button text="Login" type="submit" />
-                <ButtonLink text="Mot de passe Oublie ?" style={3} link="/reset-password"/>
-              </div>
-          </div>
-        </form>
+      <img src={ImgFont} className="-z-10 absolute bottom-0  w-full h-screen object-cover" alt="" />
+      <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+        <TitleForm title="Login" />
+        <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+        {errorServer  && <p className="bg-red-400 w-full text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+          <Fields 
+            icons={<HiOutlineMail size={24} />} 
+            label="Email" 
+            register={register("email")}
+            error={errors.email?.message}/>
+          <Fields 
+            icons={<BiLock size={24} />} 
+            label="Password" 
+            register={register("password")}
+            show={true}
+            type="password"
+            error={errors.password?.message}/>
+            <div className="lg:flex gap-8 justify-between items-start mb-8">
+              <Button text="Login" type="submit" />
+              <ButtonLink text="Mot de passe Oublie ?" style={3} link="/reset-password"/>
+            </div>
+        </div>
+      </form>
     </div>
   )
 }

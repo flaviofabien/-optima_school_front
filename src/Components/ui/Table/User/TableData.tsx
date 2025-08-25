@@ -1,9 +1,10 @@
 import { BiEdit } from 'react-icons/bi'
 import { MdDelete } from 'react-icons/md'
-import type { userType } from '../../../typescript/Users'
+import type { userType } from '../../../../typescript/Users'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import CardConfirmDelete from '../Card/CardConfirmDelete'
+import CardConfirmDelete from '../../Card/CardConfirmDelete'
+import { DeleteUsers } from '../../../../api/Users'
 
 type Props = {
     items : userType
@@ -34,7 +35,7 @@ export default function TableData({items}: Props) {
             <MdDelete onClick={ () => setShow({id : items.id , show : true}) }  className="inline-block text-xl"  />
         </td>
         {
-            show.show && <CardConfirmDelete show={show} setShow={setShow}  title='Utilisateurs' fullName={` ${items.nom} ${items.prenom} `} />
+            show.show && <CardConfirmDelete navigate='/admin/users' functionMutation={DeleteUsers} show={show} setShow={setShow}  title='Utilisateurs' fullName={` ${items.nom} ${items.prenom} `} />
         }
     </tr> 
   )

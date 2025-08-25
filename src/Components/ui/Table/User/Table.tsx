@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
 import TableData from "./TableData"
-import { getAllUsers } from "../../../api/Users"
+import { getAllUsers } from "../../../../api/Users"
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../store/store";
-import type { userType } from "../../../typescript/Users";
+import type { RootState } from "../../../../store/store";
+import type { userType } from "../../../../typescript/Users";
 
 export default function Table() {
   const token = useSelector((state: RootState) => state.dataStorage.token);

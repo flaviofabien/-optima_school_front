@@ -2,12 +2,12 @@ import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
-import { BiLock } from "react-icons/bi"
+import { BiCheck, BiLock } from "react-icons/bi"
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
-import { userSchema, type FormDataUserType } from "../../Zod-Validation/Users"
+import { userSchema, type FormDataUserType, userEditSchema, type FormDataUserEditType } from "../../Zod-Validation/Users"
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -17,6 +17,7 @@ import type { RootState } from "../../store/store"
 import { Role } from "../../Utils/Role"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
 import type { userType } from "../../typescript/Users"
+import { BsPerson, BsPersonUp } from "react-icons/bs"
 
 type Props = {}
 
@@ -32,15 +33,14 @@ export default function EditUser({}: Props) {
         queryFn: () => getOneUsers(token!,id!),
     });
 
-    const { register, setValue,formState: { errors }, handleSubmit } = useForm<FormDataUserType>({
-        resolver : zodResolver(userSchema),
+    const { register, setValue,formState: { errors }, handleSubmit } = useForm<FormDataUserEditType>({
+        resolver : zodResolver(userEditSchema),
     });
 
     useEffect(() => {
         if (data) {
           setValue("nom", data.nom);
           setValue("prenom", data.prenom);
-          setValue("password", data.password);
           setValue("email", data.email);
           setValue("role", data.role || "" );
         }
@@ -49,7 +49,7 @@ export default function EditUser({}: Props) {
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataUserType) => UpdateUsers(token,newUser,id!),
+        mutationFn: (newUser : FormDataUserEditType) => UpdateUsers(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
             queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -64,7 +64,7 @@ export default function EditUser({}: Props) {
         }
     });
 
-    const onSubmit = async (formData: FormDataUserType) => {
+    const onSubmit = async (formData: FormDataUserEditType) => {
         setErrorServer("");
         mutation.mutate(formData);
     }
@@ -83,12 +83,12 @@ export default function EditUser({}: Props) {
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
                         {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="Nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPersonUp size={24} />} 
                         label="Prenom" 
                         register={register("prenom")}
                         error={errors.prenom?.message}/>
@@ -97,19 +97,12 @@ export default function EditUser({}: Props) {
                         label="Email" 
                         register={register("email")}
                         error={errors.nom?.message}/>
-                        <Fields 
-                        icons={<BiLock size={24} />} 
-                        label="Password" 
-                        register={register("password")}
-                        show={true}
-                        type="password"
-                        error={errors.password?.message}/>
                         <SelectFields 
-                        icons={<BiLock size={24} />} 
+                        icons={<BiCheck size={24} />} 
                         data={Role}
                         label="Role" 
                         register={register("role")}
-                        error={errors.password?.message}/>
+                        error={errors.role?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Modification" type="submit" />
                         </div>

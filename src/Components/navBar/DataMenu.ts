@@ -20,12 +20,12 @@ export const DataMenu = [
         icons : FaUserMd,
     },
     {
-        path : "/admin/student",
+        path : "/admin/students",
         label : "Eleve",
         icons : PiStudent,
     },
     {
-        path : "/admin/teach",
+        path : "/admin/teachs",
         label : "Enseigant",
         icons : GiTeacher,
     },

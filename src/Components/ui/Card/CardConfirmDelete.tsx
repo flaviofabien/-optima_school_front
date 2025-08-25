@@ -20,19 +20,21 @@ type Props = {
         show: boolean;
         id: number;
     }>>
+    functionMutation: (id: number, token: string) => Promise<any>; 
+    navigate : string
 }
 
-export default function CardConfirmDelete({show,setShow,title,fullName}: Props) {
+export default function CardConfirmDelete({navigate,show,setShow,title,fullName,functionMutation}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
+    const navigation = useNavigate();
 
     const mutation = useMutation(
         {
-        mutationFn: (id : number) => DeleteUsers(id ,token!),
+        mutationFn: (id : number) => functionMutation(id, token!),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
-            navigate("/admin/users"); 
+            queryClient.invalidateQueries();
+            navigation(navigate); 
         },
     });
 
