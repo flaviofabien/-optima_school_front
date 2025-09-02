@@ -13,6 +13,7 @@ import { useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import {  type FormDataStudentType, type FormDataStudentEditType, studentEditSchema } from "../../Zod-Validation/Students"
 import {  UpdateStudents, getOneStudents } from "../../api/Student"
+import SelectFields from "../../Components/ui/Fields/SelectFields"
 
 
 
@@ -38,7 +39,9 @@ export default function EditStudent({}: Props) {
         setValue("sex", userOne.sex);
         setValue("address", userOne.address );
         setValue("phone", userOne.phone);
-        setValue("classes", userOne.classes);
+        setValue("nom", userOne.nom);
+        setValue("prenom", userOne.prenom);
+        setValue("email", userOne.email);
         setValue("status", userOne.status);
     }
     }, [userOne, setValue]);
@@ -78,62 +81,83 @@ export default function EditStudent({}: Props) {
    
   return (
     <div className="bg-[var(--font)] h-screen">
-        <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Modifier Eleve" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="matricule" 
-                            register={register("matricule")}
-                            error={errors.matricule?.message}/>
-                        <div className="lg:flex justify-between items-end">
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="dateNaissance" 
-                            register={register("dateNaissance")}
-                            error={errors.dateNaissance?.message}/>
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="sex" 
-                            register={register("sex")}
-                            error={errors.sex?.message}/> 
-                        </div>
-                        <div className="lg:flex justify-between items-end">
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="address" 
-                            register={register("address")}
-                            error={errors.address?.message}/>
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="phone" 
-                            register={register("phone")}
-                            error={errors.phone?.message}/> 
-                        </div>
-                        <div className="lg:flex justify-between items-end">
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="classes" 
-                            register={register("classes")}
-                            error={errors.classes?.message}/>
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="status" 
-                            register={register("status")}
-                            error={errors.status?.message}/> 
-                        </div>
-                        
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Modifier" type="submit" />
-                        </div>
+    <Header />
+    <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
+        <div className="w-full mt-8 flex justify-center items-center" >
+            <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+                <TitleForm title="Modifier Eleve" />
+                <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+                {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="matricule" 
+                        register={register("matricule")}
+                        error={errors.matricule?.message}/>
+                    <div className="lg:flex justify-between items-end">
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="nom" 
+                        register={register("nom")}
+                        error={errors.nom?.message}/>
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="prenom" 
+                        register={register("prenom")}
+                        error={errors.prenom?.message}/> 
                     </div>
-                </form>
-            </div>
+                    <div className="lg:flex justify-between items-end">
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="dateNaissance" 
+                        register={register("dateNaissance")}
+                        type="date"
+                        error={errors.dateNaissance?.message}/>
+                    </div>
+                    <div className="lg:flex justify-between items-end">
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="address" 
+                        register={register("address")}
+                        error={errors.address?.message}/>
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="phone" 
+                        type="number"
+
+                        register={register("phone",{
+                            valueAsNumber : true
+                        })}
+                        error={errors.phone?.message}/> 
+                    </div>
+                    <div className="lg:flex justify-between items-end">
+                        <SelectFields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="status" 
+                        data={["Passant","Redoublont","Vire"]} 
+                        register={register("status")}
+                        error={errors.status?.message}/> 
+
+                        <Fields 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="email" 
+                        register={register("email")}
+                        error={errors.email?.message}/>
+                    </div>
+                        <SelectFields
+                        data={["Fille","Garçon"]} 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="sex" 
+                        register={register("sex")}
+                        error={errors.sex?.message}/> 
+
+                    
+                    <div className="lg:flex gap-8 justify-between items-start mb-8">
+                        <Button text="Modifier" type="submit" />
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>
   )
 }

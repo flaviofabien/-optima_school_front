@@ -5,7 +5,7 @@ export default function NavBar() {
     const { pathname } = useLocation()
     return (
         <div 
-            className='bg-white  py-8 absolute left-0 top-14 rounded-r-[45px] '
+            className='bg-white  py-12 absolute left-0 top-14 rounded-r-[45px] '
             >
             {
                 DataMenu.map( i =>  {

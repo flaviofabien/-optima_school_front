@@ -13,9 +13,9 @@ import { useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import { studentSchema, type FormDataStudentType } from "../../Zod-Validation/Students"
 import { CreateStudents,  } from "../../api/Student"
+import SelectFields from "../../Components/ui/Fields/SelectFields"
+import { getAllClasses } from "../../api/Classes"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
-import type { userType } from "../../typescript/Users"
-import { getAllStudentUsers, getAllUsers } from "../../api/Users"
 
 
 type Props = {}
@@ -23,14 +23,15 @@ type Props = {}
 export default function AddStudent({}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
   
-    const {data,isLoading,isError} = useQuery<userType[]>({
-        queryKey: ["users",token],
-        queryFn: () => getAllStudentUsers(token!),
-    })
-    
     const { register, formState: { errors }, handleSubmit } = useForm<FormDataStudentType>({
         resolver : zodResolver(studentSchema)
-      });
+    });
+
+    const {data,isLoading,isError} = useQuery<userType[]>({
+        queryKey: ["classes",token],
+        queryFn: () => getAllClasses(token!),
+    })
+    
 
     const navigate = useNavigate();
 
@@ -55,15 +56,10 @@ export default function AddStudent({}: Props) {
     });
 
     const onSubmit = async (formData: FormDataStudentType) => {
-        console.log(formData);
-        
+        const newFormData = {...formData , role : "eleve"}
         setErrorServer("");
-        mutation.mutate(formData);
+        mutation.mutate(newFormData);
     }
-
-    if (isLoading) return <div>...loading</div>
-    if (isError) return <div>Error</div>
-
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
@@ -73,29 +69,39 @@ export default function AddStudent({}: Props) {
                     <TitleForm title="Ajouter Eleve" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
                     {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-                            <SelectCustomDataFields 
-                            icons={<HiOutlineMail size={24} />} 
-                            data={data}
-                            register={register("userId",{
-                                valueAsNumber : true
-                            })}
-                            error={errors.userId?.message}/> 
                             <Fields 
                             icons={<HiOutlineMail size={24} />} 
                             label="matricule" 
                             register={register("matricule")}
                             error={errors.matricule?.message}/>
+                            <SelectCustomDataFields  
+                            icons={<HiOutlineMail size={24}/>} 
+                            register={register("idClasse")}                            data={data}
+                            error={errors.idClasse?.message}
+                            label="Classe"
+                                />
+                        <div className="lg:flex justify-between items-end">
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="nom" 
+                            register={register("nom")}
+                            error={errors.nom?.message}/>
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="prenom" 
+                            register={register("prenom")}
+                            error={errors.prenom?.message}/> 
+                        </div>
                         <div className="lg:flex justify-between items-end">
                             <Fields 
                             icons={<HiOutlineMail size={24} />} 
                             label="dateNaissance" 
-                            register={register("dateNaissance")}
+                            register={register("dateNaissance",{
+                                valueAsDate : true
+                            })}
+
+                            type="date"
                             error={errors.dateNaissance?.message}/>
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="sex" 
-                            register={register("sex")}
-                            error={errors.sex?.message}/> 
                         </div>
                         <div className="lg:flex justify-between items-end">
                             <Fields 
@@ -106,21 +112,42 @@ export default function AddStudent({}: Props) {
                             <Fields 
                             icons={<HiOutlineMail size={24} />} 
                             label="phone" 
-                            register={register("phone")}
+                            type="number"
+
+                            register={register("phone",{
+                                valueAsNumber : true
+                            })}
                             error={errors.phone?.message}/> 
                         </div>
                         <div className="lg:flex justify-between items-end">
-                            <Fields 
-                            icons={<HiOutlineMail size={24} />} 
-                            label="classes" 
-                            register={register("classes")}
-                            error={errors.classes?.message}/>
-                            <Fields 
+                            <SelectFields 
                             icons={<HiOutlineMail size={24} />} 
                             label="status" 
+                            data={["Passant","Redoublont","Vire"]} 
                             register={register("status")}
                             error={errors.status?.message}/> 
+
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="email" 
+                            register={register("email")}
+                            error={errors.email?.message}/>
                         </div>
+                            <SelectFields
+                            data={["Fille","Garçon"]} 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="sex" 
+                            register={register("sex")}
+                            error={errors.sex?.message}/> 
+                       
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            show={true}
+                            type="password"
+                            label="password" 
+                            register={register("password")}
+                            error={errors.password?.message}/> 
+                        
                         
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" />

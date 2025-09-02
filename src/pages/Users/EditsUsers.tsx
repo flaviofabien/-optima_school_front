@@ -2,20 +2,18 @@ import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
-import { BiCheck, BiLock } from "react-icons/bi"
+
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
-import { userSchema, type FormDataUserType, userEditSchema, type FormDataUserEditType } from "../../Zod-Validation/Users"
+import { userEditSchema, type FormDataUserEditType } from "../../Zod-Validation/Users"
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {  UpdateUsers, getOneUsers } from "../../api/Users"
 import { useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import { Role } from "../../Utils/Role"
-import SelectFields from "../../Components/ui/Fields/SelectFields"
 import type { userType } from "../../typescript/Users"
 import { BsPerson, BsPersonUp } from "react-icons/bs"
 
@@ -97,12 +95,6 @@ export default function EditUser({}: Props) {
                         label="Email" 
                         register={register("email")}
                         error={errors.nom?.message}/>
-                        <SelectFields 
-                        icons={<BiCheck size={24} />} 
-                        data={Role}
-                        label="Role" 
-                        register={register("role")}
-                        error={errors.role?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Modification" type="submit" />
                         </div>

@@ -9,7 +9,8 @@
   --color-merge: ( #009dff , #009dff); 
 
   --white : white ;
-  --black : black ;
+  --black : rgb(43, 41, 41) ;
+  --gray : rgb(126, 124, 124) ;
   --font : rgb(230, 230, 230) ;
 }
 

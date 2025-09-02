@@ -1,10 +1,10 @@
 import { BiAnalyse, BiCalendar, BiLogOut } from "react-icons/bi";
-import { CgProfile } from "react-icons/cg";
+import { CgProfile, CgTime } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
 import { FaUserMd } from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
-import { GrDashboard } from "react-icons/gr";
-import { MdEvent } from "react-icons/md";
+import { GrDashboard, GrTest } from "react-icons/gr";
+import { MdEvent, MdRoom } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
 import { SiCoursera } from "react-icons/si";
 
@@ -20,6 +20,32 @@ export const DataMenu = [
         icons : FaUserMd,
     },
     {
+        path : "/admin/ecoles",
+        label : "Ecoles",
+        icons : BiCalendar,
+    },
+
+    {
+        path : "/admin/classes",
+        label : "Classes",
+        icons : BiAnalyse,
+    },
+    {
+        path : "/admin/salles",
+        label : "Salle",
+        icons : MdRoom,
+    },
+    {
+        path : "/admin/matieres",
+        label : "Matiere",
+        icons : MdEvent,
+    },    
+    {
+        path : "/admin/courses",
+        label : "Cours",
+        icons : SiCoursera,
+    },
+    {
         path : "/admin/students",
         label : "Eleve",
         icons : PiStudent,
@@ -30,39 +56,31 @@ export const DataMenu = [
         icons : GiTeacher,
     },
     {
-        path : "/admin/calendar",
+        path : "/admin/temps",
         label : "Emploi du temps",
-        icons : BiCalendar,
+        icons : CgTime,
     },
+    
     {
-        path : "/admin/rapport",
-        label : "Rapport",
-        icons : BiAnalyse,
+        path : "/admin/examen",
+        label : "Examen",
+        icons : GrTest,
     },
-    {
-        path : "/admin/event",
-        label : "Evenement",
-        icons : MdEvent,
+    
 
-    },
-    {
-        path : "/admin/course",
-        label : "Cours",
-        icons : SiCoursera,
-    },
-    {
-        path : "/admin/setting",
-        label : "Parametre",
-        icons : CiSettings,
-    },
-    {
-        path : "/admin/profils",
-        label : "Profils",
-        icons : CgProfile,
-    },
-    {
-        path : "/",
-        label : "Deconnexion",
-        icons : BiLogOut,
-    },
+    // {EmploiDuTemps
+    //     path : "/admin/setting",
+    //     label : "Parametre",
+    //     icons : CiSettings,
+    // },
+    // {
+    //     path : "/admin/profils",
+    //     label : "Profils",
+    //     icons : CgProfile,
+    // },
+    // {
+    //     path : "/",
+    //     label : "Deconnexion",
+    //     icons : BiLogOut,
+    // },
 ]

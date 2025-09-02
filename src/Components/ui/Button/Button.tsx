@@ -1,10 +1,13 @@
+import { BiLoader } from "react-icons/bi"
+
 type Props = {
     text : string
     type : "submit" | "reset" | "button" | undefined
     style ?: number
+    load ?: boolean
     onClick ?: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
-export default function Button({text,type,style,onClick}: Props) {
+export default function Button({text,type,style,onClick,load}: Props) {
 
   return (
     <button onClick={onClick}  className={`
@@ -14,6 +17,9 @@ export default function Button({text,type,style,onClick}: Props) {
       ${style === 2 && "py-2 px-8  bg-[var(--color-primary-transparent)] text-white "}
       ${style === 3 && "text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]"}
       `} type={type}>
+         {
+            load && <BiLoader className="animate-spin inline-block mr-2" size={25} />
+         }
         {text}
     </button>
   )

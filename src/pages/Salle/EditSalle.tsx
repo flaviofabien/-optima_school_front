@@ -1,0 +1,122 @@
+import { HiOutlineMail } from "react-icons/hi"
+import Header from "../../Components/header/Header"
+import Fields from "../../Components/ui/Fields/Fields"
+import TitleForm from "../../Components/ui/Text/TitleForm"
+import Button from "../../Components/ui/Button/Button"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { ErrorServerForm } from "../../typescript/ErrorServer"
+import { useNavigate, useParams } from "react-router-dom"
+import {  useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useSelector } from "react-redux"
+import type { RootState } from "../../store/store"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
+import { ClasseEditSchema, type FormDataClasseEditType } from "../../Zod-Validation/Classe"
+import { UpdateClasses, getAllClasses, getOneClasses } from "../../api/Classes"
+import { getAllEcoles } from "../../api/Ecole"
+import { UpdateSalles, getAllSalles, getOneSalles } from "../../api/Salles"
+import { SalleEditSchema, type FormDataSalleEditType } from "../../Zod-Validation/Salles"
+
+
+
+type Props = {}
+
+export default function EditSalle({}: Props) {
+    const token = useSelector((state: RootState) => state.dataStorage.token);
+    const { id } = useParams()
+
+    const {data,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataSalleEditType>({
+        queryKey: ["classes",token,id],
+        queryFn: () => getOneSalles(token!,id!),
+    });
+
+    const {data : dataEcole,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<FormDataClasseEditType>({
+        queryKey: ["ecoles",token],
+        queryFn: () => getAllClasses(token!),
+    });
+    
+    const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataSalleEditType>({
+        resolver : zodResolver(SalleEditSchema)
+    });
+
+    useEffect(() => {
+    if (data) {
+        setValue("nom", data.nom);
+        setValue("effectif", data.effectif);
+        setValue("idClasse", data.idClasse);
+    }
+    }, [data, setValue]);
+
+
+    const navigate = useNavigate();
+
+    const [errorServer, setErrorServer] = useState<string>("");
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation(
+        {
+        mutationFn: (newUser : FormDataSalleEditType) => UpdateSalles(token,newUser,id!),
+        onSuccess: () => {
+            setErrorServer("");
+            queryClient.invalidateQueries({ queryKey: ['salles'] });
+            navigate("/admin/salles");
+        },
+        onError: (error : ErrorServerForm ) => {
+            if (error.response && error.response.data) {
+            setErrorServer(error.response.data.message);
+            } else {
+            setErrorServer("An unexpected error occurred");
+            }
+        }
+    });
+
+    const onSubmit = async (formData: FormDataSalleEditType) => {
+        console.log(formData);
+        
+        setErrorServer("");
+        mutation.mutate(formData);
+    }
+
+    if ( userOneIsLoading || EcoleIsLoading ) return <div>...loading</div>
+    if ( userOneIsError || EcoleIsError) return <div>Error</div>
+   
+  return (
+    <div className="bg-[var(--font)] h-screen">
+        <Header />
+        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
+            <div className="w-full mt-8 flex justify-center items-center" >
+                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <TitleForm title="Moifier Eleve" />
+                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                            <SelectCustomDataFields 
+                            icons={<HiOutlineMail size={24} />} 
+                            data={dataEcole}
+                            register={register("idClasse",{
+                                valueAsNumber : true
+                            })}
+                            error={errors.idClasse?.message}/> 
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="nom" 
+                            register={register("nom")}
+                            error={errors.nom?.message}/>
+                            <Fields 
+                            icons={<HiOutlineMail size={24} />} 
+                            label="effectif" 
+                            type="number"
+                            register={register("effectif",{
+                                valueAsNumber : true
+                            })}
+                            error={errors.effectif?.message}/>
+                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                            <Button text="Ajouter" type="submit" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  )
+}

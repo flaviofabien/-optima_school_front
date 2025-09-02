@@ -1,7 +1,10 @@
 import Header from "../../Components/header/Header";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
-import TableStudent from "../../Components/ui/Table/Students/TableStudents";
+import CardContainer from "../../Components/ui/Table/CardContainer";
+import TableContainer from "../../Components/ui/Table/TableContainer";
 import TextHeaderTable from "../../Components/ui/Text/TextinTable";
+import { DeleteStudents, getAllStudents } from "../../api/Student";
+
 
 export default function StudentContent() {
   return (
@@ -11,7 +14,11 @@ export default function StudentContent() {
           <TextHeaderTable text="Les eleves" />
           <ButtonLink link="/admin/students/add" text="Ajoute +"  />
         </div>
-        <TableStudent />
+        <CardContainer
+          functionMutation={DeleteStudents}
+          title="Eleve" 
+          FnQueryGet={getAllStudents} 
+          query="students" />
     </div>
   )
 }

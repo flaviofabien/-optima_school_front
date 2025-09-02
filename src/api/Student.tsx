@@ -1,7 +1,7 @@
 import axios from "axios"
 import { IP } from "./IP"
-import type { FormDataStudentType } from "../Zod-Validation/Students"
 import type { FormDataTeachEditType } from "../Zod-Validation/Teach"
+import type { FormDataEcoleType } from "../Zod-Validation/Ecole"
 
 export const getAllStudents  = async (token : string) => {
     const res = await axios.get( IP + "/students" , {
@@ -21,7 +21,7 @@ export const getOneStudents  = async (token : string , id : string) => {
     return res.data.data
 }
 
-export const CreateStudents  = async (token : string,newUser : FormDataStudentType) => {
+export const CreateStudents  = async (token : string,newUser : FormDataEcoleType) => {
     const res = await axios.post( IP + "/students", newUser , {
         headers : {
             "Authorization" : "Bearer " + token

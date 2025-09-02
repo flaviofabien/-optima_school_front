@@ -2,44 +2,48 @@ import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
-import { BiLock } from "react-icons/bi"
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
-import { userSchema, type FormDataUserType } from "../../Zod-Validation/Users"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { CreateUsers } from "../../api/Users"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import { BsPerson } from "react-icons/bs"
-import { GiPerson } from "react-icons/gi"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
+import type { userType } from "../../typescript/Users"
+import { SalleSchema, type FormDataSalleType } from "../../Zod-Validation/Salles"
+import { CreateSalles } from "../../api/Salles"
+import { getAllClasses } from "../../api/Classes"
+
 
 type Props = {}
 
-export default function AddUser({}: Props) {
+export default function AddSalle({}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
-
-    const { register, formState: { errors }, handleSubmit } = useForm<FormDataUserType>({
-        resolver : zodResolver(userSchema)
+  
+    const {data,isLoading,isError} = useQuery<userType[]>({
+        queryKey: ["classes",token],
+        queryFn: () => getAllClasses(token!),
+    })
+    
+    const { register, formState: { errors }, handleSubmit } = useForm<FormDataSalleType>({
+        resolver : zodResolver(SalleSchema)
       });
 
     const navigate = useNavigate();
 
-    const [load,setLoad] = useState(false);
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataUserType) => CreateUsers(token,newUser),
+        mutationFn: (newUser : FormDataSalleType) => CreateSalles(token,newUser),
         onSuccess: () => {
             setErrorServer("");
-            queryClient.invalidateQueries({ queryKey: ['users'] });
-            navigate("/admin/users");
-            setLoad(false)
+            queryClient.invalidateQueries({ queryKey: ['salles'] });
+            navigate("/admin/salles");
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -47,49 +51,51 @@ export default function AddUser({}: Props) {
             } else {
             setErrorServer("An unexpected error occurred");
             }
-            setLoad(false)
         }
     });
 
-    const onSubmit = async (formData: FormDataUserType) => {
-        setLoad(true)
+    const onSubmit = async (formData: FormDataSalleType) => {
+        console.log(formData);
+        
         setErrorServer("");
-        const newUser = {...formData , role : "admin"}
-        mutation.mutate(newUser);
+        mutation.mutate(formData);
     }
+
+    if (isLoading) return <div>...loading</div>
+    if (isError) return <div>Error</div>
+
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
         <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
             <div className="w-full mt-8 flex justify-center items-center" >
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Ajouter Utilisateurs" />
+                    <TitleForm title="Ajouter salle" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        <SelectCustomDataFields 
+                        icons={<HiOutlineMail size={24} />} 
+                        data={data}
+                        register={register("idClasse",{
+                            valueAsNumber : true
+                        })}
+                        error={errors.idClasse?.message}/> 
+
                         <Fields 
-                        icons={<BsPerson size={24} />} 
-                        label="Nom" 
+                        icons={<HiOutlineMail size={24} />} 
+                        label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <Fields 
-                        icons={<GiPerson size={24} />} 
-                        label="Prenom" 
-                        register={register("prenom")}
-                        error={errors.prenom?.message}/>
-                        <Fields 
                         icons={<HiOutlineMail size={24} />} 
-                        label="Email" 
-                        register={register("email")}
-                        error={errors.nom?.message}/>
-                        <Fields 
-                        icons={<BiLock size={24} />} 
-                        label="Password" 
-                        register={register("password")}
-                        show={true}
-                        type="password"
-                        error={errors.password?.message}/>
+                        label="effectif" 
+                        type="number"
+                        register={register("effectif",{
+                            valueAsNumber : true
+                        })}
+                        error={errors.effectif?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" load={load} />
+                            <Button text="Ajouter" type="submit" />
                         </div>
                     </div>
                 </form>
