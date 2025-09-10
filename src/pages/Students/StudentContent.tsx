@@ -1,7 +1,7 @@
 import Header from "../../Components/header/Header";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
+import { dataFilterStudent } from "../../Components/ui/FilterData";
 import CardContainer from "../../Components/ui/Table/CardContainer";
-import TableContainer from "../../Components/ui/Table/TableContainer";
 import TextHeaderTable from "../../Components/ui/Text/TextinTable";
 import { DeleteStudents, getAllStudents } from "../../api/Student";
 
@@ -17,7 +17,8 @@ export default function StudentContent() {
         <CardContainer
           functionMutation={DeleteStudents}
           title="Eleve" 
-          FnQueryGet={getAllStudents} 
+          FnQueryGet={getAllStudents}
+          dataFilter={dataFilterStudent} 
           query="students" />
     </div>
   )

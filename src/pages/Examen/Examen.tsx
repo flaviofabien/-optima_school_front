@@ -14,7 +14,7 @@ export default function Examen() {
       data: examenData, 
       isLoading: examenIsLoading, 
       isError: examenIsError 
-  } = useQuery<any>({
+  } = useQuery<any[]>({
       queryKey: ["examen", token, classId],
       queryFn: () => getAllExamen(token!, classId),
   });
@@ -40,13 +40,13 @@ export default function Examen() {
             <Header />
             <div className="mt-8 px-8 lg:pl-60">
                 <h1 className="text-2xl font-bold mb-6">Affectation des étudiants pour l'examen</h1>
-                <select name="" id="" onChange={(e) => setClasseID(e.target.value)}>
+                <select name="" id="" onChange={(e : any) => setClasseID(e.target.value)}>
                   {
-                    classesData.map(i => <option value={i.id} > {i.nom} </option>)
+                    classesData.map( (i : any) => <option value={i.id} > {i.nom} </option>)
                   }
                 </select>
                 <div className="flex">
-                  {examenData.map((roomData, index) => (
+                  {examenData?.map((roomData, index) => (
                       <div key={index} className="mb-8 p-4 rounded-lg shadow-sm flex">
                         <div>
                           <h2 className="text-xl font-semibold mb-4">Salle: {roomData.salle}</h2>
@@ -61,8 +61,8 @@ export default function Examen() {
                                       </tr>
                                   </thead>
                                   <tbody className="text-gray-600 text-sm font-light">
-                                      {roomData.students.map((student, studentIndex) => (
-                                          <tr key={studentIndex} className="border-b border-gray-200 hover:bg-gray-100">
+                                      {roomData.students.map((student : any)  => (
+                                          <tr key={student.id} className="border-b border-gray-200 hover:bg-gray-100">
                                               <td className="py-3 px-6 text-left whitespace-nowrap">
                                                   {student.prenom} {student.nom}
                                               </td>

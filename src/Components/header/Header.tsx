@@ -2,11 +2,13 @@ import { MdOutlineMenuOpen } from "react-icons/md";
 import NavBar from "../navBar/NavBar";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import "react-toastify/dist/ReactToastify.css";
 
 type Props = {}
 
 export default function Header({}: Props) {
   const [menu , setMenu] = useState(false);
+
   return (
     <div className='text-gray-600 flex justify-between items-center bg-[var(--color-primary)] p-4 '>
         <MdOutlineMenuOpen 
@@ -32,6 +34,8 @@ export default function Header({}: Props) {
         <div>
             image
         </div>
+
+        
     </div>
   )
 }

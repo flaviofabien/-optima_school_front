@@ -11,6 +11,7 @@ import { ResetPasswordUser } from "../../api/Auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ErrorServerForm } from "../../typescript/ErrorServer";
 import { resetPassword, type FormDataResetPasswordType } from "../../Zod-Validation/Auth";
+import Validation from "../../Components/ui/Error/Validation";
 
 
 export default function ResetPassword() {
@@ -18,9 +19,9 @@ export default function ResetPassword() {
     resolver : zodResolver(resetPassword)
   });
   const navigate = useNavigate();
-
   const [errorServer, setErrorServer] = useState<string>("");
   const queryClient = useQueryClient();
+  const [load,setLoad] = useState(false);
 
   const mutation = useMutation(
     {
@@ -29,6 +30,7 @@ export default function ResetPassword() {
         setErrorServer("");
         queryClient.invalidateQueries({ queryKey: ['users'] });
         navigate("/load-verification");
+        setLoad(false)
       },
       onError: (error : ErrorServerForm ) => {
         if (error.response && error.response.data) {
@@ -36,10 +38,12 @@ export default function ResetPassword() {
         } else {
           setErrorServer("An unexpected error occurred");
         }
+        setLoad(false)
       }
   });
 
   const onSubmit = async (formData: FormDataResetPasswordType) => {
+    setLoad(true)
     setErrorServer("");
     mutation.mutate(formData);
   }
@@ -51,15 +55,14 @@ export default function ResetPassword() {
         <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
           <TitleForm title="Mot de passe oublie" title2="Entrer une email valide" />
           <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-24 px-8">
-            <p className="text-center ">  </p>
-            {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-            <Fields 
+          {errorServer  && <Validation errorServer={errorServer} /> }            
+          <Fields 
               icons={<HiOutlineMail size={24} />} 
               label="Email" 
               register={register("email")}
               error={errors.email?.message}/>
               <div className="lg:flex gap-8 justify-between items-start mb-8">
-                <Button text="Continue" type="submit" />
+                <Button text="Continue" type="submit" load={load}/>
               </div>
           </div>
         </form>

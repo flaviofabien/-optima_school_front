@@ -8,6 +8,9 @@ export const getAllMatieres  = async (token : string) => {
             "Authorization" : "Bearer " + token
         }
     })
+
+    console.log(res.data.data);
+    
     return res.data.data
 }
 

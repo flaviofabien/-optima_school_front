@@ -1,4 +1,3 @@
-import App from "../App";
 import Login from "../pages/Auth/Login";
 import PageLoadingResetPassword from "../pages/Auth/PageLoadingResetPassword";
 import ResetPassword from "../pages/Auth/ResetPassword";

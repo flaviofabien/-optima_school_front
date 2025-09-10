@@ -10,6 +10,15 @@ export const getAllCourses  = async (token : string) => {
     })
     return res.data.data
 }
+
+export const getAllIncludeCourses  = async (token : string) => {
+    const res = await axios.get( IP + "/include-courses" , {
+        headers : {
+            "Authorization" : "Bearer " + token
+        }
+    })
+    return res.data.data
+}
 export const getAllExamen  = async (token : string,idClasse : number) => {
     const res = await axios.get( IP + "/partition-examen" , {
         params : {

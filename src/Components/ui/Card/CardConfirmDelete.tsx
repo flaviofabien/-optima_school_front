@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Button from "../Button/Button"
 import Description from "../Text/Description"
 import Title from "../Text/Title"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import type { RootState } from "../../../store/store"
+import { setAlert } from "../../../store/Users/Users"
 
 type Props = {
     title : string
-    fullName : string
     show : {
         show: boolean;
         id: number;
@@ -21,15 +21,17 @@ type Props = {
     navigate : string
 }
 
-export default function CardConfirmDelete({navigate,show,setShow,title,fullName,functionMutation}: Props) {
+export default function CardConfirmDelete({navigate,show,setShow,title,functionMutation}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const queryClient = useQueryClient();
     const navigation = useNavigate();
-
+    
+    const dispatch = useDispatch(); 
     const mutation = useMutation(
         {
         mutationFn: (id : number) => functionMutation(id, token!),
         onSuccess: () => {
+            dispatch(setAlert({status : true,message : `${title} a ete supprimer avec succes`}))
             queryClient.invalidateQueries();
             navigation(navigate); 
         },
@@ -41,11 +43,11 @@ export default function CardConfirmDelete({navigate,show,setShow,title,fullName,
     }
 
     return (
-        <div className='h-screen w-full flex justify-center items-center fixed bg-[var(--color-primary-transparent)] backdrop-blur-sm  top-0 left-0'>
-            <div className="w-[400px] bg-white">
+        <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-xs  top-0 left-0'>
+            <div className="w-[400px] bg-[var(--white)] ">
                 <Title title={title}  />
                 <br />
-                <Description align="center" text={`Vous voulez vraiment supprimer ${fullName}  `} />
+                <Description align="center" text={`Vous voulez vraiment supprimer cette ${title.toLocaleLowerCase()}  `} />
                 <div className="px-4 pb-8 flex justify-between w-full items-center">
                     <Button onClick={ () =>  HandleDelete(show.id) } type="button" text="Oui" style={1} />
                     <Button onClick={ () => setShow({

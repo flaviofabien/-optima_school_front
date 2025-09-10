@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
-import type { userType } from "../../../typescript/Users";
 
 type Props = {
-    data ?: userType[]
+    data ?: any[]
     icons : ReactNode
     register : UseFormRegisterReturn;
     error ?: string
@@ -20,7 +19,7 @@ export default function SelectCustomDataFields({data,icons,error,register,disabl
                         className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-7 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
                     <option value={""} className="" selected> Selectionner un {label}  </option>
                     {
-                        data?.map(item => <option value={item.id} className=""> {item.nom}  {item.prenom}  </option> )
+                        data?.map( (item : any) => <option value={item.id} className=""> {item.nom}  {item.prenom}  </option> )
                     }
                 </select>
             </div>

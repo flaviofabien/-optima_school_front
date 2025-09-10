@@ -1,6 +1,9 @@
 export type DataStorageUserType = {
     token : string,
-    alert : boolean,
+    alert : {
+        status : boolean,
+        message : string
+    },
     user : UserDatastorageType
 }
 

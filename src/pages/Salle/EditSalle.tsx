@@ -1,4 +1,3 @@
-import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -9,29 +8,29 @@ import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate, useParams } from "react-router-dom"
 import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
-import { ClasseEditSchema, type FormDataClasseEditType } from "../../Zod-Validation/Classe"
-import { UpdateClasses, getAllClasses, getOneClasses } from "../../api/Classes"
-import { getAllEcoles } from "../../api/Ecole"
-import { UpdateSalles, getAllSalles, getOneSalles } from "../../api/Salles"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
+import {  getAllClasses} from "../../api/Classes"
+import { UpdateSalles, getOneSalles } from "../../api/Salles"
 import { SalleEditSchema, type FormDataSalleEditType } from "../../Zod-Validation/Salles"
+import { setAlert } from "../../store/Users/Users"
+import type { EcoleType } from "../../typescript/Salle"
+import { MdNumbers, MdOutlineExploreOff } from "react-icons/md"
+import { BsHouse } from "react-icons/bs"
+import Validation from "../../Components/ui/Error/Validation"
 
-
-
-type Props = {}
-
-export default function EditSalle({}: Props) {
+export default function EditSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
+    const dispatch = useDispatch(); 
 
     const {data,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataSalleEditType>({
         queryKey: ["classes",token,id],
         queryFn: () => getOneSalles(token!,id!),
     });
 
-    const {data : dataEcole,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<FormDataClasseEditType>({
+    const {data : dataEcole,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<EcoleType>({
         queryKey: ["ecoles",token],
         queryFn: () => getAllClasses(token!),
     });
@@ -59,6 +58,7 @@ export default function EditSalle({}: Props) {
         mutationFn: (newUser : FormDataSalleEditType) => UpdateSalles(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Salles a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['salles'] });
             navigate("/admin/salles");
         },
@@ -72,7 +72,6 @@ export default function EditSalle({}: Props) {
     });
 
     const onSubmit = async (formData: FormDataSalleEditType) => {
-        console.log(formData);
         
         setErrorServer("");
         mutation.mutate(formData);
@@ -89,21 +88,22 @@ export default function EditSalle({}: Props) {
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <TitleForm title="Moifier Eleve" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                    {errorServer  && <Validation errorServer={errorServer} /> }
                             <SelectCustomDataFields 
-                            icons={<HiOutlineMail size={24} />} 
-                            data={dataEcole}
+                            icons={<MdNumbers size={24} />} 
+                            data={dataEcole?.data}
                             register={register("idClasse",{
                                 valueAsNumber : true
                             })}
+                            label="classe"
                             error={errors.idClasse?.message}/> 
                             <Fields 
-                            icons={<HiOutlineMail size={24} />} 
+                            icons={<BsHouse size={24} />} 
                             label="nom" 
                             register={register("nom")}
                             error={errors.nom?.message}/>
                             <Fields 
-                            icons={<HiOutlineMail size={24} />} 
+                            icons={<MdOutlineExploreOff size={24} />} 
                             label="effectif" 
                             type="number"
                             register={register("effectif",{

@@ -3,7 +3,6 @@ import Button from "../../Components/ui/Button/Button";
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm";
 import ImgFont from "../../assets/classroom.jpg"
-import { HiOutlineMail } from "react-icons/hi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
@@ -12,7 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type FormDataupdatePasswordType, updatePasswordSchema } from "../../Zod-Validation/Auth";
 import type { ErrorServerForm } from "../../typescript/ErrorServer";
 import { BiLock } from "react-icons/bi";
-
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/Users/Users";
 
 export default function UpdatePassword() {
   const { register, formState: { errors }, handleSubmit } = useForm<FormDataupdatePasswordType>({
@@ -20,6 +20,8 @@ export default function UpdatePassword() {
   });
   const navigate = useNavigate();
   const { id } = useParams();  
+  const dispatch = useDispatch();
+  const [load,setLoad] = useState(false);
 
   const [errorServer, setErrorServer] = useState<string>("");
   const queryClient = useQueryClient();
@@ -29,8 +31,10 @@ export default function UpdatePassword() {
       mutationFn: (newUser : FormDataupdatePasswordType) => UpdatePasswordUser(newUser),
       onSuccess: () => {
         setErrorServer("");
+        dispatch(setAlert({status : true,message : "Mot de passe a ete modifier avec succes"}))
         queryClient.invalidateQueries({ queryKey: ['users'] });
-        navigate("/");
+        navigate("/login");
+        setLoad(false)
       },
       onError: (error : ErrorServerForm ) => {
         if (error.response && error.response.data) {
@@ -38,15 +42,14 @@ export default function UpdatePassword() {
         } else {
           setErrorServer("An unexpected error occurred");
         }
+        setLoad(false)
       }
   });
 
   const onSubmit = async (formData: FormDataupdatePasswordType) => {
+    setLoad(true)
     setErrorServer("");
-    const newFormData = {
-        ...formData ,
-        token : id,
-    }
+    const newFormData = {...formData ,token : id}
     mutation.mutate(newFormData);
   }
 
@@ -72,7 +75,7 @@ export default function UpdatePassword() {
               type="password"
               error={errors.confimationPassword?.message}/>
               <div className="lg:flex gap-8 justify-between items-start mb-8">
-                <Button text="Envoyer" type="submit" />
+                <Button text="Envoyer" type="submit" load={load} />
               </div>
           </div>
         </form>

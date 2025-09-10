@@ -1,13 +1,16 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { DataStorageUserType, UserDatastorageType } from "../../typescript/Store";
 
-   const getTokenFromStorage = () => {
-      return localStorage.getItem("userToken") || "";
-   };
+const getTokenFromStorage = () => {
+   return localStorage.getItem("userToken") || "";
+};
 
  const initialState : DataStorageUserType = {
     token : getTokenFromStorage(),
-    alert : false,
+    alert : {
+      status : false,
+      message : ""
+    },
     user : {
       id : 0,
       nom : "",
@@ -25,15 +28,18 @@ import type { DataStorageUserType, UserDatastorageType } from "../../typescript/
            state.token = action.payload;
            localStorage.setItem("userToken", action.payload);
         },
-        setAlert: (state : DataStorageUserType, action: PayloadAction<boolean>) => {
-           state.alert = action.payload;
+        setAlert: (state, action: PayloadAction<{ status: boolean, message: string }>) => {
+           state.alert.status = action.payload.status;
+           state.alert.message = action.payload.message;
         },
         setUsers: (state : DataStorageUserType, action: PayloadAction<UserDatastorageType>) => { 
            state.user =  action.payload;
-        }
+        },
+
+        
     }
  })
 
-export const { setToken ,setAlert , setUsers } = DataStorage.actions;
+export const { setToken ,setAlert , setUsers  } = DataStorage.actions;
 
 export default DataStorage.reducer;

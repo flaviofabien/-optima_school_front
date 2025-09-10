@@ -9,26 +9,31 @@ import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate, useParams } from "react-router-dom"
 import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import { MatiereEditSchema, type FormDataMatiereEditType } from "../../Zod-Validation/Matiere"
 import { UpdateMatieres, getOneMatieres } from "../../api/Matieres"
 import { getAllClasses } from "../../api/Classes"
 import type { FormDataClasseEditType } from "../../Zod-Validation/Classe"
-import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
+import { setAlert } from "../../store/Users/Users"
+import Validation from "../../Components/ui/Error/Validation"
 
 type Props = {}
 
 export default function EditMatiere({}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
+    const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
+
 
     const {data : dataMatiere,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataMatiereEditType>({
         queryKey: ["matieres",token,id],
         queryFn: () => getOneMatieres(token!,id!),
     });
 
-    const {data : data,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<FormDataClasseEditType>({
+    const {data : data,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<FormDataClasseEditType[]>({
         queryKey: ["classes",token],
         queryFn: () => getAllClasses(token!),
     });
@@ -56,8 +61,11 @@ export default function EditMatiere({}: Props) {
         mutationFn: (newUser : FormDataMatiereEditType) => UpdateMatieres(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Matiere a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['salles'] });
-            navigate("/admin/salles");
+            navigate("/admin/salles");   
+            setLoad(false)        
+
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -65,12 +73,12 @@ export default function EditMatiere({}: Props) {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)        
         }
     });
 
     const onSubmit = async (formData: FormDataMatiereEditType) => {
-        console.log(formData);
-        
+        setLoad(true)                
         setErrorServer("");
         mutation.mutate(formData);
     }
@@ -83,15 +91,16 @@ export default function EditMatiere({}: Props) {
         <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
             <div className="w-full mt-8 flex justify-center items-center" >
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Ajouter salle" />
+                    <TitleForm title="Ajouter Matiere" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                        {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFields 
                         icons={<HiOutlineMail size={24} />} 
                         data={data}
                         register={register("idClasse",{
                             valueAsNumber : true
                         })}
+                        label="classe"
                         error={errors.idClasse?.message}/> 
 
                         <Fields 
@@ -108,7 +117,7 @@ export default function EditMatiere({}: Props) {
                         })}
                         error={errors.coefficiant?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Modifier" type="submit" />
+                            <Button text="Modification" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

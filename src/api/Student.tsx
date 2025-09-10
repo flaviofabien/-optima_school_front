@@ -1,15 +1,16 @@
 import axios from "axios"
 import { IP } from "./IP"
-import type { FormDataTeachEditType } from "../Zod-Validation/Teach"
-import type { FormDataEcoleType } from "../Zod-Validation/Ecole"
 
-export const getAllStudents  = async (token : string) => {
+export const getAllStudents  = async (token : string,    
+    page : number | undefined,limit : number |undefined , search : string | undefined , order : string | undefined ,sortBy : string | undefined    ) => {
     const res = await axios.get( IP + "/students" , {
+        params : { page,limit,search,order,sortBy },
         headers : {
             "Authorization" : "Bearer " + token
         }
-    })
-    return res.data.data.rows
+        
+    })    
+    return res.data
 }
 
 export const getOneStudents  = async (token : string , id : string) => {
@@ -21,7 +22,7 @@ export const getOneStudents  = async (token : string , id : string) => {
     return res.data.data
 }
 
-export const CreateStudents  = async (token : string,newUser : FormDataEcoleType) => {
+export const CreateStudents  = async (token : string,newUser : FormData) => {
     const res = await axios.post( IP + "/students", newUser , {
         headers : {
             "Authorization" : "Bearer " + token
@@ -30,7 +31,7 @@ export const CreateStudents  = async (token : string,newUser : FormDataEcoleType
     return res.data.data
 }
 
-export const UpdateStudents  = async (token : string,newUser : FormDataTeachEditType,id : string) => {
+export const UpdateStudents  = async (token : string,newUser : FormData,id : string) => {
     const res = await axios.put( IP + "/student/" + id , newUser , {
         headers : {
             "Authorization" : "Bearer " + token

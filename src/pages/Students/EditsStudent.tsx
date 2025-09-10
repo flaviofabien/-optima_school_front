@@ -1,4 +1,3 @@
-import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -9,19 +8,37 @@ import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate, useParams } from "react-router-dom"
 import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import {  type FormDataStudentType, type FormDataStudentEditType, studentEditSchema } from "../../Zod-Validation/Students"
 import {  UpdateStudents, getOneStudents } from "../../api/Student"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
+import { setAlert } from "../../store/Users/Users"
+import Loading from "../../Components/ui/Loader/Loading"
+import { BiImage, BiMap } from "react-icons/bi"
+import { SiMatrix } from "react-icons/si"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
+import { MdNumbers } from "react-icons/md"
+import {  BsPerson, BsPersonX, BsPhone } from "react-icons/bs"
+import { PiBirdThin } from "react-icons/pi"
+import { GrStatusGood } from "react-icons/gr"
+import { CgMail } from "react-icons/cg"
+import { getAllClasses } from "../../api/Classes"
+import type { FormDataClasseType } from "../../Zod-Validation/Classe"
+import Validation from "../../Components/ui/Error/Validation"
 
 
-
-type Props = {}
-
-export default function EditStudent({}: Props) {
+export default function EditStudent() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
+    const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
+
+    const {data,isLoading,isError} = useQuery<FormDataClasseType[]>({
+        queryKey: ["classes",token],
+        queryFn: () => getAllClasses(token!),
+    })
+    
 
     const {data : userOne,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataStudentType>({
         queryKey: ["users",token,id],
@@ -54,11 +71,13 @@ export default function EditStudent({}: Props) {
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataStudentEditType) => UpdateStudents(token,newUser,id!),
+        mutationFn: (newUser : FormData) => UpdateStudents(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Etudiant  a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['students'] });
             navigate("/admin/students");
+            setLoad(false)        
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -66,18 +85,37 @@ export default function EditStudent({}: Props) {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)        
         }
     });
 
     const onSubmit = async (formData: FormDataStudentEditType) => {
-        console.log(formData);
-        
+        const newFormData = new FormData();   
+        setLoad(true)        
+
+        const files = formData.img as FileList;
+        if (files && files.length > 0) {
+            newFormData.append("img", files[0]);
+        }
+  
+        newFormData.append("role","eleve");
+        newFormData.append("idClasse",formData.idClasse);
+        newFormData.append("matricule",formData.matricule);
+        newFormData.append("sex",formData.sex);
+        newFormData.append("address",formData.address);
+        newFormData.append("dateNaissance",formData.dateNaissance);
+        newFormData.append("phone", (formData.phone).toString() );
+        newFormData.append("status",formData.status);
+        newFormData.append("email",formData.email);
+        newFormData.append("nom",formData.nom);
+        newFormData.append("prenom",formData.prenom);
+
         setErrorServer("");
-        mutation.mutate(formData);
+        mutation.mutate(newFormData);
     }
 
-    if ( userOneIsLoading) return <div>...loading</div>
-    if ( userOneIsError) return <div>Error</div>
+    if (userOneIsLoading || isLoading) return <Loading />
+    if ( userOneIsError || isError) return <div>Error</div>
    
   return (
     <div className="bg-[var(--font)] h-screen">
@@ -87,27 +125,40 @@ export default function EditStudent({}: Props) {
             <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                 <TitleForm title="Modifier Eleve" />
                 <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BiImage size={24} />} 
+                        label="img" 
+                        register={register("img")}
+                        type="file"
+                        error={errors.img?.message}/>
+                        <Fields 
+                        icons={<SiMatrix size={24} />} 
                         label="matricule" 
                         register={register("matricule")}
                         error={errors.matricule?.message}/>
+                        <SelectCustomDataFields  
+                        icons={<MdNumbers size={24}/>} 
+                        register={register("idClasse")}                            
+                        data={data}
+                        error={errors.idClasse?.message}
+                        label="Classe"
+                        />
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="prenom" 
                         register={register("prenom")}
                         error={errors.prenom?.message}/> 
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<PiBirdThin size={24} />} 
                         label="dateNaissance" 
                         register={register("dateNaissance")}
                         type="date"
@@ -115,12 +166,12 @@ export default function EditStudent({}: Props) {
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BiMap size={24} />} 
                         label="address" 
                         register={register("address")}
                         error={errors.address?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPhone size={24} />} 
                         label="phone" 
                         type="number"
 
@@ -131,33 +182,32 @@ export default function EditStudent({}: Props) {
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <SelectFields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<GrStatusGood size={24} />} 
                         label="status" 
                         data={["Passant","Redoublont","Vire"]} 
                         register={register("status")}
                         error={errors.status?.message}/> 
 
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<CgMail size={24} />} 
                         label="email" 
                         register={register("email")}
                         error={errors.email?.message}/>
                     </div>
                         <SelectFields
                         data={["Fille","Garçon"]} 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPersonX size={24} />} 
                         label="sex" 
                         register={register("sex")}
                         error={errors.sex?.message}/> 
-
-                    
-                    <div className="lg:flex gap-8 justify-between items-start mb-8">
-                        <Button text="Modifier" type="submit" />
+  
+                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                            <Button text="Modification" type="submit" load={load} />
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
   )
 }

@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const TeachSchema = z.object({
+    img: z.custom(),
     matricule: z.string().min(1, "Ce champs est requise🔺 🔺"),
     sex: z.string().min(1,"Ce champs est requise 🔺"),
     address: z.string().min(1,"Ce champs est requise 🔺"),
@@ -16,6 +17,7 @@ export const TeachSchema = z.object({
 export  type FormDataTeachType = z.infer<typeof TeachSchema>;
 
 export const TeachEditSchema = z.object({
+    img: z.custom(),
     matricule: z.string().min(1,"Ce champs est requise 🔺"),
     sex: z.string().min(1,"Ce champs est requise 🔺"),
     address: z.string().min(1,"Ce champs est requise 🔺"),

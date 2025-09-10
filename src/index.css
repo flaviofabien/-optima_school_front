@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --color-success:#00ac00; 
   --color-primary: #009dff; 
   --color-primary-hover: #0091eb; 
   --color-primary-transparent: #009dff69; 

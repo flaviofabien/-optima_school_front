@@ -15,6 +15,7 @@ import { BiLock } from "react-icons/bi";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
 import { useDispatch } from "react-redux";
 import { setAlert, setToken, setUsers } from "../../store/Users/Users";
+import Validation from "../../Components/ui/Error/Validation";
 
 export default function Login() {
   const { register, formState: { errors }, handleSubmit } = useForm<FormDataLoginType>({
@@ -22,6 +23,7 @@ export default function Login() {
   });
   const navigate = useNavigate();
   const dispatch = useDispatch(); 
+  const [load,setLoad] = useState(false);
 
   const [errorServer, setErrorServer] = useState<string>("");
   const queryClient = useQueryClient();
@@ -35,8 +37,9 @@ export default function Login() {
         queryClient.invalidateQueries({ queryKey: ['users'] });
         dispatch(setToken(value.token))
         dispatch(setUsers(value.user))
-        dispatch(setAlert(true))
+        dispatch(setAlert({status : true,message : "Utilisateur a ete connecter avec succes"}))
         navigate("/admin/users");
+        setLoad(false)
       },
       onError: (error : ErrorServerForm ) => {
         console.log(error);
@@ -45,10 +48,12 @@ export default function Login() {
         } else {
           setErrorServer("An unexpected error occurred");
         }
+        setLoad(false)
       }
   });
 
   const onSubmit = async (formData: FormDataLoginType) => {
+    setLoad(true)
     setErrorServer("");
     mutation.mutate(formData);
   }
@@ -59,7 +64,7 @@ export default function Login() {
       <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
         <TitleForm title="Login" />
         <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-        {errorServer  && <p className="bg-red-400 w-full text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+        {errorServer  && <Validation errorServer={errorServer} /> }
           <Fields 
             icons={<HiOutlineMail size={24} />} 
             label="Email" 
@@ -73,7 +78,7 @@ export default function Login() {
             type="password"
             error={errors.password?.message}/>
             <div className="lg:flex gap-8 justify-between items-start mb-8">
-              <Button text="Login" type="submit" />
+              <Button text="Login" type="submit" load={load} />
               <ButtonLink text="Mot de passe Oublie ?" style={3} link="/reset-password"/>
             </div>
         </div>

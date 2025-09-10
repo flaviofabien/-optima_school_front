@@ -1,6 +1,5 @@
-import { BiAnalyse, BiCalendar, BiLogOut } from "react-icons/bi";
-import { CgProfile, CgTime } from "react-icons/cg";
-import { CiSettings } from "react-icons/ci";
+import { BiAnalyse, BiCalendar} from "react-icons/bi";
+import {  CgTime } from "react-icons/cg";
 import { FaUserMd } from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
 import { GrDashboard, GrTest } from "react-icons/gr";
@@ -66,21 +65,5 @@ export const DataMenu = [
         label : "Examen",
         icons : GrTest,
     },
-    
 
-    // {EmploiDuTemps
-    //     path : "/admin/setting",
-    //     label : "Parametre",
-    //     icons : CiSettings,
-    // },
-    // {
-    //     path : "/admin/profils",
-    //     label : "Profils",
-    //     icons : CgProfile,
-    // },
-    // {
-    //     path : "/",
-    //     label : "Deconnexion",
-    //     icons : BiLogOut,
-    // },
 ]

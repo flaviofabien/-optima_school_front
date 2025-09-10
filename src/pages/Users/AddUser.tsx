@@ -12,34 +12,36 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CreateUsers } from "../../api/Users"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import { BsPerson } from "react-icons/bs"
 import { GiPerson } from "react-icons/gi"
+import { setAlert } from "../../store/Users/Users"
+import Validation from "../../Components/ui/Error/Validation"
 
-type Props = {}
-
-export default function AddUser({}: Props) {
+export default function AddUser() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
 
     const { register, formState: { errors }, handleSubmit } = useForm<FormDataUserType>({
         resolver : zodResolver(userSchema)
-      });
+    });
 
     const navigate = useNavigate();
 
     const [load,setLoad] = useState(false);
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
-
+    
+    const dispatch = useDispatch(); 
     const mutation = useMutation(
         {
         mutationFn: (newUser : FormDataUserType) => CreateUsers(token,newUser),
-        onSuccess: () => {
-            setErrorServer("");
+        onSuccess: () => { 
+            dispatch(setAlert({status : true,message : `Utilisateur a ete Ajouter avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['users'] });
             navigate("/admin/users");
             setLoad(false)
+            setErrorServer("");
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -65,8 +67,7 @@ export default function AddUser({}: Props) {
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <TitleForm title="Ajouter Utilisateurs" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-                        <Fields 
+                    {errorServer  && <Validation errorServer={errorServer} /> }                        <Fields 
                         icons={<BsPerson size={24} />} 
                         label="Nom" 
                         register={register("nom")}
@@ -88,6 +89,7 @@ export default function AddUser({}: Props) {
                         show={true}
                         type="password"
                         error={errors.password?.message}/>
+
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load} />
                         </div>

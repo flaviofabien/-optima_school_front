@@ -9,7 +9,7 @@ type Props = {
     error ?: string
 }
 
-export default function SelectFields({data,icons,label,error,register}: Props) {
+export default function SelectFields({data,icons,error,register}: Props) {
   return (
     <div className="relative mt-4" >
         <div className="group flex mt-4">

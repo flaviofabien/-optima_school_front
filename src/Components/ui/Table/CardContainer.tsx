@@ -1,23 +1,42 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CardConfirmDelete from '../Card/CardConfirmDelete';
 import { BiEdit } from 'react-icons/bi';
 import { MdDelete } from 'react-icons/md';
 import { useQuery } from '@tanstack/react-query';
+import { IPLocal } from '../../../api/IP';
+import type { RootState } from '../../../store/store';
+import Filter from '../Filter';
+import Pagination from '../Pagination';
 
 type Props = {
-    FnQueryGet: (token: string) => Promise<any[]>;
+    FnQueryGet: (
+      token: string ,  
+      limit: number,
+      page: number,
+      sortBy: string,
+      order: string,
+      search: string) => Promise<any>;
     query : string
     title : string
-    functionMutation :  (id: number, token: string) => void;
-  };
-export default function CardContainer({   FnQueryGet , query ,title , functionMutation  }: Props) {
-    const token = useSelector((state: RootState) => state.dataStorage.token);
+    functionMutation :  (id: number, token: string) => Promise<any[]>;
+    dataFilter : any
+};
 
-    const { data, isLoading, isError } = useQuery<any[]>({
-      queryKey: [query, token],
-      queryFn: () => FnQueryGet(token!),
+export default function CardContainer({   FnQueryGet , query ,title , functionMutation ,dataFilter }: Props) {
+  const  [paramsPatient ,setParamsPatient] = useState( {
+    limit : 3,
+    page : 1,
+    sortBy : "nom",
+    order : "order",
+    search : ""
+  } )     
+  const token = useSelector((state: RootState) => state.dataStorage.token);
+
+    const { data, isLoading, isError } = useQuery<any>({
+      queryKey : [query,token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+      queryFn : () =>  FnQueryGet(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
     });
   
     const [show, setShow] = useState({
@@ -33,58 +52,63 @@ export default function CardContainer({   FnQueryGet , query ,title , functionMu
     if (isError) {
       return <div>Error</div>;
     }
+    
   return ( 
-  <>
-  {
-      data?.map( i => (
-          <div className="inline-block max-w-96 lg:ml-60 mt-8 mr-8 bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center space-x-4 mb-4 ">
-              <div className="flex-shrink-0">
-                  <svg className="h-12 w-12 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.261 2.358 11.996 5.993zM12 13C6.477 13 2 8.523 2 3S6.477 0 12 0s10 4.477 10 9-4.477 10-10 10z" />
-                  </svg>
-              </div>
-              <div>
-                  <h3 className="text-xl font-bold text-gray-900">{i.prenom} {i.nom}</h3>
-                  <p className="text-sm text-gray-500">{i.matricule}</p>
-              </div>
-              </div>
-              
-              <div className="space-y-2 text-sm text-gray-700">
-              <div className="flex justify-between items-center border-t pt-2">
-                  <span className="font-medium">Genre:</span>
-                  <span>{i.sex}</span>
-              </div>
-              <div className="flex justify-between items-center border-t pt-2">
-                  <span className="font-medium">Téléphone:</span>
-                  <span>{i.phone}</span>
-              </div>
-              <div className="flex justify-between items-center border-t pt-2">
-                  <span className="font-medium">Email:</span>
-                  <span className="truncate">{i.email}</span>
-              </div>
-              <div className="flex justify-between items-center border-t pt-2">
-                  <span className="font-medium">Statut:</span>
-                  <span>{i.status}</span>
-              </div>
-              <p className="px-6 py-4">
-                      <BiEdit onClick={() => navigate(`/admin/${query}/edit/${item.id}`)} className="inline-block mr-4 text-xl" />
-                      <MdDelete onClick={() => setShow({ id: item.id, show: true })} className="inline-block text-xl" />
+  <div className=' w-full lg:pl-60 pt-8 pr-8'>
+            <Filter data={dataFilter} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
+
+    <div className='flex justify-between flex-wrap gap-8'>
+      {
+          data?.data.map(  (i : any) => (
+              <div className="inline-block max-w-[360px] w-full mt-8 mr-8 bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+                  <div className="flex items-center space-x-4 mb-4 justify-between w-full">
+                    <div className="flex-shrink-0">
+                      <img className='w-20 h-20 object-cover rounded-2xl' src={IPLocal  + i.img} alt={IPLocal + "/" + i.img} />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-900"> {i.nom}</h3>
+                        <h3 className=" font-bold text-gray-900">{i.prenom} </h3>
+                        <div className='w-full flex justify-between'>
+                            <p className="text-sm text-gray-500">{i.matricule}</p>
+                            <span>{i?.Classe?.nom}</span>
+                        </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex justify-between items-center border-t pt-2">
+                      <span className="font-medium">Genre:</span>
+                      <span>{i.sex}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-2">
+                      <span className="font-medium">Téléphone:</span>
+                      <span>{i.phone}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-2">
+                      <span className="font-medium">Email:</span>
+                      <span className="truncate">{i.email}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-2">
+                      <span className="font-medium">Statut:</span>
+                      <span>{i.status}</span>
+                  </div>
+                  <p className="mt-4">
+                      <BiEdit onClick={() => navigate(`/admin/${query}/edit/${i.id}`)} className="inline-block mr-4 text-2xl" />
+                      <MdDelete onClick={() => setShow({ id: i.id, show: true })} className="inline-block text-2xl" />
                   </p>
-                  {show.show && (
-                      <CardConfirmDelete
-                      navigate={`/admin/${query}`}
-                      functionMutation={functionMutation}
-                      show={show}
-                      setShow={setShow}
-                      title={title}
-                      fullName={`${query}`}
-                      />
-                  )}
+                      {show.show && (
+                          <CardConfirmDelete
+                          navigate={`/admin/${query}`}
+                          functionMutation={functionMutation}
+                          show={show}
+                          setShow={setShow}
+                          title={title}
+                          />
+                      )}
+                  </div>
               </div>
-          </div>
-  
-      ) )
-  }
-  </>
+        ))}
+    </div>
+
+    {data && <Pagination   paramsPatient={paramsPatient} totalPage={data?.totalPages} setParamsPatient={setParamsPatient}/>}
+  </div>
 )}

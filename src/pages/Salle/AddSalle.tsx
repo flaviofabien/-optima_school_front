@@ -1,4 +1,3 @@
-import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -9,20 +8,26 @@ import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import SelectCustomDataFields from "../../Components/ui/Fields/SelectFieldsCustom"
+import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import type { userType } from "../../typescript/Users"
 import { SalleSchema, type FormDataSalleType } from "../../Zod-Validation/Salles"
 import { CreateSalles } from "../../api/Salles"
 import { getAllClasses } from "../../api/Classes"
-
+import { setAlert } from "../../store/Users/Users"
+import Loading from "../../Components/ui/Loader/Loading"
+import { MdNumbers, MdOutlineExploreOff } from "react-icons/md"
+import { BsHouse } from "react-icons/bs"
+import Validation from "../../Components/ui/Error/Validation"
 
 type Props = {}
 
 export default function AddSalle({}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
-  
+    const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
+
     const {data,isLoading,isError} = useQuery<userType[]>({
         queryKey: ["classes",token],
         queryFn: () => getAllClasses(token!),
@@ -42,8 +47,10 @@ export default function AddSalle({}: Props) {
         mutationFn: (newUser : FormDataSalleType) => CreateSalles(token,newUser),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Salles a ete ajouter avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['salles'] });
             navigate("/admin/salles");
+            setLoad(false)
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -51,17 +58,17 @@ export default function AddSalle({}: Props) {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)
         }
     });
 
-    const onSubmit = async (formData: FormDataSalleType) => {
-        console.log(formData);
-        
+    const onSubmit = async (formData: FormDataSalleType) => {           
+        setLoad(true)
         setErrorServer("");
         mutation.mutate(formData);
     }
 
-    if (isLoading) return <div>...loading</div>
+    if (isLoading) return <Loading />
     if (isError) return <div>Error</div>
 
   return (
@@ -72,22 +79,23 @@ export default function AddSalle({}: Props) {
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <TitleForm title="Ajouter salle" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                        {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<MdNumbers size={24} />} 
                         data={data}
                         register={register("idClasse",{
                             valueAsNumber : true
                         })}
+                        label="classe"
                         error={errors.idClasse?.message}/> 
 
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsHouse size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<MdOutlineExploreOff size={24} />} 
                         label="effectif" 
                         type="number"
                         register={register("effectif",{
@@ -95,7 +103,7 @@ export default function AddSalle({}: Props) {
                         })}
                         error={errors.effectif?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" />
+                            <Button text="Ajouter" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

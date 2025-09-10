@@ -12,10 +12,12 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {  UpdateUsers, getOneUsers } from "../../api/Users"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import type { userType } from "../../typescript/Users"
 import { BsPerson, BsPersonUp } from "react-icons/bs"
+import { setAlert } from "../../store/Users/Users"
+import Validation from "../../Components/ui/Error/Validation"
 
 type Props = {}
 
@@ -25,6 +27,8 @@ export default function EditUser({}: Props) {
     const navigate = useNavigate();
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
+    const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
 
     const {data,isLoading,isError} = useQuery<userType>({
         queryKey: ["users",token,id],
@@ -50,8 +54,10 @@ export default function EditUser({}: Props) {
         mutationFn: (newUser : FormDataUserEditType) => UpdateUsers(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Utilisateur a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['users'] });
             navigate("/admin/users");
+            setLoad(false)
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -59,10 +65,12 @@ export default function EditUser({}: Props) {
             } else {
                 setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)
         }
     });
 
     const onSubmit = async (formData: FormDataUserEditType) => {
+        setLoad(true)
         setErrorServer("");
         mutation.mutate(formData);
     }
@@ -79,7 +87,7 @@ export default function EditUser({}: Props) {
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <TitleForm title="Modification Utilisateurs" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                        {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                        {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
                         icons={<BsPerson size={24} />} 
                         label="Nom" 
@@ -96,7 +104,7 @@ export default function EditUser({}: Props) {
                         register={register("email")}
                         error={errors.nom?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Modification" type="submit" />
+                            <Button text="Modification" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

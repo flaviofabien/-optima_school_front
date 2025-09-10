@@ -18,7 +18,7 @@ const userColumns = [
   {
     header: 'classe',
     accessor: 'classe',
-    render: (item : any) => item.Classe.nom
+    render: (item : any) => item?.Classe?.nom
   },
 
 ];

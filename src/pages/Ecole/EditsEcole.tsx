@@ -9,36 +9,37 @@ import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate, useParams } from "react-router-dom"
 import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import {  type FormDataStudentType, type FormDataStudentEditType } from "../../Zod-Validation/Students"
-import {  UpdateStudents} from "../../api/Student"
 import { SiDatev, SiZcool } from "react-icons/si"
 import { GrLocal } from "react-icons/gr"
 import FieldCheckBox from "../../Components/ui/Fields/InputCheckBox"
 import { EcoleEditSchema, type FormDataEcoleEditType } from "../../Zod-Validation/Ecole"
 import { UpdateEcoles, getOneEcoles } from "../../api/Ecole"
+import { setAlert } from "../../store/Users/Users"
+import Loading from "../../Components/ui/Loader/Loading"
+import Validation from "../../Components/ui/Error/Validation"
 
 export default function EditEcole() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
+    const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
 
     const {data : userOne,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataEcoleEditType>({
         queryKey: ["users",token,id],
         queryFn: () => getOneEcoles(token!,id!),
     });
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataEcoleEditType>({
+    const {setError , register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataEcoleEditType>({
         resolver : zodResolver(EcoleEditSchema)
     });
 
     useEffect(() => {
-    if (userOne) {
-        setValue("nom", userOne.nom);
-        setValue("adresse", userOne.adresse);
-        setValue("type", userOne.type);
-        setValue("anneeScolaire", userOne.anneeScolaire );
-    }
+        if (userOne) {
+            setValue("nom", userOne.nom);
+            setValue("adresse", userOne.adresse);
+        }
     }, [userOne, setValue]);
 
 
@@ -49,11 +50,13 @@ export default function EditEcole() {
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataEcoleEditType) => UpdateEcoles(token,newUser,id!),
+        mutationFn: (newUser : FormData) => UpdateEcoles(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
+            dispatch(setAlert({status : true,message : `Utilisateur a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['ecoles'] });
             navigate("/admin/ecoles");
+            setLoad(false)
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -61,17 +64,33 @@ export default function EditEcole() {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)
         }
     });
 
     const onSubmit = async (formData: FormDataEcoleEditType) => {
-        console.log(formData);
-        
+        setLoad(true)
+        const newFormData = new FormData();
+
+
+                
+        if ((formData.img as FileList).length <= 0) {
+            setError("img", { message: "Veuillez choisir une image." });
+            setLoad(false);
+            console.log("dans if");
+            
+            return; 
+        }
+
+        newFormData.append("nom",formData.nom)
+        newFormData.append("adresse",formData.adresse)
+        newFormData.append("type", JSON.stringify(formData.type));
+        newFormData.append("img", (formData.img as FileList)[0]);        
         setErrorServer("");
-        mutation.mutate(formData);
+        mutation.mutate(newFormData);
     }
 
-    if ( userOneIsLoading) return <div>...loading</div>
+    if ( userOneIsLoading) return <Loading />
     if ( userOneIsError) return <div>Error</div>
    
   return (
@@ -82,7 +101,7 @@ export default function EditEcole() {
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <TitleForm title="Modification Ecole" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
+                    {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
                         icons={<SiZcool size={24} />} 
                         label="nom" 
@@ -96,9 +115,10 @@ export default function EditEcole() {
                             error={errors.adresse?.message}/> 
                             <Fields 
                             icons={<SiDatev size={24} />} 
-                            label="anneeScolaire" 
-                            register={register("anneeScolaire")}
-                            error={errors.anneeScolaire?.message}/> 
+                            label="img" 
+                            register={register("img")}
+                            type="file"
+                            error={errors.img?.message}/> 
                         </div>
                         <FieldCheckBox
                         data={["Primaire","College","Lycee","Universite"]} 
@@ -108,7 +128,7 @@ export default function EditEcole() {
                         error={errors.type?.message}/>
                         
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Modifier" type="submit" />
+                            <Button text="Modifier" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

@@ -6,14 +6,14 @@ import { BiEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import CardConfirmDelete from "../Card/CardConfirmDelete";
 import type { RootState } from "../../../store/store";
-
+import Loading from "../Loader/Loading";
 
 type Props = {
   columns: any[]; 
   FnQueryGet: (token: string) => Promise<any[]>;
   query : string
   title : string
-  functionMutation :  (id: number, token: string) => void;
+  functionMutation :  (id: number, token: string) =>  Promise<any>;
 };
 
 export default function TableContainer({ columns , FnQueryGet , query ,title , functionMutation }: Props) {
@@ -31,62 +31,50 @@ export default function TableContainer({ columns , FnQueryGet , query ,title , f
 
   const navigate = useNavigate();
 
-  if (isLoading) {
-    return <div>...loading</div>;
-  }
-  if (isError) {
-    return <div>Error</div>;
-  }
+  if (isLoading) return <Loading />;
+  if (isError) return <div>Error</div>;
 
   return (
-    <div className="lg:pl-60 lg:pr-8">
-      <div className="mt-8 overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-[var(--color-primary)] text-[var(--white)]">
-              {/* <td className="px-6 py-4">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-4 w-4 text-color-base transition duration-150 ease-in-out"
-                />
-              </td> */}
-              {columns.map((column, index) => (
-                <td key={index} className="px-6 py-4 text-sm font-medium">
-                  {column.header}
-                </td>
-              ))}
-              <td className="px-6 py-4 text-sm font-medium">Action</td>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((item: any) => (
-              <tr key={item.id} className="w-96 border-b-2 border-[var(--color-primary-transparent)] bg-[var(--white)]">
-                {/* <td className="px-6 py-4">
-                  <input type="checkbox" className="form-checkbox h-4 w-4 text-color-base transition duration-150 ease-in-out" />
-                </td> */}
+    <div className="lg:pl-60 lg:pr-8 ">
+      <div className="overflow-auto w-full max-h-[700px]">
+        <div className="mt-8 ">
+          <table className="overflow-auto w-full">
+            <thead className="text-lg">
+              <tr className="bg-[var(--color-primary)] text-[var(--white)]">
                 {columns.map((column, index) => (
-                  <td key={index} className="px-6 py-4">
-                    {column.render(item)}
+                  <td key={index} className="lg:px-6 px-4 py-4  font-medium">
+                    {column.header}
                   </td>
                 ))}
-                <td className="px-6 py-4">
-                  <BiEdit onClick={() => navigate(`/admin/${query}/edit/${item.id}`)} className="inline-block mr-4 text-xl" />
-                  <MdDelete onClick={() => setShow({ id: item.id, show: true })} className="inline-block text-xl" />
-                </td>
-                {show.show && (
-                  <CardConfirmDelete
-                    navigate={`/admin/${query}`}
-                    functionMutation={functionMutation}
-                    show={show}
-                    setShow={setShow}
-                    title={title}
-                    fullName={`${query}`}
-                  />
-                )}
+                <td className="lg:px-6 px-4 py-4  font-medium"></td>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data?.map((item: any) => (
+                <tr key={item.id} className="w-96 border-b-2 border-[var(--color-primary-transparent)] bg-[var(--white)]">
+                  {columns.map((column, index) => (
+                    <td key={index} className="lg:px-6 px-4 py-4">
+                      {column.render(item)}
+                    </td>
+                  ))}
+                  <td className="lg:px-6 px-4 py-4">
+                    <BiEdit onClick={() => navigate(`/admin/${query}/edit/${item.id}`)} className="inline-block mr-4 text-2xl cursor-pointer scale-110" />
+                    <MdDelete onClick={() => setShow({ id: item.id, show: true })} className="inline-block text-2xl cursor-pointer scale-110" />
+                  </td>
+                  {show.show && (
+                    <CardConfirmDelete
+                      navigate={`/admin/${query}`}
+                      functionMutation={functionMutation}
+                      show={show}
+                      setShow={setShow}
+                      title={title}
+                    />
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
