@@ -51,7 +51,7 @@ export const Router = [
     
     {
       path: "/",
-      element: <Dashboard />
+      element: <Login />
     },
     {
       path: "/admin",
