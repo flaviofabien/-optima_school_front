@@ -1,4 +1,4 @@
-import { BiAnalyse, BiCalendar, BiLogOut} from "react-icons/bi";
+import { BiAnalyse, BiCalendar} from "react-icons/bi";
 import {  CgTime } from "react-icons/cg";
 import { FaUserMd } from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
