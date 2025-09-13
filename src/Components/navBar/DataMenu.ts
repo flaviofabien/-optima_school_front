@@ -65,9 +65,9 @@ export const DataMenu = [
         label : "Examen",
         icons : GrTest,
     },
-    {
-        path : "/login",
-        label : "Logout",
-        icons : BiLogOut,
-    },
+    // {
+    //     path : "/login",
+    //     label : "Logout",
+    //     icons : BiLogOut,
+    // },
 ]

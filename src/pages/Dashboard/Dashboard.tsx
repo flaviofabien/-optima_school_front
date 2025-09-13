@@ -5,6 +5,7 @@ import { getAllStates } from "../../api/State";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import Loading from "../../Components/ui/Loader/Loading";
 
 
 export default function Dashboard() {
@@ -16,7 +17,7 @@ const token = useSelector((state: RootState) => state.dataStorage.token);
   });
 
   if (isLoading) {
-    return <div>...loading</div>;
+    return <Loading />;
   }
   if (isError) {
     return <div>Error</div>;
