@@ -1,4 +1,4 @@
-import { BiAnalyse, BiCalendar} from "react-icons/bi";
+import { BiAnalyse, BiCalendar, BiLogOut} from "react-icons/bi";
 import {  CgTime } from "react-icons/cg";
 import { FaUserMd } from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
@@ -10,7 +10,7 @@ import { SiCoursera } from "react-icons/si";
 export const DataMenu = [
     {
         path : "/admin",
-        label : "dashboard",
+        label : "Dashboard",
         icons : GrDashboard,
     },
     {
@@ -65,5 +65,9 @@ export const DataMenu = [
         label : "Examen",
         icons : GrTest,
     },
-
+    {
+        path : "/login",
+        label : "Logout",
+        icons : BiLogOut,
+    },
 ]

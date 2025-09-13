@@ -18,6 +18,7 @@ import type { FormDataClasseEditType } from "../../Zod-Validation/Classe"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
+import Loading from "../../Components/ui/Loader/Loading"
 
 type Props = {}
 
@@ -83,7 +84,7 @@ export default function EditMatiere({}: Props) {
         mutation.mutate(formData);
     }
 
-    if ( userOneIsLoading || EcoleIsLoading ) return <div>...loading</div>
+    if ( userOneIsLoading || EcoleIsLoading ) return <Loading />
     if ( userOneIsError || EcoleIsError) return <div>Error</div>
   return (
     <div className="bg-[var(--font)] h-screen">

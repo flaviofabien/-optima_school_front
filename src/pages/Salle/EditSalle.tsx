@@ -19,6 +19,7 @@ import type { EcoleType } from "../../typescript/Salle"
 import { MdNumbers, MdOutlineExploreOff } from "react-icons/md"
 import { BsHouse } from "react-icons/bs"
 import Validation from "../../Components/ui/Error/Validation"
+import Loading from "../../Components/ui/Loader/Loading"
 
 export default function EditSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -77,7 +78,7 @@ export default function EditSalle() {
         mutation.mutate(formData);
     }
 
-    if ( userOneIsLoading || EcoleIsLoading ) return <div>...loading</div>
+    if ( userOneIsLoading || EcoleIsLoading ) return <Loading />
     if ( userOneIsError || EcoleIsError) return <div>Error</div>
    
   return (

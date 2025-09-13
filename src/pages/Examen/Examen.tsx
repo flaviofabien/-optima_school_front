@@ -5,6 +5,7 @@ import Header from "../../Components/header/Header";
 import {  getAllExamen } from "../../api/Course";
 import { getAllClasses } from "../../api/Classes";
 import { useState } from "react";
+import Loading from "../../Components/ui/Loader/Loading";
 
 export default function Examen() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -28,9 +29,8 @@ export default function Examen() {
       queryFn: () => getAllClasses(token!),
   });
 
-  if (examenIsLoading || classesIsLoading) {
-      return <div>...chargement</div>;
-  }
+  if (examenIsLoading || classesIsLoading) return <Loading />;
+  
 
   if (examenIsError || classesIsError) {
       return <div>Erreur lors du chargement des données.</div>;

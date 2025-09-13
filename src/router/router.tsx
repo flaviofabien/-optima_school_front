@@ -29,6 +29,7 @@ import TeachContent from "../pages/Teachs/TeachContenu";
 import AddUser from "../pages/Users/AddUser";
 import EditUser from "../pages/Users/EditsUsers";
 import UserContent from "../pages/Users/UserContenu";
+import PrivateRoute from "./PrivateRoute";
 
 export const Router = [
     /****** Autentification ********/
@@ -48,6 +49,8 @@ export const Router = [
       path: "/update-password/:id",
       element: <UpdatePassword />
     },
+
+    
     
     {
       path: "/",
@@ -55,132 +58,130 @@ export const Router = [
     },
     {
       path: "/admin",
-      element: <Dashboard />
+      element: <PrivateRoute element={Dashboard}   />
     },
 
-    /****** Users *********/
-      
-    {
-      path: "/admin/users",
-      element: <UserContent />
-    },
-    {
-      path: "/admin/users/add",
-      element: <AddUser />
-    },
-    {
-      path: "/admin/users/edit/:id",
-      element: <EditUser />
-    },
+     /****** Users *********/
+  {
+    path: "/admin/users",
+    element: <PrivateRoute element={UserContent} />,
+  },
+  {
+    path: "/admin/users/add",
+    element: <PrivateRoute element={AddUser} />,
+  },
+  {
+    path: "/admin/users/edit/:id",
+    element: <PrivateRoute element={EditUser} />,
+  },
 
-      /****** student *********/
-    {
-      path: "/admin/students",
-      element: <StudentContent />
-    },
-    {
-      path: "/admin/students/add",
-      element: <AddStudent />
-    },
-    {
-      path: "/admin/students/edit/:id",
-      element: <EditStudent />
-    },
+  /****** student *********/
+  {
+    path: "/admin/students",
+    element: <PrivateRoute element={StudentContent} />,
+  },
+  {
+    path: "/admin/students/add",
+    element: <PrivateRoute element={AddStudent} />,
+  },
+  {
+    path: "/admin/students/edit/:id",
+    element: <PrivateRoute element={EditStudent} />,
+  },
 
-      /****** teachs *********/
-    {
-      path: "/admin/teachs",
-      element: <TeachContent />
-    },
-    {
-      path: "/admin/teachs/add",
-      element: <AddTeach />
-    },
-    {
-      path: "/admin/teachs/edit/:id",
-      element: <EditTeach />
-    },
+  /****** teachs *********/
+  {
+    path: "/admin/teachs",
+    element: <PrivateRoute element={TeachContent} />,
+  },
+  {
+    path: "/admin/teachs/add",
+    element: <PrivateRoute element={AddTeach} />,
+  },
+  {
+    path: "/admin/teachs/edit/:id",
+    element: <PrivateRoute element={EditTeach} />,
+  },
 
-    /* ecole */
+  /* ecole */
+  {
+    path: "/admin/ecoles",
+    element: <PrivateRoute element={EcoleContent} />,
+  },
+  {
+    path: "/admin/ecoles/add",
+    element: <PrivateRoute element={AddEcole} />,
+  },
+  {
+    path: "/admin/ecoles/edit/:id",
+    element: <PrivateRoute element={EditEcole} />,
+  },
 
-    {
-      path: "/admin/ecoles",
-      element: <EcoleContent />
-    },
-    {
-      path: "/admin/ecoles/add",
-      element: <AddEcole/>
-    },
-    {
-      path: "/admin/ecoles/edit/:id",
-      element: <EditEcole />
-    },
-    /* classes */
+  /* classes */
+  {
+    path: "/admin/classes",
+    element: <PrivateRoute element={ClasseContent} />,
+  },
+  {
+    path: "/admin/classes/add",
+    element: <PrivateRoute element={AddClasse} />,
+  },
+  {
+    path: "/admin/classes/edit/:id",
+    element: <PrivateRoute element={EditClasse} />,
+  },
 
-    {
-      path: "/admin/classes",
-      element: <ClasseContent />
-    },
-    {
-      path: "/admin/classes/add",
-      element: <AddClasse />
-    },
-    {
-      path: "/admin/classes/edit/:id",
-      element: <EditClasse />
-    },
+  /* salle */
+  {
+    path: "/admin/salles",
+    element: <PrivateRoute element={SalleContent} />,
+  },
+  {
+    path: "/admin/salles/add",
+    element: <PrivateRoute element={AddSalle} />,
+  },
+  {
+    path: "/admin/salles/edit/:id",
+    element: <PrivateRoute element={EditSalle} />,
+  },
 
-    /* salle */
+  /* course */
+  {
+    path: "/admin/Courses",
+    element: <PrivateRoute element={CourseContent} />,
+  },
+  {
+    path: "/admin/courses/add",
+    element: <PrivateRoute element={AddCourse} />,
+  },
+  {
+    path: "/admin/courses/edit/:id",
+    element: <PrivateRoute element={EditCourse} />,
+  },
 
-    {
-      path: "/admin/salles",
-      element: <SalleContent />
-    },
-    {
-      path: "/admin/salles/add",
-      element: <AddSalle />
-    },
-    {
-      path: "/admin/salles/edit/:id",
-      element: <EditSalle />
-    },
-    /* course */
+  /* matiere */
+  {
+    path: "/admin/matieres",
+    element: <PrivateRoute element={MatiereContent} />,
+  },
+  {
+    path: "/admin/matieres/add",
+    element: <PrivateRoute element={AddMatiere} />,
+  },
+  {
+    path: "/admin/matieres/edit/:id",
+    element: <PrivateRoute element={EditMatiere} />,
+  },
 
-    {
-      path: "/admin/Courses",
-      element: <CourseContent />
-    },
-    {
-      path: "/admin/courses/add",
-      element: <AddCourse />
-    },
-    {
-      path: "/admin/courses/edit/:id",
-      element: <EditCourse />
-    },
-    /* matiere */
+  /* EmploiDuTemps */
+  {
+    path: "/admin/temps",
+    element: <PrivateRoute element={EmploiDuTemps} />,
+  },
 
-    {
-      path: "/admin/matieres",
-      element: <MatiereContent />
-    },
-    {
-      path: "/admin/matieres/add",
-      element: <AddMatiere />
-    },
-    {
-      path: "/admin/matieres/edit/:id",
-      element: <EditMatiere />
-    },
-
-    /* EmploiDuTemps */
-    {
-      path: "/admin/temps",
-      element: <EmploiDuTemps />
-    },
-    /* Examen */
-    {
-      path: "/admin/examen",
-      element: <Examen />
-    },
-  ]
+  /* Examen */
+  {
+    path: "/admin/examen",
+    element: <PrivateRoute element={Examen} />,
+  },
+]

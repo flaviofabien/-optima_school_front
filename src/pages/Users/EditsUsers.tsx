@@ -18,6 +18,7 @@ import type { userType } from "../../typescript/Users"
 import { BsPerson, BsPersonUp } from "react-icons/bs"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
+import Loading from "../../Components/ui/Loader/Loading"
 
 type Props = {}
 
@@ -75,7 +76,7 @@ export default function EditUser({}: Props) {
         mutation.mutate(formData);
     }
 
-    if (isLoading) return <div>...loading</div>
+    if (isLoading) return <Loading />
     if (isError) return <div>Error</div>
    
    
