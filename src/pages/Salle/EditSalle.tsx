@@ -25,6 +25,14 @@ export default function EditSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
     const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
+    const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } ) 
 
     const {data,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataSalleEditType>({
         queryKey: ["classes",token,id],
@@ -32,9 +40,9 @@ export default function EditSalle() {
     });
 
     const {data : dataEcole,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<EcoleType>({
-        queryKey: ["ecoles",token],
-        queryFn: () => getAllClasses(token!),
-    });
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      });
     
     const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataSalleEditType>({
         resolver : zodResolver(SalleEditSchema)
@@ -58,10 +66,13 @@ export default function EditSalle() {
         {
         mutationFn: (newUser : FormDataSalleEditType) => UpdateSalles(token,newUser,id!),
         onSuccess: () => {
+            setLoad(true)
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Salles a ete modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['salles'] });
             navigate("/admin/salles");
+                        setLoad(false)
+
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -69,11 +80,13 @@ export default function EditSalle() {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)
+
         }
     });
 
     const onSubmit = async (formData: FormDataSalleEditType) => {
-        
+        setLoad(true)
         setErrorServer("");
         mutation.mutate(formData);
     }
@@ -112,7 +125,7 @@ export default function EditSalle() {
                             })}
                             error={errors.effectif?.message}/>
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" />
+                            <Button text="Modification" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

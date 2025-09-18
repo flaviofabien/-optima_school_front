@@ -1,4 +1,7 @@
 export const dataFilterEcole = ["nom","adresse"]
+export const dataFilterClasse = ["nom","ecole"]
+export const dataFilterSalle = ["nom","effectif","classe"]
+export const dataFilterMatiere = ["nom","coefficiant","classe"]
 export const dataFilterStudent = ["nom","prenom","matricule","dateNaissance","sex","address","phone","email"]
 
 export const dataFilterConsultation = [

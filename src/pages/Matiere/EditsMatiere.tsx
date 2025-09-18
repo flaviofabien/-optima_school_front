@@ -14,7 +14,6 @@ import type { RootState } from "../../store/store"
 import { MatiereEditSchema, type FormDataMatiereEditType } from "../../Zod-Validation/Matiere"
 import { UpdateMatieres, getOneMatieres } from "../../api/Matieres"
 import { getAllClasses } from "../../api/Classes"
-import type { FormDataClasseEditType } from "../../Zod-Validation/Classe"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
@@ -28,16 +27,23 @@ export default function EditMatiere({}: Props) {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
+    const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } ) 
 
     const {data : dataMatiere,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataMatiereEditType>({
         queryKey: ["matieres",token,id],
         queryFn: () => getOneMatieres(token!,id!),
     });
 
-    const {data : data,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<FormDataClasseEditType[]>({
-        queryKey: ["classes",token],
-        queryFn: () => getAllClasses(token!),
-    });
+    const {data : data,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<any>({
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      });
     
     const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataMatiereEditType>({
         resolver : zodResolver(MatiereEditSchema)
@@ -63,8 +69,8 @@ export default function EditMatiere({}: Props) {
         onSuccess: () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Matiere a ete modifier avec succes`}))
-            queryClient.invalidateQueries({ queryKey: ['salles'] });
-            navigate("/admin/salles");   
+            queryClient.invalidateQueries({ queryKey: ['matieres'] });
+            navigate("/admin/matieres");   
             setLoad(false)        
 
         },
@@ -97,7 +103,7 @@ export default function EditMatiere({}: Props) {
                         {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFields 
                         icons={<HiOutlineMail size={24} />} 
-                        data={data}
+                        data={data?.data}
                         register={register("idClasse",{
                             valueAsNumber : true
                         })}

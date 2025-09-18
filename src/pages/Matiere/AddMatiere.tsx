@@ -17,7 +17,6 @@ import { CreateMatieres } from "../../api/Matieres"
 import { setAlert } from "../../store/Users/Users"
 import { MdNumbers, MdSubject } from "react-icons/md"
 import { BsType } from "react-icons/bs"
-import type { FormDataClasseType } from "../../Zod-Validation/Classe"
 import Loading from "../../Components/ui/Loader/Loading"
 import Validation from "../../Components/ui/Error/Validation"
 
@@ -26,14 +25,22 @@ export default function AddMatiere() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const {data,isLoading,isError} = useQuery<FormDataClasseType[]>({
-        queryKey: ["users",token],
-        queryFn: () => getAllClasses(token!),
+    const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } )  
+
+    const {data,isLoading,isError} = useQuery<any>({
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
     })
     
     const { register, formState: { errors }, handleSubmit } = useForm<FormDataMatiereType>({
         resolver : zodResolver(MatiereSchema)
-      });
+    });
 
     const navigate = useNavigate();
 
@@ -82,7 +89,7 @@ export default function AddMatiere() {
                         {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFields 
                         icons={<MdNumbers size={24} />} 
-                        data={data}
+                        data={data?.data}
                         register={register("idClasse",{
                             valueAsNumber : true
                         })}

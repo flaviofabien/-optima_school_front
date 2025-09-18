@@ -16,17 +16,14 @@ import SelectFields from "../../Components/ui/Fields/SelectFields"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
 import { BiImage, BiMap } from "react-icons/bi"
-import { SiMatrix } from "react-icons/si"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { MdNumbers } from "react-icons/md"
 import {  BsPerson, BsPersonX, BsPhone } from "react-icons/bs"
-import { PiBirdThin } from "react-icons/pi"
 import { GrStatusGood } from "react-icons/gr"
 import { CgMail } from "react-icons/cg"
 import { getAllClasses } from "../../api/Classes"
-import type { FormDataClasseType } from "../../Zod-Validation/Classe"
 import Validation from "../../Components/ui/Error/Validation"
-
+import { SiDatefns } from "react-icons/si"
 
 export default function EditStudent() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -34,10 +31,18 @@ export default function EditStudent() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const {data,isLoading,isError} = useQuery<FormDataClasseType[]>({
-        queryKey: ["classes",token],
-        queryFn: () => getAllClasses(token!),
-    })
+     const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } )  
+
+    const {data,isLoading,isError} = useQuery<any>({
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      })
     
 
     const {data : userOne,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataStudentType>({
@@ -51,11 +56,10 @@ export default function EditStudent() {
 
     useEffect(() => {
     if (userOne) {
-        setValue("matricule", userOne.matricule);
         setValue("dateNaissance", userOne.dateNaissance);
         setValue("sex", userOne.sex);
         setValue("address", userOne.address );
-        setValue("phone", userOne.phone);
+        setValue("phone",  (userOne.phone).toString() );
         setValue("nom", userOne.nom);
         setValue("prenom", userOne.prenom);
         setValue("email", userOne.email);
@@ -100,7 +104,6 @@ export default function EditStudent() {
   
         newFormData.append("role","eleve");
         newFormData.append("idClasse",formData.idClasse);
-        newFormData.append("matricule",formData.matricule);
         newFormData.append("sex",formData.sex);
         newFormData.append("address",formData.address);
         newFormData.append("dateNaissance",formData.dateNaissance);
@@ -132,15 +135,10 @@ export default function EditStudent() {
                         register={register("img")}
                         type="file"
                         error={errors.img?.message}/>
-                        <Fields 
-                        icons={<SiMatrix size={24} />} 
-                        label="matricule" 
-                        register={register("matricule")}
-                        error={errors.matricule?.message}/>
                         <SelectCustomDataFields  
                         icons={<MdNumbers size={24}/>} 
                         register={register("idClasse")}                            
-                        data={data}
+                        data={data?.data}
                         error={errors.idClasse?.message}
                         label="Classe"
                         />
@@ -158,7 +156,7 @@ export default function EditStudent() {
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<PiBirdThin size={24} />} 
+                        icons={<SiDatefns size={24} />} 
                         label="dateNaissance" 
                         register={register("dateNaissance")}
                         type="date"
@@ -170,15 +168,13 @@ export default function EditStudent() {
                         label="address" 
                         register={register("address")}
                         error={errors.address?.message}/>
-                        <Fields 
-                        icons={<BsPhone size={24} />} 
-                        label="phone" 
-                        type="number"
-
-                        register={register("phone",{
-                            valueAsNumber : true
-                        })}
-                        error={errors.phone?.message}/> 
+                          <Fields 
+                            icons={<BsPhone size={24} />} 
+                            label="phone" 
+                            type="text"
+                            text="+261"
+                            register={register("phone")}
+                            error={errors.phone?.message}/> 
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <SelectFields 

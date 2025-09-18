@@ -1,4 +1,3 @@
-import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -11,14 +10,15 @@ import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import { SiDatev, SiZcool } from "react-icons/si"
-import { GrLocal } from "react-icons/gr"
 import FieldCheckBox from "../../Components/ui/Fields/InputCheckBox"
 import { EcoleEditSchema, type FormDataEcoleEditType } from "../../Zod-Validation/Ecole"
 import { UpdateEcoles, getOneEcoles } from "../../api/Ecole"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
 import Validation from "../../Components/ui/Error/Validation"
+import { FaSchool } from "react-icons/fa"
+import { BiImage } from "react-icons/bi"
+import { BsHouse, BsPerson } from "react-icons/bs"
 
 export default function EditEcole() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -39,7 +39,15 @@ export default function EditEcole() {
         if (userOne) {
             setValue("nom", userOne.nom);
             setValue("adresse", userOne.adresse);
-        }
+            if (typeof userOne.type === 'string') {
+                try {
+                    setValue("type", JSON.parse(userOne.type));
+                } catch (error) {
+                    setValue("type", userOne.type);
+                }
+            } else {
+                setValue("type", userOne.type);
+            }        }
     }, [userOne, setValue]);
 
 
@@ -103,26 +111,26 @@ export default function EditEcole() {
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
                     {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
-                        icons={<SiZcool size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <div className="lg:flex justify-between items-end">
                             <Fields 
-                            icons={<GrLocal size={24} />} 
+                            icons={<BsHouse size={24} />} 
                             label="adresse" 
                             register={register("adresse")}
                             error={errors.adresse?.message}/> 
                             <Fields 
-                            icons={<SiDatev size={24} />} 
+                            icons={<BiImage size={24} />} 
                             label="img" 
                             register={register("img")}
                             type="file"
                             error={errors.img?.message}/> 
                         </div>
                         <FieldCheckBox
-                        data={["Primaire","College","Lycee","Universite"]} 
-                        icons={<HiOutlineMail size={24} className="inline-block" />} 
+                        data={["Primaire", "Collège", "Lycée", "Université"]} 
+                        icons={<FaSchool size={24} className="inline-block" />} 
                         label="type" 
                         register={register("type")}
                         error={errors.type?.message}/>

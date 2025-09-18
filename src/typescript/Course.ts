@@ -19,8 +19,8 @@ export type DataCourse= {
         idMatiere: string;
         eleveIds: unknown;
         jour: string;
-        heureDebut: number;
-        heureFin: number;
+        heureDebut: string;
+        heureFin: string;
         Salle : FormDataSalleType
         Matiere : FormDataMatiereType
         Teacher : FormDataTeachType

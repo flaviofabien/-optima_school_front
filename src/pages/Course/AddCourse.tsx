@@ -12,21 +12,20 @@ import type { RootState } from "../../store/store"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { CreateCourses, getAllIncludeCourses } from "../../api/Course"
 import { CoursesSchema, type FormDataCoursesType } from "../../Zod-Validation/Course"
-import FieldCheckBoxCustom from "../../Components/ui/Fields/FieldsCheckBoxCustom"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
-import { Heure } from "../../Utils/Heure"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
 import { MdNumbers, MdRoom, MdSubject } from "react-icons/md"
 import { GiTeacher } from "react-icons/gi"
-import { PiStudent } from "react-icons/pi"
 import { CgViewDay } from "react-icons/cg"
 import { BsHourglass } from "react-icons/bs"
 import type { DataCourseInclude } from "../../typescript/Course"
+import Fields from "../../Components/ui/Fields/Fields"
 
 export default function AddCourse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
+    const [load,setLoad] = useState(false);
 
     const {data,isLoading,isError,} = useQuery<DataCourseInclude>({
         queryKey: ["include-course", token],
@@ -50,6 +49,7 @@ export default function AddCourse() {
             dispatch(setAlert({status : true,message : `Cours a ete ajouter avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['courses'] });
             navigate("/admin/courses");
+
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -57,6 +57,8 @@ export default function AddCourse() {
             } else {
             setErrorServer("An unexpected error occurred");
             }
+            setLoad(false)
+
         }
     });
 
@@ -66,7 +68,8 @@ export default function AddCourse() {
     const watchMatiere = watch("idMatiere");
     const watchTeach = watch("idTeacher");
 
-    const onSubmit = async (formData: FormDataCoursesType) => {        
+    const onSubmit = async (formData: FormDataCoursesType) => {   
+        setLoad(true)
         setErrorServer("");
         mutation.mutate(formData);
     }
@@ -119,16 +122,6 @@ export default function AddCourse() {
                            {
                              (watchMatiere && watchTeach && watchClasse && watchSalle) && (
                               <div>
-                                <FieldCheckBoxCustom
-                                icons={<PiStudent size={24} />} 
-                                data={data?.student}
-                                register={register("eleveIds"
-                                ,{
-                                    valueAsNumber : true
-                                }
-                                )}
-                                label="Eleves"
-                                error={errors.eleveIds?.message}/> 
                                 <SelectFields 
                                 icons={<CgViewDay size={24} />} 
                                 label="jour" 
@@ -136,29 +129,26 @@ export default function AddCourse() {
                                 register={register("jour")}
                                 error={errors.jour?.message}/>
                                 <div className="lg:flex justify-between items-end">
-                                    <SelectCustomDataFields 
+                                    <Fields 
                                     icons={<BsHourglass size={24} />} 
                                     label="heureDebut" 
-                                    register={register("heureDebut",{
-                                      valueAsNumber : true
-                                  })}
-                                    data={Heure}
+                                    type="time"
+                                    register={register("heureDebut")}
                                     error={errors.heureDebut?.message}/>
-                                    <SelectCustomDataFields 
+                                    <Fields 
+                                    type="time"
                                     icons={<BsHourglass size={24} />} 
                                     label="heureFin" 
-                                    register={register("heureFin",{
-                                      valueAsNumber : true
-                                  })}
-                                    data={Heure}
+                                    register={register("heureFin")}
                                     error={errors.heureFin?.message}/> 
+                                    
                                 </div>
 
                               </div>
                              )
                            }
                         <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" />
+                            <Button text="Ajouter" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

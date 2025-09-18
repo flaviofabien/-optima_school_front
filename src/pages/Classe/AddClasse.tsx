@@ -18,13 +18,11 @@ import type { EcoleData } from "../../typescript/Ecole"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import Validation from "../../Components/ui/Error/Validation"
 import Loading from "../../Components/ui/Loader/Loading"
-import { FaSchool } from "react-icons/fa"
-import { MdNumbers } from "react-icons/md"
+import { FaChalkboardTeacher, FaSchool } from "react-icons/fa"
 
 
 export default function AddClasse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
-    const user = useSelector((state: RootState) => state.dataStorage.user);
     const  [paramsPatient ] = useState( {
         limit : 100,
         page : 1,
@@ -72,7 +70,7 @@ export default function AddClasse() {
     const onSubmit = async (formData: FormDataClasseType) => {
         setLoad(true)
         setErrorServer("");
-        const newUser = {...formData , idUser : user.id}
+        const newUser = {...formData }
         mutation.mutate(newUser);
     }
 
@@ -97,7 +95,7 @@ export default function AddClasse() {
                             label="ecole"
                             error={errors.idEcole?.message}/> 
                             <Fields 
-                            icons={<MdNumbers size={24} />} 
+                            icons={<FaChalkboardTeacher size={24} />} 
                             label="nom" 
                             register={register("nom")}
                             error={errors.nom?.message}/>

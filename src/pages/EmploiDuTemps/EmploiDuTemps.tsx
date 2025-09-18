@@ -37,24 +37,27 @@ export default function EmploiDuTemps() {
     });
 
     useEffect(() => {
-        if (data  && currentViewDate) {
-            const formattedEvents = data?.map((course): EventInput | null => {
+        if (data && currentViewDate) {
+            const formattedEvents = data.map((course): EventInput | null => {
                 const dayOfWeek = getDayNumber(course.jour);
-                if (dayOfWeek === undefined) return null; 
-
+                if (dayOfWeek === undefined) return null;
+    
                 const baseDate = new Date(currentViewDate);
-                console.log(baseDate,dayOfWeek);
-
                 const currentDay = baseDate.getDay();
-                const diff = dayOfWeek - currentDay;
-                
-                const eventDate = new Date(baseDate.setDate(baseDate.getDate() + diff));
-                
+                const diff = (dayOfWeek - currentDay + 7) % 7;
+    
+                const eventDate = new Date(baseDate);
+                eventDate.setDate(baseDate.getDate() + diff);
+    
+                const [startHour, startMinute] = course.heureDebut.split(':').map(Number);
+                const [endHour, endMinute] = course.heureFin.split(':').map(Number);
+    
                 const startDateTime = new Date(eventDate);
+                startDateTime.setHours(startHour, startMinute, 0, 0);
+    
                 const endDateTime = new Date(eventDate);
-                startDateTime.setHours(course.heureDebut, 0, 0, 0);
-                endDateTime.setHours(course.heureFin, 0, 0, 0);
-
+                endDateTime.setHours(endHour, endMinute, 0, 0);
+    
                 return {
                     title: `${course?.Matiere?.nom} - Salle ${course.Salle?.nom}`,
                     start: startDateTime.toISOString(),
@@ -63,10 +66,12 @@ export default function EmploiDuTemps() {
                         professeur: `${course?.Teacher?.prenom} ${course.Teacher?.nom}`
                     }
                 };
-            }).filter((event): event is EventInput => event !== null); 
+            }).filter((event): event is EventInput => event !== null);
+    
             setEvents(formattedEvents);
         }
     }, [data, currentViewDate]);
+    
 
     const handleDatesSet = (info : any) => {
         setCurrentViewDate(info.view.currentStart);
@@ -82,8 +87,8 @@ export default function EmploiDuTemps() {
     return (
         <div className="bg-[var(--font)] ">
             <Header />
-                <div className="mt-8 flex justify-center px-8 lg:pl-60 items-center w-full h-screen">
-                    <div className="w-1/2 h-[100%] bg-white p-8 max-h-[1500px]">
+                <div className="overflow-auto mt-8 flex justify-center px-8 lg:pl-60 items-start w-full h-screen">
+                    <div className="w-full bg-white p-8 ">
                         <FullCalendar
                             plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
                             locale="fr"

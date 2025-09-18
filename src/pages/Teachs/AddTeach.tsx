@@ -16,14 +16,14 @@ import { CreateTeachs } from "../../api/Teach"
 import { setAlert } from "../../store/Users/Users"
 import { BiImage } from "react-icons/bi"
 import { SiMatrix, SiPercy } from "react-icons/si"
-import { BsMap, BsPerson, BsPhone } from "react-icons/bs"
+import { BsLock, BsMap, BsPerson, BsPhone } from "react-icons/bs"
 import { CgMail } from "react-icons/cg"
-import { PiPassword, PiPerson } from "react-icons/pi"
+import { PiPerson } from "react-icons/pi"
 import Validation from "../../Components/ui/Error/Validation"
 
 export default function AddTeach() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
-    const { register, formState: { errors }, handleSubmit } = useForm<FormDataTeachType>({
+    const { register, setValue , formState: { errors }, handleSubmit } = useForm<FormDataTeachType>({
         resolver : zodResolver(TeachSchema)
     });
     const [load,setLoad] = useState(false);
@@ -40,7 +40,6 @@ export default function AddTeach() {
         onSuccess: () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Enseignat a ete ajouter avec succes`}))
-
             queryClient.invalidateQueries({ queryKey: ['teacher'] });
             navigate("/admin/teachs");
             setLoad(false)        
@@ -52,17 +51,15 @@ export default function AddTeach() {
             } else {
             setErrorServer("An unexpected error occurred");
             }
-                                    setLoad(false)        
-
+            setLoad(false)        
         }
     });
 
     const onSubmit = async (formData: FormDataTeachType) => {
-        const newFormData = new FormData();
         setLoad(true)        
+        const newFormData = new FormData();
 
         const files = formData.img as FileList;
-
         if (files && files.length > 0) {
             newFormData.append("img", files[0]);
         }        
@@ -134,7 +131,7 @@ export default function AddTeach() {
                         <SelectFields 
                         icons={<SiPercy size={24} />} 
                         label="Specialite" 
-                        data={["Encadreur","Proffeseur","Retraite"]} 
+                        data={["Proffeseur","Retraite"]} 
                         register={register("specialite")}
                         error={errors.specialite?.message}/> 
 
@@ -152,12 +149,16 @@ export default function AddTeach() {
                         error={errors.sex?.message}/> 
                    
                         <Fields 
-                        icons={<PiPassword size={24} />} 
+                        icons={<BsLock size={24} />} 
                         show={true}
                         type="password"
                         label="password" 
                         register={register("password")}
-                        error={errors.password?.message}/>  
+                        generatePassword={true}
+                        setValue={setValue}
+                        name="password"
+                        error={errors.password?.message}/> 
+                        
                     <div className="lg:flex gap-8 justify-between items-start mb-8">
                         <Button text="Ajouter" type="submit" load={load} />
                     </div>

@@ -1,4 +1,7 @@
-import { HiOutlineMail } from "react-icons/hi"
+import { SiMatrix, SiPercy } from "react-icons/si"
+import {  BsMap, BsPerson, BsPhone } from "react-icons/bs"
+import { CgMail } from "react-icons/cg"
+import { PiPerson } from "react-icons/pi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -17,6 +20,7 @@ import SelectFields from "../../Components/ui/Fields/SelectFields"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
 import Loading from "../../Components/ui/Loader/Loading"
+import { BiImage } from "react-icons/bi"
 
 
 export default function EditTeach() {
@@ -111,39 +115,38 @@ export default function EditTeach() {
                 <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
                 {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BiImage size={24} />} 
                         label="img" 
                         register={register("img")}
                         type="file"
                         error={errors.img?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<SiMatrix size={24} />} 
                         label="matricule" 
                         register={register("matricule")}
                         error={errors.matricule?.message}/>
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="prenom" 
                         register={register("prenom")}
                         error={errors.prenom?.message}/> 
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsMap size={24} />} 
                         label="address" 
                         register={register("address")}
                         error={errors.address?.message}/>
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<BsPhone size={24} />} 
                         label="phone" 
                         type="number"
-
                         register={register("phone",{
                             valueAsNumber : true
                         })}
@@ -151,24 +154,24 @@ export default function EditTeach() {
                     </div>
                     <div className="lg:flex justify-between items-end">
                         <SelectFields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<SiPercy size={24} />} 
                         label="Specialite" 
-                        data={["Encadreur","Proffeseur","Retraite"]} 
+                        data={["Proffeseur","Retraite"]} 
                         register={register("specialite")}
                         error={errors.specialite?.message}/> 
 
                         <Fields 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<CgMail size={24} />} 
                         label="email" 
                         register={register("email")}
                         error={errors.email?.message}/>
                     </div>
                         <SelectFields
                         data={["Homme","Femme"]} 
-                        icons={<HiOutlineMail size={24} />} 
+                        icons={<PiPerson size={24} />} 
                         label="sex" 
                         register={register("sex")}
-                        error={errors.sex?.message}/> 
+                        error={errors.sex?.message}/>  
  
                     <div className="lg:flex gap-8 justify-between items-start mb-8">
                         <Button text="Modifier" type="submit" />

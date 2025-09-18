@@ -4,6 +4,9 @@ import type { DataStorageUserType, UserDatastorageType } from "../../typescript/
 const getTokenFromStorage = () => {
    return localStorage.getItem("userToken") || "";
 };
+const getUserFromStorage = () => {
+   const userString = localStorage.getItem("user");
+   return userString ? JSON.parse(userString) : null;};
 
  const initialState : DataStorageUserType = {
     token : getTokenFromStorage(),
@@ -11,13 +14,13 @@ const getTokenFromStorage = () => {
       status : false,
       message : ""
     },
-    user : {
-      id : 0,
-      nom : "",
-      prenom : "",
-      email : '',
-      role : undefined
-    },
+    user: getUserFromStorage() || {
+      id: 0,
+      nom: "",
+      prenom: "",
+      email: '',
+      role: undefined
+   }
  }
 
  export const DataStorage = createSlice({
@@ -34,6 +37,7 @@ const getTokenFromStorage = () => {
         },
         setUsers: (state : DataStorageUserType, action: PayloadAction<UserDatastorageType>) => { 
            state.user =  action.payload;
+           localStorage.setItem("user", JSON.stringify(action.payload));
         },
 
         

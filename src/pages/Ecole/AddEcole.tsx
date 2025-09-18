@@ -1,4 +1,3 @@
-import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
@@ -14,15 +13,17 @@ import type { RootState } from "../../store/store"
 import { EcoleSchema, type FormDataEcoleType } from "../../Zod-Validation/Ecole"
 import { CreateEcoles } from "../../api/Ecole"
 import FieldCheckBox from "../../Components/ui/Fields/InputCheckBox"
-import { SiDatev, SiZcool } from "react-icons/si"
-import { GrLocal } from "react-icons/gr"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
+import { BsHouse, BsPerson } from "react-icons/bs"
+import { BiImage } from "react-icons/bi"
+import { FaSchool } from "react-icons/fa"
 
 type Props = {}
 
 export default function AddEcole({}: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
+    const user = useSelector((state: RootState) => state.dataStorage.user);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
@@ -57,10 +58,10 @@ export default function AddEcole({}: Props) {
 
     const onSubmit = async (formData: FormDataEcoleType) => {
         setLoad(true)
-        const newFormData = new FormData();
-
+        const newFormData = new FormData();        
         newFormData.append("nom",formData.nom)
         newFormData.append("adresse",formData.adresse)
+        newFormData.append("idUser", JSON.stringify(user.id) )
         newFormData.append("type", JSON.stringify(formData.type));
         newFormData.append("img", (formData.img as FileList)[0]);        
         setErrorServer("");
@@ -78,26 +79,26 @@ export default function AddEcole({}: Props) {
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
                     {errorServer  && <Validation errorServer={errorServer} /> }
                         <Fields 
-                        icons={<SiZcool size={24} />} 
+                        icons={<BsPerson size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
                         <div className="lg:flex justify-between items-end">
                             <Fields 
-                            icons={<GrLocal size={24} />} 
+                            icons={<BsHouse size={24} />} 
                             label="adresse" 
                             register={register("adresse")}
                             error={errors.adresse?.message}/> 
                             <Fields 
-                            icons={<SiDatev size={24} />} 
+                            icons={<BiImage size={24} />} 
                             label="img" 
                             type="file"
                             register={register("img")}
                             error={errors.img?.message}/> 
                         </div>
                         <FieldCheckBox
-                        data={["Primaire","College","Lycee","Universite"]} 
-                        icons={<HiOutlineMail size={24} className="inline-block" />} 
+                        data={["Primaire", "Collège", "Lycée", "Université"]} 
+                        icons={<FaSchool size={24} className="inline-block" />} 
                         label="type" 
                         register={register("type")}
                         error={errors.type?.message}/>

@@ -9,6 +9,7 @@ import { IPLocal } from '../../../api/IP';
 import type { RootState } from '../../../store/store';
 import Filter from '../Filter';
 import Pagination from '../Pagination';
+import Loading from '../Loader/Loading';
 
 type Props = {
     FnQueryGet: (
@@ -47,7 +48,7 @@ export default function CardContainer({   FnQueryGet , query ,title , functionMu
     const navigate = useNavigate();
   
     if (isLoading) {
-      return <div>...loading</div>;
+      return <Loading />;
     }
     if (isError) {
       return <div>Error</div>;
@@ -55,9 +56,9 @@ export default function CardContainer({   FnQueryGet , query ,title , functionMu
     
   return ( 
   <div className=' w-full lg:pl-60 pt-8 pr-8'>
-            <Filter data={dataFilter} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
+    <Filter data={dataFilter} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
 
-    <div className='flex justify-between flex-wrap gap-8'>
+    <div className='flex  flex-wrap gap-8'>
       {
           data?.data.map(  (i : any) => (
               <div className="inline-block max-w-[360px] w-full mt-8 mr-8 bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
@@ -95,20 +96,20 @@ export default function CardContainer({   FnQueryGet , query ,title , functionMu
                       <BiEdit onClick={() => navigate(`/admin/${query}/edit/${i.id}`)} className="inline-block mr-4 text-2xl" />
                       <MdDelete onClick={() => setShow({ id: i.id, show: true })} className="inline-block text-2xl" />
                   </p>
-                      {show.show && (
-                          <CardConfirmDelete
-                          navigate={`/admin/${query}`}
-                          functionMutation={functionMutation}
-                          show={show}
-                          setShow={setShow}
-                          title={title}
-                          />
-                      )}
+                     
                   </div>
               </div>
         ))}
     </div>
-
+    {show.show && (
+                    <CardConfirmDelete
+                    navigate={`/admin/${query}`}
+                    functionMutation={functionMutation}
+                    show={show}
+                    setShow={setShow}
+                    title={title}
+                    />
+                )}
     {data && <Pagination   paramsPatient={paramsPatient} totalPage={data?.totalPages} setParamsPatient={setParamsPatient}/>}
   </div>
 )}

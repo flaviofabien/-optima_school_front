@@ -15,18 +15,27 @@ export default function Examen() {
       data: examenData, 
       isLoading: examenIsLoading, 
       isError: examenIsError 
-  } = useQuery<any[]>({
+  } = useQuery<any>({
       queryKey: ["examen", token, classId],
       queryFn: () => getAllExamen(token!, classId),
   });
+
+  const  [paramsPatient ] = useState( {
+    limit : 50,
+    page : 1,
+    sortBy : "nom",
+    order : "desc",
+    search : ""
+  } )  
+
 
   const { 
       data: classesData, 
       isLoading: classesIsLoading, 
       isError: classesIsError 
   } = useQuery<any>({
-      queryKey: ["classes", token],
-      queryFn: () => getAllClasses(token!),
+    queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+    queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
   });
 
   if (examenIsLoading || classesIsLoading) return <Loading />;
@@ -46,7 +55,7 @@ export default function Examen() {
                   }
                 </select>
                 <div className="flex">
-                  {examenData?.map((roomData, index) => (
+                  {examenData?.map((roomData : any, index : any) => (
                       <div key={index} className="mb-8 p-4 rounded-lg shadow-sm flex">
                         <div>
                           <h2 className="text-xl font-semibold mb-4">Salle: {roomData.salle}</h2>

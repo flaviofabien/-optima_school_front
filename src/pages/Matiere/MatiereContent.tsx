@@ -1,22 +1,23 @@
 import Header from "../../Components/header/Header";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
-import TableContainer from "../../Components/ui/Table/TableContainer";
+import { dataFilterMatiere } from "../../Components/ui/FilterData";
+import TableMatiere from "../../Components/ui/Table/TableMatiere";
 import TextHeaderTable from "../../Components/ui/Text/TextinTable";
 import { DeleteMatieres, getAllMatieres } from "../../api/Matieres";
 
 const userColumns = [
   {
-    header: 'nom',
+    header: 'Nom',
     accessor: 'nom',
     render: (item : any) => item.nom
   },
   {
-    header: 'coefficiant',
+    header: 'Coefficiant',
     accessor: 'coefficiant',
     render: (item : any) => item.coefficiant
   },
   {
-    header: 'classe',
+    header: 'Classe',
     accessor: 'classe',
     render: (item : any) => item?.Classe?.nom
   },
@@ -31,7 +32,8 @@ export default function MatiereContent() {
           <TextHeaderTable text="Les Matieres" />
           <ButtonLink link="/admin/matieres/add" text="Ajoute +"  />
         </div>
-        <TableContainer
+        <TableMatiere
+         dataFilterSelect={dataFilterMatiere}
           functionMutation={DeleteMatieres}
           title="Matiere" 
           FnQueryGet={getAllMatieres} 

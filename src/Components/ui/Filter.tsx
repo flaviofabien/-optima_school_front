@@ -20,9 +20,10 @@ export default function Filter( {  paramsPatient, setParamsPatient, data} : Prop
         const newOrder = paramsPatient.order === "asc" ? "desc" : "asc";
         setParamsPatient((prev)=> ({...prev ,order : newOrder  })  )
     }
+
     const handleSearch = () => {
-        setParamsPatient((prev)=> ({...prev ,Page : 1  ,search : ValueSearch} )  )
-    }
+        setParamsPatient((prev) => ({ ...prev, page: 1, search: ValueSearch })); // Corrected
+    };
 
     return (
         <div className='mb-8 sm:justify-center sm:flex w-full '>
@@ -41,14 +42,15 @@ export default function Filter( {  paramsPatient, setParamsPatient, data} : Prop
                 <div className=' flex flex-row justify-between gap-4 items-end'>
                     <div className="w-full">
                         <label htmlFor="">Trier Par :</label>
-                        <select className='w-full bg-[var(--color-primary)] h-9 pl-2 text-white' onChange={(e) =>   setParamsPatient(  (prec) => ({...prec,  sortBy : e.target.value })   )}>
-                            {
-                                data.map((items : any) => {
-                                    return(
-                                        <option key={items} value={items} className="capitalize">  {items.toUpperCase()} </option>
-                                    )
-                                } )
-                            }
+                        <select className='w-full bg-[var(--color-primary)] h-9 pl-2 text-white' 
+                            onChange={(e) =>   setParamsPatient(  (prec) => ({...prec,  sortBy : e.target.value })   )}>
+                                {
+                                    data.map((items : any) => {
+                                        return(
+                                            <option key={items} className="capitalize" value={items}>  {items.toUpperCase()} </option>
+                                        )
+                                    } )
+                                }
                         </select>
                     </div>
                     

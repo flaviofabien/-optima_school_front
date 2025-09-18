@@ -18,8 +18,7 @@ import { setAlert } from "../../store/Users/Users"
 import type { EcoleData } from "../../typescript/Ecole"
 import Loading from "../../Components/ui/Loader/Loading"
 import Validation from "../../Components/ui/Error/Validation"
-import { FaSchool } from "react-icons/fa"
-import { MdNumbers } from "react-icons/md"
+import { FaChalkboardTeacher, FaSchool } from "react-icons/fa"
 
 export default function EditClasse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -109,7 +108,7 @@ export default function EditClasse() {
                         label="ecole"
                         error={errors.idEcole?.message}/> 
                         <Fields 
-                        icons={<MdNumbers size={24} />} 
+                        icons={<FaChalkboardTeacher size={24} />} 
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>

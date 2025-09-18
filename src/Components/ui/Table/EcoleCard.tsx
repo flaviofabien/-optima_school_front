@@ -29,13 +29,15 @@ type Props = {
 export default function EcoleCardContainer({   FnQueryGet , query ,title , functionMutation ,dataFilterSelect }: Props) {
   const token = useSelector((state: RootState) => state.dataStorage.token);
   const navigate = useNavigate();
-  const  [paramsPatient ,setParamsPatient] = useState( {
-    limit : 4,
-    page : 1,
-    sortBy : "nom",
-    order : "order",
-    search : ""
-  } )   
+ 
+  const [paramsPatient, setParamsPatient] = useState({
+    limit: 3,
+    page: 1,
+    sortBy:  "nom",
+    order: "desc",
+    search: ""
+    });
+
 
   const {data,isLoading,isError} = useQuery<EcoleData> (
   {
@@ -51,10 +53,12 @@ export default function EcoleCardContainer({   FnQueryGet , query ,title , funct
   if (isLoading) return <Loading />;
   if (isError) return <div>Error</div>;
     
+  console.log(paramsPatient,"Parent");
+
   return ( 
   <div className=' w-full lg:pl-60 pt-8 pr-8  '>
         <Filter data={dataFilterSelect} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
-        <div className='flex justify-between flex-wrap gap-8 '>
+        <div className='flex flex-wrap gap-8 '>
           {
               data?.data.map( i => (
                   <div className="flex flex-col gap-2  w-full max-w-[290px] bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
@@ -84,15 +88,7 @@ export default function EcoleCardContainer({   FnQueryGet , query ,title , funct
                                 <BiEdit onClick={() => navigate(`/admin/${query}/edit/${i.id}`)} className="inline-block mr-4 text-2xl" />
                                 <MdDelete onClick={() => setShow({ id: i.id, show: true })} className="inline-block text-2xl" />
                             </p>
-                            {show.show && (
-                                <CardConfirmDelete
-                                navigate={`/admin/${query}`}
-                                functionMutation={functionMutation}
-                                show={show}
-                                setShow={setShow}
-                                title={title}
-                                />
-                            )}
+                          
                         </div>
                       </div>
                   </div>
@@ -100,6 +96,15 @@ export default function EcoleCardContainer({   FnQueryGet , query ,title , funct
               ) )
           }
         </div>
+        {show.show && (
+            <CardConfirmDelete
+            navigate={`/admin/${query}`}
+            functionMutation={functionMutation}
+            show={show}
+            setShow={setShow}
+            title={title}
+            />
+        )}
         {data && <Pagination   paramsPatient={paramsPatient} totalPage={data?.totalPages} setParamsPatient={setParamsPatient}/>}
 
   </div>

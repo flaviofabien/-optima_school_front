@@ -11,7 +11,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
-import type { userType } from "../../typescript/Users"
 import { SalleSchema, type FormDataSalleType } from "../../Zod-Validation/Salles"
 import { CreateSalles } from "../../api/Salles"
 import { getAllClasses } from "../../api/Classes"
@@ -28,10 +27,18 @@ export default function AddSalle({}: Props) {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const {data,isLoading,isError} = useQuery<userType[]>({
-        queryKey: ["classes",token],
-        queryFn: () => getAllClasses(token!),
-    })
+    const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } )  
+
+    const {data,isLoading,isError} = useQuery<any>({
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      })
     
     const { register, formState: { errors }, handleSubmit } = useForm<FormDataSalleType>({
         resolver : zodResolver(SalleSchema)
@@ -82,7 +89,7 @@ export default function AddSalle({}: Props) {
                         {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFields 
                         icons={<MdNumbers size={24} />} 
-                        data={data}
+                        data={data?.data}
                         register={register("idClasse",{
                             valueAsNumber : true
                         })}

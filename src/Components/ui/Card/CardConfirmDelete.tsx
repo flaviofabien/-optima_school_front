@@ -44,7 +44,7 @@ export default function CardConfirmDelete({navigate,show,setShow,title,functionM
 
     return (
         <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-xs  top-0 left-0'>
-            <div className="w-[400px] bg-[var(--white)] ">
+            <div className="w-[400px] border-2 border-[var(--color-primary)] rounded-b-4xl bg-[var(--white)] ">
                 <Title title={title}  />
                 <br />
                 <Description align="center" text={`Vous voulez vraiment supprimer cette ${title.toLocaleLowerCase()}  `} />

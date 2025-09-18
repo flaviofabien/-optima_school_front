@@ -7,6 +7,6 @@ export const IPLocal = "https://optima-school-backend.onrender.com";
 // export const IP = "http://dpg-d3167dmmcj7s7383dlk0-a:5000/api";
 // export const IPLocal = "http://dpg-d3167dmmcj7s7383dlk0-a:5000";
 
-// local
+// // local
 // export const IP = "http://localhost:5000/api";
 // export const IPLocal = "http://localhost:5000";

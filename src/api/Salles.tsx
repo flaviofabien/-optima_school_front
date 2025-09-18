@@ -2,13 +2,16 @@ import axios from "axios"
 import { IP } from "./IP"
 import type { FormDataSalleEditType, FormDataSalleType } from "../Zod-Validation/Salles"
 
-export const getAllSalles  = async (token : string) => {
+export const getAllSalles  = async ( token : string,
+    page : number | undefined,limit : number |undefined , search : string | undefined , order : string | undefined ,sortBy : string | undefined
+    ) => {
     const res = await axios.get( IP + "/salles" , {
+        params : { page,limit,search,order,sortBy },
         headers : {
             "Authorization" : "Bearer " + token
         }
     })
-    return res.data.data
+    return res.data
 }
 
 export const getOneSalles  = async (token : string , id : string) => {

@@ -1,17 +1,18 @@
 import Header from "../../Components/header/Header";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
-import TableContainer from "../../Components/ui/Table/TableContainer";
+import { dataFilterSalle } from "../../Components/ui/FilterData";
+import TableSalle from "../../Components/ui/Table/TableSalle";
 import TextHeaderTable from "../../Components/ui/Text/TextinTable";
 import { DeleteSalles, getAllSalles } from "../../api/Salles";
 
 const userColumns = [
   {
-    header: 'nom',
+    header: 'Nom',
     accessor: 'nom',
     render: (item : any) => item.nom
   },
   {
-    header: 'effectif',
+    header: 'Effectif',
     accessor: 'effectif',
     render: (item : any) => item.effectif
   },
@@ -31,7 +32,8 @@ export default function SalleContent() {
           <TextHeaderTable text="Les Salle" />
           <ButtonLink link="/admin/salles/add" text="Ajoute +"  />
         </div>
-        <TableContainer
+        <TableSalle
+          dataFilterSelect={dataFilterSalle}
           functionMutation={DeleteSalles}
           title="Salles" 
           FnQueryGet={getAllSalles} 

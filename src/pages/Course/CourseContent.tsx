@@ -6,24 +6,19 @@ import { DeleteCourses, getAllCourses } from "../../api/Course";
 
 const userColumns = [
   {
-    header: 'jour',
+    header: 'Jour',
     accessor: 'jour',
     render: (item : any) => item.jour
   },
   {
-    header: 'heureDebut',
+    header: 'Heure de debut',
     accessor: 'heureDebut',
     render: (item : any) => `${item.heureDebut}h` 
   },
   {
-    header: 'heureFin',
+    header: 'Heure de fin',
     accessor: 'heureFin',
     render: (item : any) => `${item.heureFin}h` 
-  },
-  {
-    header: 'Eleves',
-    accessor: 'Eleves',
-    render: (item : any) => item?.Students?.map( (i : any)   =>  <p>{i.nom}</p>)
   },
   {
     header: 'Enseignant',

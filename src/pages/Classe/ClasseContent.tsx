@@ -1,12 +1,13 @@
 import Header from "../../Components/header/Header";
 import ButtonLink from "../../Components/ui/Button/ButtonLink";
-import TableContainer from "../../Components/ui/Table/TableContainer";
+import { dataFilterClasse} from "../../Components/ui/FilterData";
+import TableClasse from "../../Components/ui/Table/TableClasse";
 import TextHeaderTable from "../../Components/ui/Text/TextinTable";
 import { DeleteClasses, getAllClasses } from "../../api/Classes";
 
 const userColumns = [
   {
-    header: 'nom',
+    header: 'Nom',
     accessor: 'nom',
     render: (item : any) => item.nom
   },
@@ -26,8 +27,9 @@ export default function ClasseContent() {
           <TextHeaderTable text="Les Classes" />
           <ButtonLink link="/admin/classes/add" text="Ajoute +"  />
         </div>
-        <TableContainer
+        <TableClasse
           functionMutation={DeleteClasses}
+          dataFilterSelect={dataFilterClasse}
           title="Classe" 
           FnQueryGet={getAllClasses} 
           columns={userColumns} 

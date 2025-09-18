@@ -16,13 +16,11 @@ import SelectFields from "../../Components/ui/Fields/SelectFields"
 import { getAllClasses } from "../../api/Classes"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { setAlert } from "../../store/Users/Users"
-import type { FormDataClasseType } from "../../Zod-Validation/Classe"
 import Loading from "../../Components/ui/Loader/Loading"
 import { BiImage, BiMap } from "react-icons/bi"
-import { SiMatrix } from "react-icons/si"
+import { SiDatefns, SiMatrix } from "react-icons/si"
 import { MdNumbers } from "react-icons/md"
 import { BsLock, BsPerson, BsPersonX, BsPhone } from "react-icons/bs"
-import { PiBirdThin } from "react-icons/pi"
 import { GrStatusGood } from "react-icons/gr"
 import { CgMail } from "react-icons/cg"
 import Validation from "../../Components/ui/Error/Validation"
@@ -32,14 +30,23 @@ export default function AddStudent() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const { register, formState: { errors }, handleSubmit } = useForm<FormDataStudentType>({
+    const {setValue , register, formState: { errors }, handleSubmit } = useForm<FormDataStudentType>({
         resolver : zodResolver(studentSchema)
     });
 
-    const {data,isLoading,isError} = useQuery<FormDataClasseType[]>({
-        queryKey: ["classes",token],
-        queryFn: () => getAllClasses(token!),
-    })
+    const  [paramsPatient ] = useState( {
+        limit : 50,
+        page : 1,
+        sortBy : "nom",
+        order : "desc",
+        search : ""
+      } )  
+    
+
+    const {data,isLoading,isError} = useQuery<any>({
+        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      })
     
 
     const navigate = useNavigate();
@@ -50,13 +57,11 @@ export default function AddStudent() {
     const mutation = useMutation(
         {
         mutationFn: (newUser : FormData) => CreateStudents(token,newUser),
-        onSuccess: () => {
+        onSuccess: async () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Etudiant a ete Modifier avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['students'] });
-            navigate("/admin/students");
-                        setLoad(false)        
-
+            await navigate("/admin/students");      
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -65,14 +70,12 @@ export default function AddStudent() {
             setErrorServer("An unexpected error occurred");
             }
             setLoad(false)        
-
         }
     });
 
     const onSubmit = async (formData: FormDataStudentType) => {
-        const newFormData = new FormData();
         setLoad(true)        
-
+        const newFormData = new FormData();
         const files = formData.img as FileList;
         if (files && files.length > 0) {
             newFormData.append("img", files[0]);
@@ -84,7 +87,7 @@ export default function AddStudent() {
         newFormData.append("sex",formData.sex);
         newFormData.append("address",formData.address);
         newFormData.append("dateNaissance",formData.dateNaissance);
-        newFormData.append("phone", (formData.phone).toString() );
+        newFormData.append("phone",  (formData.phone).toString() );
         newFormData.append("status",formData.status);
         newFormData.append("email",formData.email);
         newFormData.append("nom",formData.nom);
@@ -121,7 +124,7 @@ export default function AddStudent() {
                             <SelectCustomDataFields  
                             icons={<MdNumbers size={24}/>} 
                             register={register("idClasse")}                            
-                            data={data}
+                            data={data?.data}
                             error={errors.idClasse?.message}
                             label="Classe"
                             />
@@ -139,10 +142,11 @@ export default function AddStudent() {
                         </div>
                         <div className="lg:flex justify-between items-end">
                             <Fields 
-                            icons={<PiBirdThin size={24} />} 
+                            icons={<SiDatefns size={24} />} 
                             label="dateNaissance" 
-                            register={register("dateNaissance")}
+                            register={register("dateNaissance",)}
                             type="date"
+                            maxDate={new Date().toISOString().split('T')[0]}
                             error={errors.dateNaissance?.message}/>
                         </div>
                         <div className="lg:flex justify-between items-end">
@@ -154,18 +158,16 @@ export default function AddStudent() {
                             <Fields 
                             icons={<BsPhone size={24} />} 
                             label="phone" 
-                            type="number"
-
-                            register={register("phone",{
-                                valueAsNumber : true
-                            })}
+                            type="text"
+                            text="+261"
+                            register={register("phone")}
                             error={errors.phone?.message}/> 
                         </div>
                         <div className="lg:flex justify-between items-end">
                             <SelectFields 
                             icons={<GrStatusGood size={24} />} 
                             label="status" 
-                            data={["Passant","Redoublont","Vire"]} 
+                            data={["Passant","Redoublant","Renvoyer","Nouveau"]} 
                             register={register("status")}
                             error={errors.status?.message}/> 
 
@@ -188,6 +190,9 @@ export default function AddStudent() {
                             type="password"
                             label="password" 
                             register={register("password")}
+                            generatePassword={true}
+                            setValue={setValue}
+                            name="password"
                             error={errors.password?.message}/> 
                         
                         

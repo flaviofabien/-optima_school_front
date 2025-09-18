@@ -2,16 +2,16 @@ import axios from "axios"
 import { IP } from "./IP"
 import type { FormDataMatiereEditType, FormDataMatiereType } from "../Zod-Validation/Matiere"
 
-export const getAllMatieres  = async (token : string) => {
+export const getAllMatieres  = async ( token : string,
+    page : number | undefined,limit : number |undefined , search : string | undefined , order : string | undefined ,sortBy : string | undefined
+    ) => {
     const res = await axios.get( IP + "/matieres" , {
+        params : { page,limit,search,order,sortBy },
         headers : {
             "Authorization" : "Bearer " + token
         }
-    })
-
-    console.log(res.data.data);
-    
-    return res.data.data
+    })    
+    return res.data
 }
 
 export const getOneMatieres  = async (token : string , id : string) => {
