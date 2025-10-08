@@ -7,11 +7,11 @@ import { DeleteEcoles, getAllEcoles } from "../../api/Ecole";
 
 export default function EcoleContent() {
   return (
-    <div className="bg-[var(--font)] h-screen">
+    <div className="bg-[var(--font)] h-screen w-full">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-          <TextHeaderTable text="Les ecoles" />
-          <ButtonLink link="/admin/ecoles/add" text="Ajoute +"  />
+        <div className="my-8 flex justify-between lg:pl-64 items-end pr-8">
+          <TextHeaderTable text="Ecole" />
+          <ButtonLink link={`/admin/ecoles/add`} text="+ Ajoute "  />
         </div>
         <EcoleCardContainer
           functionMutation={DeleteEcoles}

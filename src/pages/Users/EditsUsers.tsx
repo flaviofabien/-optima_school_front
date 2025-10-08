@@ -2,9 +2,9 @@ import { HiOutlineMail } from "react-icons/hi"
 import Header from "../../Components/header/Header"
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
-
+import ImgFontLogo from "../../assets/web-design-3411373_1280.jpg"
 import Button from "../../Components/ui/Button/Button"
-import { useForm } from "react-hook-form"
+import { useForm, type IsAny } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { userEditSchema, type FormDataUserEditType } from "../../Zod-Validation/Users"
@@ -15,10 +15,10 @@ import {  UpdateUsers, getOneUsers } from "../../api/Users"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import type { userType } from "../../typescript/Users"
-import { BsPerson, BsPersonUp } from "react-icons/bs"
 import { setAlert } from "../../store/Users/Users"
 import Validation from "../../Components/ui/Error/Validation"
 import Loading from "../../Components/ui/Loader/Loading"
+import ButtonLink from "../../Components/ui/Button/ButtonLink"
 
 type Props = {}
 
@@ -45,14 +45,13 @@ export default function EditUser({}: Props) {
           setValue("nom", data.nom);
           setValue("prenom", data.prenom);
           setValue("email", data.email);
-          setValue("role", data.role || "" );
         }
       }, [data, setValue]);
 
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataUserEditType) => UpdateUsers(token,newUser,id!),
+        mutationFn: (newUser : any) => UpdateUsers(token,newUser,id!),
         onSuccess: () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Utilisateur a ete modifier avec succes`}))
@@ -70,7 +69,7 @@ export default function EditUser({}: Props) {
         }
     });
 
-    const onSubmit = async (formData: FormDataUserEditType) => {
+    const onSubmit = async (formData: any) => {
         setLoad(true)
         setErrorServer("");
         mutation.mutate(formData);
@@ -83,32 +82,35 @@ export default function EditUser({}: Props) {
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Modification Utilisateurs" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                        {errorServer  && <Validation errorServer={errorServer} /> }
-                        <Fields 
-                        icons={<BsPerson size={24} />} 
-                        label="Nom" 
-                        register={register("nom")}
-                        error={errors.nom?.message}/>
-                        <Fields 
-                        icons={<BsPersonUp size={24} />} 
-                        label="Prenom" 
-                        register={register("prenom")}
-                        error={errors.prenom?.message}/>
+        <div className="mt-4 w-full flex justify-center px-8 lg:pl-60 items-center">
+            <div className="rounded-s-3xl w-[1500px] h-[800px]  flex  items-center bg-white " >
+
+                <form className=" w-[500px] p-8 relative rounded-s-3xl" onSubmit={handleSubmit(onSubmit)} >
+                        <TitleForm title="Modification d'utilisateurs" />
+                        {errorServer  && <Validation errorServer={errorServer} /> }                        
+                        
+                        <div className="flex justify-between">
+                            <Fields 
+                            label="Nom" 
+                            register={register("nom")}
+                            error={errors.nom?.message}/>
+                            <Fields 
+                            label="Prenom" 
+                            register={register("prenom")}
+                            error={errors.prenom?.message}/>
+                        </div>
                         <Fields 
                         icons={<HiOutlineMail size={24} />} 
                         label="Email" 
                         register={register("email")}
                         error={errors.nom?.message}/>
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                        <div className="lg:flex gap-8 justify-between items-center my-8">
                             <Button text="Modification" type="submit" load={load} />
+                            <ButtonLink text="Retour" link="/admin/users" style={1} />
                         </div>
-                    </div>
                 </form>
+                <img src={ImgFontLogo} className="w-[1000px] h-full  object-cover  rounded-e-3xl" alt="" />
+
             </div>
         </div>
     </div>

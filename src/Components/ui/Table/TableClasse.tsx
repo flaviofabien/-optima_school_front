@@ -48,10 +48,10 @@ export default function TableClasse({ columns , FnQueryGet , query ,title , func
   const navigate = useNavigate();
 
   if (isLoading) return <Loading />;
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>Error</div>;  
 
   return (
-    <div className="lg:pl-60 lg:pr-8 ">
+    <div className="lg:pl-64 lg:pr-8 mt-8">
       <Filter data={dataFilterSelect} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
 
       <div className="overflow-auto w-full max-h-[700px]">

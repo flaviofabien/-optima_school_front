@@ -26,7 +26,7 @@ const token = useSelector((state: RootState) => state.dataStorage.token);
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
+        <div className="mt-4 flex justify-between px-8 lg:pl-64 items-center">
             <div className="w-full ">
                 <TextHeaderTable text="Les Statistique" />
                 <div className="w-full flex justify-between gap-20 mt-4">
@@ -44,7 +44,6 @@ const token = useSelector((state: RootState) => state.dataStorage.token);
                             <span className="text-white "> Nombres de Enseignant</span>
                         </div>
                     </div>       
-                        
                 </div>
             </div>
             

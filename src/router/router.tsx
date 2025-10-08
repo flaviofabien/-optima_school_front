@@ -1,7 +1,12 @@
+import Profils from "../Components/header/Profils";
+import SortableList from "../Client";
 import Login from "../pages/Auth/Login";
 import PageLoadingResetPassword from "../pages/Auth/PageLoadingResetPassword";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import UpdatePassword from "../pages/Auth/UpdatePassword";
+import AddCategorie from "../pages/Categorie/AddCategorie";
+import CategorieContent from "../pages/Categorie/CategirieContent";
+import EditCategorie from "../pages/Categorie/EditCategorie";
 import AddClasse from "../pages/Classe/AddClasse";
 import ClasseContent from "../pages/Classe/ClasseContent";
 import EditClasse from "../pages/Classe/EditClasses";
@@ -13,10 +18,14 @@ import AddEcole from "../pages/Ecole/AddEcole";
 import EcoleContent from "../pages/Ecole/EcoleContent";
 import EditEcole from "../pages/Ecole/EditsEcole";
 import EmploiDuTemps from "../pages/EmploiDuTemps/EmploiDuTemps";
+import AddExamen from "../pages/Examen/AddExamen";
 import Examen from "../pages/Examen/Examen";
 import AddMatiere from "../pages/Matiere/AddMatiere";
 import EditMatiere from "../pages/Matiere/EditsMatiere";
 import MatiereContent from "../pages/Matiere/MatiereContent";
+import AddNiveau from "../pages/Niveau/AddNiveaux";
+import EditNiveau from "../pages/Niveau/EditNiveaux";
+import NiveauContent from "../pages/Niveau/NiveauxContent";
 import AddSalle from "../pages/Salle/AddSalle";
 import EditSalle from "../pages/Salle/EditSalle";
 import SalleContent from "../pages/Salle/SalleContent";
@@ -30,6 +39,14 @@ import AddUser from "../pages/Users/AddUser";
 import EditUser from "../pages/Users/EditsUsers";
 import UserContent from "../pages/Users/UserContenu";
 import PrivateRoute from "./PrivateRoute";
+import PartitionSalle from "../pages/PartitionSalle/PartitionSalle";
+import AddPartitionSalle from "../pages/PartitionSalle/AddPartition";
+import NotesContent from "../pages/Notes/NotesContent";
+import AddNotes from "../pages/Notes/AddNotes";
+import ClientPage from "../Client";
+import AnneeScolaireContent from "../pages/Annee Scolaire/AnneeScolaireContent";
+import AddAnneeScolaire from "../pages/Annee Scolaire/AddAnneeScolaire";
+import EditAnneeScolaire from "../pages/Annee Scolaire/EditAnneeScolaire";
 
 export const Router = [
     /****** Autentification ********/
@@ -49,16 +66,17 @@ export const Router = [
       path: "/update-password/:id",
       element: <UpdatePassword />
     },
-
-    
-    
     {
       path: "/",
-      element: <Login />
+      element: <ClientPage />
     },
     {
       path: "/admin",
       element: <PrivateRoute element={Dashboard}   />
+    },
+    {
+      path: "/admin/profils",
+      element: <PrivateRoute element={Profils}   />
     },
 
      /****** Users *********/
@@ -115,6 +133,33 @@ export const Router = [
   {
     path: "/admin/ecoles/edit/:id",
     element: <PrivateRoute element={EditEcole} />,
+  },
+
+  /* anneeScolaire */
+  {
+    path: "/admin/annee-scolaires",
+    element: <PrivateRoute element={AnneeScolaireContent} />,
+  },
+  {
+    path: "/admin/annee-scolaires/add",
+    element: <PrivateRoute element={AddAnneeScolaire} />,
+  },
+  {
+    path: "/admin/annee-scolaires/edit/:id",
+    element: <PrivateRoute element={EditAnneeScolaire} />,
+  },
+  /* type */
+  {
+    path: "/admin/niveaux",
+    element: <PrivateRoute element={NiveauContent} />,
+  },
+  {
+    path: "/admin/niveaux/add",
+    element: <PrivateRoute element={AddNiveau} />,
+  },
+  {
+    path: "/admin/niveaux/edit/:id",
+    element: <PrivateRoute element={EditNiveau} />,
   },
 
   /* classes */
@@ -179,9 +224,47 @@ export const Router = [
     element: <PrivateRoute element={EmploiDuTemps} />,
   },
 
+  /* Categorie */
+  {
+    path: "/admin/categories/add",
+    element: <PrivateRoute element={AddCategorie} />,
+  },
+  {
+    path: "/admin/categories",
+    element: <PrivateRoute element={CategorieContent} />,
+  },
+  {
+    path: "/admin/categories/edit/:id",
+    element: <PrivateRoute element={EditCategorie} />,
+  },
   /* Examen */
   {
-    path: "/admin/examen",
+    path: "/admin/examens/add",
+    element: <PrivateRoute element={AddExamen} />,
+  },
+  {
+    path: "/admin/examens",
     element: <PrivateRoute element={Examen} />,
   },
+  /* Partition salle */
+  {
+    path: "/admin/partition-salles/add",
+    element: <PrivateRoute element={AddPartitionSalle} />,
+  },
+  {
+    path: "/admin/partition-salles",
+    element: <PrivateRoute element={PartitionSalle} />,
+  },
+
+  /* Notes */
+  {
+    path: "/admin/notes/add",
+    element: <PrivateRoute element={AddNotes} />,
+  },
+  {
+    path: "/admin/notes",
+    element: <PrivateRoute element={NotesContent} />,
+  },
+
+
 ]

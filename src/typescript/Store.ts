@@ -12,5 +12,6 @@ export type UserDatastorageType = {
     nom : string
     prenom : string
     email : string
+    img : string
     role : "superAdmin" | "admin" | "Enseignant" | "parent" | "élève" | undefined
 } 

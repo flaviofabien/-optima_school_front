@@ -1,18 +1,21 @@
-@import "tailwindcss";
+/* @import "tailwindcss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --color-success:#00ac00; 
-  --color-primary: #009dff; 
-  --color-primary-hover: #0091eb; 
-  --color-primary-transparent: #009dff69; 
+  --color-primary: #13698F; 
+  --color-primary-hover: #5BAF1D; 
+  --color-primary-transparent: #5aaf1d8a; 
   --color-second: #00e1ff; 
   --color-second-transparent: #00e1ff75;
   --color-merge: ( #009dff , #009dff); 
-
+  
   --white : white ;
   --black : rgb(43, 41, 41) ;
-  --gray : rgb(126, 124, 124) ;
-  --font : rgb(230, 230, 230) ;
+  --gray : rgb(157, 170, 177) ;
+  --font : rgb(240, 240, 240) ;
 }
 
 .animate-in {

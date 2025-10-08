@@ -7,13 +7,12 @@ type Props = {
     label : string,
     data :  any,
     none ?: string,
-    icons ? : React.ReactNode
 }
-export default function FieldCheckBoxCustom({ label,register,error,data,icons}: Props) {
+export default function FieldCheckBoxCustom({ label,register,error,data}: Props) {
   return (
-    <div className='w-full mt-4  flex '>
+    <div className='w-full mt-4 '>
+                <p className='inline-block pr-2 font-light'> {label} : </p>
         <div className={`w-full border-b-4 py-2 border-[var(--color-primary-transparent)] ${error ? "":"mb-4" } `}>
-                <div className='inline-block pr-2  text-[var(--color-primary)] text-sm'> {icons} {label} : </div>
                 {
                     data?.map((option : any) => (
                         <>

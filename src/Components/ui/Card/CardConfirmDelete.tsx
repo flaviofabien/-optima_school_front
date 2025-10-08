@@ -43,12 +43,12 @@ export default function CardConfirmDelete({navigate,show,setShow,title,functionM
     }
 
     return (
-        <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-xs  top-0 left-0'>
+        <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-sm  top-0 left-0'>
             <div className="w-[400px] border-2 border-[var(--color-primary)] rounded-b-4xl bg-[var(--white)] ">
                 <Title title={title}  />
                 <br />
                 <Description align="center" text={`Vous voulez vraiment supprimer cette ${title.toLocaleLowerCase()}  `} />
-                <div className="px-4 pb-8 flex justify-between w-full items-center">
+                <div className="mt-8 px-4 pb-8 flex justify-between w-full items-center">
                     <Button onClick={ () =>  HandleDelete(show.id) } type="button" text="Oui" style={1} />
                     <Button onClick={ () => setShow({
                         id : NaN, show : false

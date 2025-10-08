@@ -1,13 +1,6 @@
 import z from "zod";
 
-export const studentSchema = z.object({
-    img: z
-    .custom<FileList>((value) => {
-      return value instanceof FileList && value.length > 0;
-    }, {
-      message: "Ce champ est requis 🔺",
-    }),    
-    matricule: z.string().min(1,"Ce champs est requise 🔺"),
+export const studentSchema = z.object({  
     dateNaissance: z.string().min(1, "Ce champs est requise🔺"),
     sex: z.string().min(1,"Ce champs est requise 🔺"),
     address: z.string().min(1,"Ce champs est requise 🔺"),
@@ -24,17 +17,12 @@ export const studentSchema = z.object({
     nom: z.string().min(1, "Ce champs est requise🔺"),
     prenom: z.string().min(1,"Ce champs est requise 🔺"),
     idClasse: z.string().min(1,"Ce champs est requise 🔺"),
+    idNiveau: z.string().optional(),
     role: z.string().optional(),
 });
 export  type FormDataStudentType = z.infer<typeof studentSchema>;
 
 export const studentEditSchema = z.object({
-    img: z
-    .custom<FileList>((value) => {
-      return value instanceof FileList && value.length > 0;
-    }, {
-      message: "Ce champ est requis 🔺",
-    }),    
     dateNaissance: z.string().min(1, "Ce champs est requise🔺"),
     sex: z.string().min(1,"Ce champs est requise 🔺"),
     address: z.string().min(1,"Ce champs est requise 🔺"),
@@ -50,5 +38,6 @@ export const studentEditSchema = z.object({
     nom: z.string().min(1, "Ce champs est requise🔺"),
     prenom: z.string().min(1,"Ce champs est requise 🔺"),
     idClasse: z.string().min(1,"Ce champs est requise 🔺"),
+    idNiveau: z.string().optional(),
 });
 export  type FormDataStudentEditType = z.infer<typeof studentEditSchema>;

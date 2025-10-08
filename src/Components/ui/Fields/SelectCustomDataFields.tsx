@@ -1,20 +1,17 @@
-import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
     data ?: any[]
-    icons : ReactNode
     register : UseFormRegisterReturn;
-    error ?: string
+    error ?: any
     disabled ?: boolean
     label ?: string
 }
 
-export default function SelectCustomDataFields({data,icons,error,register,disabled,label}: Props) {
+export default function SelectCustomDataFields({data,error,register,disabled,label}: Props) {
   return (
         <div className="relative mt-4  w-full" >
             <div className= {` ${disabled && "bg-gray-200"} group flex mt-4 `} >
-                <span className="py-2 absolute text-[var(--color-primary-transparent)] group-focus-within:text-[var(--color-primary)] ">{icons}</span>
                 <select  id="" {...register} disabled={disabled}
                         className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-7 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
                     <option value={""} className="" selected> Selectionner un {label}  </option>

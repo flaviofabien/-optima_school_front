@@ -23,6 +23,15 @@ export const getOneSalles  = async (token : string , id : string) => {
     return res.data.data
 }
 
+export const getAllSallesExamens  = async (token : string ) => {
+    const res = await axios.get( IP + "/salles-include-ecole/" , {
+        headers : {
+            "Authorization" : "Bearer " + token
+        }
+    })
+    return res.data.data
+}
+
 export const CreateSalles  = async (token : string,newUser : FormDataSalleType) => {
     const res = await axios.post( IP + "/salles", newUser , {
         headers : {

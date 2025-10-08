@@ -1,4 +1,4 @@
-export const generateSecurePassword = (length = 12) => {
+export const generateSecurePassword = (length = 20) => {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
     const values = new Uint32Array(length);
     crypto.getRandomValues(values);

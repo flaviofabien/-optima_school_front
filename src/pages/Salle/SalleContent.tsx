@@ -28,7 +28,7 @@ export default function SalleContent() {
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
+        <div className="mt-8 flex justify-between px-8 lg:pl-64 items-center">
           <TextHeaderTable text="Les Salle" />
           <ButtonLink link="/admin/salles/add" text="Ajoute +"  />
         </div>

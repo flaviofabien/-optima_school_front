@@ -1,12 +1,11 @@
 import Header from "../../Components/header/Header"
-import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
@@ -18,8 +17,10 @@ import type { EcoleData } from "../../typescript/Ecole"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import Validation from "../../Components/ui/Error/Validation"
 import Loading from "../../Components/ui/Loader/Loading"
-import { FaChalkboardTeacher, FaSchool } from "react-icons/fa"
-
+import { getAllNiveaux } from "../../api/Niveau"
+import SelectFields from "../../Components/ui/Fields/SelectFields"
+import ImgFontLogo from "../../assets/school-953123_1280.jpg"
+import { HandleNiveaux } from "../../Utils/Niveau"
 
 export default function AddClasse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -37,13 +38,18 @@ export default function AddClasse() {
       queryKey : ["ecoles",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
       queryFn : () =>  getAllEcoles(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
     })
+
+    const {data: dataNiveau,isLoading: isLoadingNiveau,isError : isErrorNiveau} = useQuery<EcoleData>({
+      queryKey : ["niveaux",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+      queryFn : () =>  getAllNiveaux(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+    })
     
-    const { register, formState: { errors }, handleSubmit } = useForm<FormDataClasseType>({
+    const { watch , register, formState: { errors }, handleSubmit } = useForm<FormDataClasseType>({
         resolver : zodResolver(ClasseSchema)
       });
 
     const navigate = useNavigate();
-
+    
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
 
@@ -66,6 +72,16 @@ export default function AddClasse() {
             setLoad(false)
         }
     });
+    const watchEcole = watch("idEcole")
+    const watchNiveaux = watch("idNiveau");
+    const Niveaux = dataNiveau?.data.find( i => i.id == watchNiveaux )
+
+    const [newArray , setNewArray]  = useState([]) ;
+
+    useEffect( ()  => {
+        HandleNiveaux(Niveaux , setNewArray)
+    } ,[Niveaux] )
+    
 
     const onSubmit = async (formData: FormDataClasseType) => {
         setLoad(true)
@@ -74,36 +90,44 @@ export default function AddClasse() {
         mutation.mutate(newUser);
     }
 
-    if (isLoading) return <Loading  />
-    if (isError) return <div>Error</div>
+
+    if (isLoading || isLoadingNiveau) return <Loading  />
+    if (isError || isErrorNiveau) return <div>Error</div>
 
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Ajoute d'une classe" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+        <div className="w-full mt-8 flex justify-center px-8 lg:pl-64 items-center">
+            <div className=" w-[800px] h-[600px] mt-8 rounded-l-3xl flex justify-center items-center" >
+                <form className="w-1/2 h-full bg-white  flex justify-center items-center relative rounded-l-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="  rounded-2xl pt-20 px-8">
+                    <TitleForm title="Ajouter Classe" />
                     {errorServer  && <Validation errorServer={errorServer} /> }
                             <SelectCustomDataFields 
-                            icons={<FaSchool size={24} />} 
                             data={data?.data}
                             register={register("idEcole",{
                                 valueAsNumber : true
                             })}
                             label="ecole"
                             error={errors.idEcole?.message}/> 
-                            <Fields 
-                            icons={<FaChalkboardTeacher size={24} />} 
+                            <SelectCustomDataFields 
+                            data={dataNiveau?.data.filter( (i : any) => i?.ecoles?.some((ecole: any) => ecole.id === watchEcole)  )}
+                            register={register("idNiveau",{
+                                valueAsNumber : true
+                            })}
+                            label="Niveau"
+                            error={errors.idNiveau?.message}/> 
+                            <SelectFields
+                            data={newArray?.map( (i :any) => i.nom)}
                             label="nom" 
                             register={register("nom")}
                             error={errors.nom?.message}/>
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                        <div className="lg:flex mt-8 gap-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load}  />
                         </div>
                     </div>
                 </form>
+                <img src={ImgFontLogo} className="h-full w-1/2 h object-cover  rounded-e-3xl" alt="" />
             </div>
         </div>
     </div>

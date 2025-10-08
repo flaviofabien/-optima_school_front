@@ -19,7 +19,8 @@ const getUserFromStorage = () => {
       nom: "",
       prenom: "",
       email: '',
-      role: undefined
+      role: undefined,
+      img: "undefined"
    }
  }
 

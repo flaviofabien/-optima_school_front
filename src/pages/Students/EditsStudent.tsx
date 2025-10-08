@@ -15,21 +15,21 @@ import {  UpdateStudents, getOneStudents } from "../../api/Student"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
-import { BiImage, BiMap } from "react-icons/bi"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
-import { MdNumbers } from "react-icons/md"
-import {  BsPerson, BsPersonX, BsPhone } from "react-icons/bs"
-import { GrStatusGood } from "react-icons/gr"
-import { CgMail } from "react-icons/cg"
+import ImgFontLogo from "../../assets/school-953123_1280.jpg"
 import { getAllClasses } from "../../api/Classes"
 import Validation from "../../Components/ui/Error/Validation"
 import { SiDatefns } from "react-icons/si"
+import FieldImage from "../../Components/ui/Fields/FieldImage"
+import { IPLocal } from "../../api/IP"
 
 export default function EditStudent() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
+    const [fileURLs, setFileURLs] = useState();
+    const [file, setFile] = useState(); 
 
      const  [paramsPatient ] = useState( {
         limit : 50,
@@ -64,9 +64,14 @@ export default function EditStudent() {
         setValue("prenom", userOne.prenom);
         setValue("email", userOne.email);
         setValue("status", userOne.status);
+        setValue("idClasse", `${userOne.idClasse}` );
+        if (userOne?.img) {
+            setFileURLs(`${IPLocal}${userOne.img}`);
+        }   
     }
     }, [userOne, setValue]);
-
+    console.log(userOne);
+    
 
     const navigate = useNavigate();
 
@@ -94,15 +99,20 @@ export default function EditStudent() {
     });
 
     const onSubmit = async (formData: FormDataStudentEditType) => {
-        const newFormData = new FormData();   
+        const newFormData = new FormData(); 
+          
         setLoad(true)        
 
-        const files = formData.img as FileList;
-        if (files && files.length > 0) {
-            newFormData.append("img", files[0]);
+        if (file ) {
+            newFormData.append("img", file);
         }
+        const Niveaux = data?.data.find( (i : any) => i.id == formData.idClasse )
   
-        newFormData.append("role","eleve");
+        // newFormData.append("role","eleve");
+        newFormData.append("idNiveau",Niveaux.idNiveau);
+
+
+
         newFormData.append("idClasse",formData.idClasse);
         newFormData.append("sex",formData.sex);
         newFormData.append("address",formData.address);
@@ -121,87 +131,84 @@ export default function EditStudent() {
     if ( userOneIsError || isError) return <div>Error</div>
    
   return (
-    <div className="bg-[var(--font)] h-screen">
-    <Header />
-    <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-        <div className="w-full mt-8 flex justify-center items-center" >
-            <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                <TitleForm title="Modifier Eleve" />
-                <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                {errorServer  && <Validation errorServer={errorServer} /> }
-                        <Fields 
-                        icons={<BiImage size={24} />} 
-                        label="img" 
-                        register={register("img")}
-                        type="file"
-                        error={errors.img?.message}/>
-                        <SelectCustomDataFields  
-                        icons={<MdNumbers size={24}/>} 
-                        register={register("idClasse")}                            
-                        data={data?.data}
-                        error={errors.idClasse?.message}
-                        label="Classe"
-                        />
-                    <div className="lg:flex justify-between items-end">
-                        <Fields 
-                        icons={<BsPerson size={24} />} 
-                        label="nom" 
-                        register={register("nom")}
-                        error={errors.nom?.message}/>
-                        <Fields 
-                        icons={<BsPerson size={24} />} 
-                        label="prenom" 
-                        register={register("prenom")}
-                        error={errors.prenom?.message}/> 
+    <div className="bg-[var(--font)] h-full">
+        <Header />
+        <div className="mt-8 w-full flex justify-center px-8 lg:pl-60 items-center">
+            <div className="w-full h-[700px] flex justify-center items-center" >
+                <form className="h-full w-[700px] flex justify-center items-center bg-white relative rounded-s-3xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="w-full rounded-2xl mt-8 px-8">
+                    <TitleForm title="Modifier Eleve" />
+                    {errorServer  && <Validation errorServer={errorServer} /> }
+                    <div className="gap-4 lg:flex justify-between 
+                    items-end">
+                            <div className="w-full">
+                                <FieldImage 
+                                fileURLs={fileURLs!} 
+                                setFileURLs={setFileURLs} 
+                                setFile={setFile}
+                                /> 
+                            </div>
+                            <div>
+                                <SelectCustomDataFields  
+                                register={register("idClasse")}                            
+                                data={data?.data}
+                                error={errors.idClasse?.message}
+                                label="Classe"
+                                />
+                                <div className="gap-4 lg:flex justify-between items-end">
+                                    <Fields 
+                                    label="nom" 
+                                    register={register("nom")}
+                                    error={errors.nom?.message}/>
+                                    <Fields 
+                                    label="prenom" 
+                                    register={register("prenom")}
+                                    error={errors.prenom?.message}/> 
+                                </div>
+                                <div className="gap-4 lg:flex justify-between items-end">
+                                    <Fields 
+                                    icons={<SiDatefns size={24} />} 
+                                    label="dateNaissance" 
+                                    register={register("dateNaissance",)}
+                                    type="date"
+                                    maxDate={new Date().toISOString().split('T')[0]}
+                                    error={errors.dateNaissance?.message}/>
+                                    <Fields 
+                                    label="address" 
+                                    register={register("address")}
+                                    error={errors.address?.message}/>
+                                </div>
+                            </div>
                     </div>
-                    <div className="lg:flex justify-between items-end">
-                        <Fields 
-                        icons={<SiDatefns size={24} />} 
-                        label="dateNaissance" 
-                        register={register("dateNaissance")}
-                        type="date"
-                        error={errors.dateNaissance?.message}/>
-                    </div>
-                    <div className="lg:flex justify-between items-end">
-                        <Fields 
-                        icons={<BiMap size={24} />} 
-                        label="address" 
-                        register={register("address")}
-                        error={errors.address?.message}/>
-                          <Fields 
-                            icons={<BsPhone size={24} />} 
+                        <div className="gap-4 lg:flex justify-between items-end">  
+                            <Fields 
                             label="phone" 
                             type="text"
                             text="+261"
                             register={register("phone")}
                             error={errors.phone?.message}/> 
-                    </div>
-                    <div className="lg:flex justify-between items-end">
-                        <SelectFields 
-                        icons={<GrStatusGood size={24} />} 
-                        label="status" 
-                        data={["Passant","Redoublont","Vire"]} 
-                        register={register("status")}
-                        error={errors.status?.message}/> 
-
-                        <Fields 
-                        icons={<CgMail size={24} />} 
-                        label="email" 
-                        register={register("email")}
-                        error={errors.email?.message}/>
-                    </div>
-                        <SelectFields
-                        data={["Fille","Garçon"]} 
-                        icons={<BsPersonX size={24} />} 
-                        label="sex" 
-                        register={register("sex")}
-                        error={errors.sex?.message}/> 
-  
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                            <SelectFields 
+                            label="status" 
+                            data={["Passant","Redoublant","Renvoyer","Nouveau"]} 
+                            register={register("status")}
+                            error={errors.status?.message}/> 
+                            <SelectFields
+                            data={["Fille","Garçon"]} 
+                            label="sex" 
+                            register={register("sex")}
+                            error={errors.sex?.message}/> 
+                            <Fields 
+                            label="email" 
+                            register={register("email")}
+                            error={errors.email?.message}/>
+                        </div>
+                                   
+                        <div className="mt-4 lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Modification" type="submit" load={load} />
                         </div>
                     </div>
                 </form>
+                <img src={ImgFontLogo} className="w-1/2 h-full  object-cover  rounded-e-3xl" alt="" />
             </div>
         </div>
     </div>

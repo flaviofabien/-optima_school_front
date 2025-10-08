@@ -1,11 +1,11 @@
 import { BiAnalyse, BiCalendar} from "react-icons/bi";
-import {  CgTime } from "react-icons/cg";
+import {  CgNotes, CgTime } from "react-icons/cg";
 import { FaUserMd } from "react-icons/fa";
-import { GiTeacher } from "react-icons/gi";
+import { GiCalendarHalfYear, GiLevelTwo, GiTeacher } from "react-icons/gi";
 import { GrDashboard, GrTest } from "react-icons/gr";
-import { MdEvent, MdRoom } from "react-icons/md";
+import { MdEvent, MdRoom, MdRoomPreferences } from "react-icons/md";
 import { PiStudent } from "react-icons/pi";
-import { SiCoursera } from "react-icons/si";
+import { SiCoursera, SiLevelsdotfyi } from "react-icons/si";
 
 export const DataMenu = [
     {
@@ -19,10 +19,21 @@ export const DataMenu = [
         icons : FaUserMd,
     },
     {
+        path : "/admin/niveaux",
+        label : "Niveaux",
+        icons : GiLevelTwo,
+    },
+    {
         path : "/admin/ecoles",
         label : "Ecoles",
         icons : BiCalendar,
     },
+    {
+        path : "/admin/annee-scolaires",
+        label : "Annee Scolaires",
+        icons : GiCalendarHalfYear,
+    },
+    
 
     {
         path : "/admin/classes",
@@ -38,12 +49,7 @@ export const DataMenu = [
         path : "/admin/matieres",
         label : "Matiere",
         icons : MdEvent,
-    },    
-    {
-        path : "/admin/courses",
-        label : "Cours",
-        icons : SiCoursera,
-    },
+    },   
     {
         path : "/admin/students",
         label : "Eleve",
@@ -54,20 +60,36 @@ export const DataMenu = [
         label : "Enseigant",
         icons : GiTeacher,
     },
+    
+    {
+        path : "/admin/categories",
+        label : "Categorie",
+        icons : SiLevelsdotfyi,
+    },
+    {
+        path : "/admin/examens",
+        label : "Examen",
+        icons : GrTest,
+    },
+    {
+        path : "/admin/partition-salles",
+        label : "PartitionSalle",
+        icons : MdRoomPreferences,
+    },
+
+    {
+        path : "/admin/courses",
+        label : "Cours",
+        icons : SiCoursera,
+    },
+    {
+        path : "/admin/notes",
+        label : "Notes",
+        icons : CgNotes,
+    },
     {
         path : "/admin/temps",
         label : "Emploi du temps",
         icons : CgTime,
     },
-    
-    {
-        path : "/admin/examen",
-        label : "Examen",
-        icons : GrTest,
-    },
-    // {
-    //     path : "/login",
-    //     label : "Logout",
-    //     icons : BiLogOut,
-    // },
 ]

@@ -2,7 +2,8 @@ import { useForm } from "react-hook-form";
 import Button from "../../Components/ui/Button/Button";
 import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm";
-import ImgFont from "../../assets/classroom.jpg"
+import ImgFont from "../../assets/book-3964050_1920.jpg"
+import ImgLogo from "../../assets/logo.png"
 import { HiOutlineMail } from "react-icons/hi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -59,30 +60,34 @@ export default function Login() {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center items-center" >
-      <img src={ImgFont} className="-z-10 absolute bottom-0  w-full h-screen object-cover" alt="" />
-      <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-        <TitleForm title="Login" />
-        <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-        {errorServer  && <Validation errorServer={errorServer} /> }
-          <Fields 
-            icons={<HiOutlineMail size={24} />} 
-            label="Email" 
-            register={register("email")}
-            error={errors.email?.message}/>
-          <Fields 
-            icons={<BiLock size={24} />} 
-            label="Password" 
-            register={register("password")}
-            show={true}
-            type="password"
-            error={errors.password?.message}/>
-            <div className="lg:flex gap-8 justify-between items-start mb-8">
-              <Button text="Login" type="submit" load={load} />
-              <ButtonLink text="Mot de passe Oublie ?" style={3} link="/reset-password"/>
-            </div>
-        </div>
-      </form>
+    <div className="w-full h-screen flex justify-center items-center bg-[var(--font)]" >
+      <div className="flex w-[1500px] h-[800px] bg-[var(--white)] items-center rounded-4xl relative">
+        <form className="  bg-white  rounded-2xl p-16 " onSubmit={handleSubmit(onSubmit)} >
+          <img src={ImgLogo} className="absolute top-8  w-40 mb-8 object-cover rounded-r-4xl" alt="" />
+          <TitleForm title="Bonjour bienvenu dans OPTIMA-SCHOOL " />
+          <div className="w-full mt-8">
+          {errorServer  && <Validation errorServer={errorServer} /> }
+            <Fields 
+              icons={<HiOutlineMail size={24} />} 
+              label="Email" 
+              register={register("email")}
+              error={errors.email?.message}/>
+            <Fields 
+              icons={<BiLock size={24} />} 
+              label="Password" 
+              register={register("password")}
+              show={true}
+              type="password"
+              error={errors.password?.message}/>
+              <div className="lg:flex mt-8 gap-8 justify-between items-start mb-8">
+                <Button text="Se Connecté" type="submit" load={load} />
+                <ButtonLink text="Mot de passe Oublié ?" style={3} link="/reset-password"/>
+              </div>
+          </div>
+        </form>
+        <img src={ImgFont} className=" w-full h-full object-cover rounded-r-4xl" alt="" />
+
+      </div>
     </div>
   )
 }

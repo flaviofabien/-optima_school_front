@@ -55,7 +55,7 @@ export default function CardContainer({   FnQueryGet , query ,title , functionMu
     }
     
   return ( 
-  <div className=' w-full lg:pl-60 pt-8 pr-8'>
+  <div className=' w-full lg:pl-64 pt-8 pr-8'>
     <Filter data={dataFilter} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
 
     <div className='flex  flex-wrap gap-8'>

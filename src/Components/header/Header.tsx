@@ -1,41 +1,77 @@
-import { MdOutlineMenuOpen } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../navBar/NavBar";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
+import type { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
+import { BiLogOut } from "react-icons/bi";
+import { BsPerson } from "react-icons/bs";
+import { IPLocal } from "../../api/IP";
+import { getOneUsers } from "../../api/Users";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../ui/Loader/Loading";
+import { useState } from "react";
+import CardConfirmDeconnexion from "../ui/Card/CardConfirmDeconnexion";
 
-type Props = {}
+export default function Header() {
+  const users = useSelector((state: RootState) => state.dataStorage.user);
+  const token = useSelector((state: RootState) => state.dataStorage.token);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [show, setShow] = useState({
+    show: false,
+    id: NaN
+  });
 
-export default function Header({}: Props) {
-  const [menu , setMenu] = useState(false);
+  const {data,isLoading,isError} = useQuery<any>({
+    queryKey: ["users",token,users.id],
+    queryFn: () => getOneUsers(token!,users.id!),
+  });
 
+  const handleLogout = () => {
+    setShow({show : true , id : NaN})
+  };
+
+  if (isLoading) return <Loading />
+  if (isError) return <div>Error</div>
+   
   return (
-    <div className='text-gray-600 flex justify-between items-center bg-[var(--color-primary)] p-4 '>
-        <MdOutlineMenuOpen 
-          onClick={() => setMenu(!menu)}
-          className="text-white text-4xl lg:hidden cursor-pointer"
-        />
-        <AnimatePresence>
-          {
-            menu && (
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}   
-                animate={{ opacity: 1, x: 0 }}     
-                exit={{ opacity: 0, x: -50 }}       
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="absolute top-3 left-0  w-full z-10"
-              >
-                <NavBar />
-              </motion.div>
-            )}
-        </AnimatePresence>
-        <div className="hidden lg:block "><NavBar /></div>
-        <div>Logo</div>
+    <div className=' relative  flex justify-between items-center bg-[var(--color-primary)]  px-4 py-4 '>
+      <NavBar />        
+      <div></div>
+      <div className="text-[var(--white)] flex gap-5">
         <div>
-            image
+            <p className="text-end"> {data?.nom} {data?.prenom} </p>
+            <p  className="text-xs text-end"> {data?.email} </p>
         </div>
+        <div className="relative group">
+          <img className="w-12 h-12  rounded-3xl cursor-pointer "  src={IPLocal + data?.img} alt="img" />
+          <div className="absolute  right-0  rounded-xl">
+            <div className=" group-hover:p-4 p-0 bg-[var(--white)]">
+              <button
+                type="button" 
+                onClick={() => navigate("/admin/profils")  }
+                className={`${" bg-[var(--white)] text-black text-center "} hover:bg-gray-200 py-2 px-2 w-full  cursor-pointer  right-0  group-hover:flex hidden gap-2  items-center`}>
+                <BsPerson size={20} className=' ' /> 
+                <span className=' '>Profils</span>
+              </button>  
+              <button
+                type="button" 
+                onClick={handleLogout}
+                className={`${" bg-[var(--white)] text-black text-center "} hover:bg-gray-200 py-2 px-2  w-full cursor-pointer  right-0 group-hover:flex hidden gap-2  items-center`}>
+                    <BiLogOut size={20} className=' ' /> 
+                  <span className=' '>Deconnexion</span>
+              </button>  
 
-        
+            </div>
+          </div>
+        </div> 
+      </div>
+      {show.show && (
+            <CardConfirmDeconnexion
+            show={show}
+            setShow={setShow}
+            />
+        )}
     </div>
   )
 }

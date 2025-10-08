@@ -1,5 +1,4 @@
 import Header from "../../Components/header/Header"
-import Fields from "../../Components/ui/Fields/Fields"
 import TitleForm from "../../Components/ui/Text/TitleForm"
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
@@ -18,7 +17,11 @@ import { setAlert } from "../../store/Users/Users"
 import type { EcoleData } from "../../typescript/Ecole"
 import Loading from "../../Components/ui/Loader/Loading"
 import Validation from "../../Components/ui/Error/Validation"
-import { FaChalkboardTeacher, FaSchool } from "react-icons/fa"
+import { getAllNiveaux } from "../../api/Niveau"
+import SelectFields from "../../Components/ui/Fields/SelectFields"
+import ImgFontLogo from "../../assets/school-953123_1280.jpg"
+import { HandleNiveaux } from "../../Utils/Niveau"
+
 
 export default function EditClasse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -33,6 +36,11 @@ export default function EditClasse() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
+    const {data: dataNiveau,isLoading: isLoadingNiveau,isError : isErrorNiveau} = useQuery<EcoleData>({
+        queryKey : ["niveaux",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
+        queryFn : () =>  getAllNiveaux(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+      })
+
     const {data : DataEcole,isLoading : isLoadingEcole,isError : isErrorEcole} = useQuery<EcoleData>({
       queryKey : ["ecoles",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
       queryFn : () =>  getAllEcoles(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
@@ -42,19 +50,22 @@ export default function EditClasse() {
         queryKey: ["classes",token,id],
         queryFn: () => getOneClasses(token!,id!),
     });
-
+    console.log(data);
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataClasseEditType>({
+    
+    const {watch , register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataClasseEditType>({
         resolver : zodResolver(ClasseEditSchema)
     });
 
+    console.log(data)
     useEffect(() => {
     if (data) {
         setValue("nom", data.nom);
         setValue("idEcole", data.idEcole);
+        setValue("idNiveau", data.idNiveau);
     }
     }, [data, setValue]);
-
+    
 
     const navigate = useNavigate();
 
@@ -86,6 +97,15 @@ export default function EditClasse() {
         setErrorServer("");
         mutation.mutate(formData);
     }
+    const watchEcole = watch("idEcole")
+    const watchNiveaux = watch("idNiveau");
+    const Niveaux = dataNiveau?.data.find( i => i.id == watchNiveaux )
+
+    const [newArray , setNewArray]  = useState([]) ;
+
+    useEffect( ()  => {
+        HandleNiveaux(Niveaux , setNewArray)
+    } ,[Niveaux] )
 
     if ( userOneIsLoading || isLoadingEcole ) return <Loading />
     if ( userOneIsError || isErrorEcole) return <div>Error</div>
@@ -93,31 +113,37 @@ export default function EditClasse() {
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Modifier classe" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+        <div className="w-full mt-8 flex justify-center px-8 lg:pl-64 items-center">
+            <div className=" w-[800px] h-[600px] mt-8 rounded-l-3xl flex justify-center items-center" >
+                <form className="w-1/2 h-full bg-white  flex justify-center items-center relative rounded-l-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="  rounded-2xl pt-20 px-8">
+                    <TitleForm title="Modifier Classe" />
                     {errorServer  && <Validation errorServer={errorServer} /> }
-                        <SelectCustomDataFields 
-                        icons={<FaSchool size={24} />} 
-                        data={DataEcole?.data}
-                        register={register("idEcole",{
-                            valueAsNumber : true
-                        })}
-                        label="ecole"
-                        error={errors.idEcole?.message}/> 
-                        <Fields 
-                        icons={<FaChalkboardTeacher size={24} />} 
-                        label="nom" 
-                        register={register("nom")}
-                        error={errors.nom?.message}/>
-                        
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Moification" type="submit" load={load} />
+                            <SelectCustomDataFields 
+                            data={DataEcole?.data}
+                            register={register("idEcole",{
+                                valueAsNumber : true
+                            })}
+                            label="ecole"
+                            error={errors.idEcole?.message}/> 
+                            <SelectCustomDataFields 
+                            data={dataNiveau?.data.filter( (i : any) => i?.ecoles?.some((ecole: any) => ecole.id === watchEcole)  )}
+                            register={register("idNiveau",{
+                                valueAsNumber : true
+                            })}
+                            label="Niveau"
+                            error={errors.idNiveau?.message}/> 
+                            <SelectFields
+                            data={newArray.map((i :any ) => i.nom)}
+                            label="nom" 
+                            register={register("nom")}
+                            error={errors.nom?.message}/>
+                        <div className="lg:flex mt-8 gap-8 justify-between items-start mb-8">
+                            <Button text="Modification" type="submit" load={load}  />
                         </div>
                     </div>
                 </form>
+                <img src={ImgFontLogo} className="h-full w-1/2 h object-cover  rounded-e-3xl" alt="" />
             </div>
         </div>
     </div>

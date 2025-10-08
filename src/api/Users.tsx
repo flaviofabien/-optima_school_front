@@ -1,6 +1,5 @@
 import axios from "axios"
 import { IP } from "./IP"
-import type { FormDataUserEditType, FormDataUserType } from "../Zod-Validation/Users"
 
 export const getAllUsers  = async (token : string) => {
     const res = await axios.get( IP + "/users" , {
@@ -29,7 +28,7 @@ export const getAllTeachUsers  = async (token : string) => {
     return res.data.data
 }
 
-export const getOneUsers  = async (token : string , id : string) => {
+export const getOneUsers  = async (token : string , id : any) => {
     const res = await axios.get( IP + "/user/" + id , {
         headers : {
             "Authorization" : "Bearer " + token
@@ -38,7 +37,7 @@ export const getOneUsers  = async (token : string , id : string) => {
     return res.data.data
 }
 
-export const CreateUsers  = async (token : string,newUser : FormDataUserType) => {
+export const CreateUsers  = async (token : string,newUser : FormData) => {
     const res = await axios.post( IP + "/users", newUser , {
         headers : {
             "Authorization" : "Bearer " + token
@@ -47,7 +46,7 @@ export const CreateUsers  = async (token : string,newUser : FormDataUserType) =>
     return res.data.data
 }
 
-export const UpdateUsers  = async (token : string,newUser : FormDataUserEditType,id : string) => {
+export const UpdateUsers  = async (token : string,newUser : any,id : any) => {
     const res = await axios.put( IP + "/user/" + id , newUser , {
         headers : {
             "Authorization" : "Bearer " + token
