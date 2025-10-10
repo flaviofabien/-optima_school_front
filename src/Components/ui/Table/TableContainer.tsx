@@ -35,7 +35,7 @@ export default function TableContainer({ columns , FnQueryGet , query ,title , f
   if (isError) return <div>Error</div>;
 
   return (
-    <div className="lg:pl-60 lg:pr-8 ">
+    <div className="lg:pl-64 lg:pr-8 ">
       <div className="overflow-auto w-full max-h-[700px]">
         <div className="mt-8 ">
           <table className="overflow-auto w-full">

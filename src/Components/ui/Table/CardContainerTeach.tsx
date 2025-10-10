@@ -25,7 +25,7 @@ type Props = {
     dataFilter : any
 };
 
-export default function CardContainer({   FnQueryGet , query ,title , functionMutation ,dataFilter }: Props) {
+export default function CardContainerTeach({   FnQueryGet , query ,title , functionMutation ,dataFilter }: Props) {
   const  [paramsPatient ,setParamsPatient] = useState( {
     limit : 3,
     page : 1,

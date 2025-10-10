@@ -10,27 +10,26 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
-import { CreateCourses, getAllIncludeCourses } from "../../api/Course"
+import { CreateCourses } from "../../api/Course"
 import { CoursesSchema, type FormDataCoursesType } from "../../Zod-Validation/Course"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
-import { MdNumbers, MdRoom, MdSubject } from "react-icons/md"
-import { GiTeacher } from "react-icons/gi"
-import { CgViewDay } from "react-icons/cg"
 import { BsHourglass } from "react-icons/bs"
-import type { DataCourseInclude } from "../../typescript/Course"
 import Fields from "../../Components/ui/Fields/Fields"
+import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
+import { getAllSallesExamens } from "../../api/Salles"
 
 export default function AddCourse() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const {data,isLoading,isError,} = useQuery<DataCourseInclude>({
-        queryKey: ["include-course", token],
-        queryFn: () => getAllIncludeCourses(token!),
-    })      
+
+    const {data,isLoading,isError} = useQuery<any>({
+      queryKey : ["salle-include-examen" , token] ,
+      queryFn : () =>  getAllSallesExamens(token!)
+    })   
     
     const { watch , register, formState: { errors }, handleSubmit } = useForm<FormDataCoursesType>({
         resolver : zodResolver(CoursesSchema),
@@ -63,6 +62,8 @@ export default function AddCourse() {
     });
 
 
+    const watchEcole = watch("idEcole");
+    const watchNiveau = watch("idNiveau");
     const watchClasse = watch("idClasse");
     const watchSalle = watch("idSalle");
     const watchMatiere = watch("idMatiere");
@@ -83,47 +84,72 @@ export default function AddCourse() {
         <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
             <div className="w-full mt-8 flex justify-center items-center" >
                 <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Ajouter Eleve" />
                     <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+                    <TitleForm title="Ajouter cours" />
                     {errorServer  && <p className="bg-red-400 max-w-64 text-sm text-white text-center p-2 my-2"> {errorServer} </p> }
-                            <SelectCustomDataFields 
-                            icons={<MdNumbers size={24} />} 
-                            data={data?.classe}
-                            register={register("idClasse")}
-                            label="classe"
-                            error={errors.idClasse?.message}/>
-                            {
-                              watchClasse && <SelectCustomDataFields 
-                              icons={<MdRoom size={24} />} 
-                              data={data?.salle?.filter(i =>  (i.idClasse).toString() == watchClasse  )}
-                              register={register("idSalle")}
-                              label="salle"
-                              error={errors.idSalle?.message}/> 
-                            } 
+                    <div className="flex">
+                                <SelectCustomDataFieldsSimple 
+                                item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                register={register("idEcole")}
+                                label="Ecole"
+                                error={errors.idEcole?.message}
+                                />
+                            </div>
+                            <div className="flex">
+                                {
+                                    watchEcole && <SelectCustomDataFieldsSimple 
+                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idNiveau")}
+                                    label="Niveau"
+                                    error={errors.idNiveau?.message}
+                                    /> 
+                                } 
+                            </div>
+                            <div className="flex">
+                                {
+                                    ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idClasse")}
+                                    label="Classe"
+                                    error={errors.idClasse?.message}
+                                    /> 
+                                } 
+                            </div>
+                            <div className="flex">
+                                {
+                                    (watchEcole && watchClasse&& watchNiveau ) &&
+                                    <SelectCustomDataFieldsSimple 
+                                    item={data?.salle.filter((i : any) => i.idClasse == watchClasse).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idSalle")}
+                                    label="Salle"
+                                    error={errors.idSalle?.message}
+                                    />  
+                                }
+                            </div>
 
-                            {
-                               (watchSalle && watchClasse) &&  <SelectCustomDataFields 
-                              icons={<GiTeacher size={24} />} 
-                              data={data?.teacher}
-                              register={register("idTeacher")}
-                              label="enseignant"
-                              error={errors.idTeacher?.message}/> 
-                            }
-                            
                            {
-                             (watchClasse && watchSalle) && <SelectCustomDataFields 
-                            icons={<MdSubject size={24} />} 
+                             (watchEcole && watchClasse && watchSalle) && <SelectCustomDataFields 
                             data={data?.matiere?.filter(i =>  (i.idClasse).toString()  == watchClasse)}
                             register={register("idMatiere")}
                             label="matiere"
                             error={errors.idMatiere?.message}/> 
                            }
 
+{
+                                    (watchEcole && watchClasse && watchNiveau && watchMatiere && watchSalle ) &&
+                                    <SelectCustomDataFieldsSimple 
+                                    item={data?.teacher.filter((i : any) => i.idClasse == watchClasse && i.idMatiere == watchMatiere ).map(  (u : any) => <option value={u.id} > {u?.User?.nom}    </option>)}
+                                    register={register("idTeacher")}
+                                    label="Enseignant"
+                                    error={errors.idTeacher?.message}
+                                    />  
+                                }
+                            
+
                            {
-                             (watchMatiere && watchTeach && watchClasse && watchSalle) && (
+                             (watchMatiere && watchTeach && watchClasse && watchSalle && watchNiveau && watchEcole ) && (
                               <div>
                                 <SelectFields 
-                                icons={<CgViewDay size={24} />} 
                                 label="jour" 
                                 data={["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"]}
                                 register={register("jour")}
@@ -147,7 +173,7 @@ export default function AddCourse() {
                               </div>
                              )
                            }
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                        <div className="lg:flex gap-8 mt-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load} />
                         </div>
                     </div>

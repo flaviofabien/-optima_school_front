@@ -46,7 +46,7 @@ export default function AddSalle({}: Props) {
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataSalleType) => CreateSalles(token,newUser),
+        mutationFn: (newUser : any) => CreateSalles(token,newUser),
         onSuccess: () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Salles a ete ajouter avec succes`}))

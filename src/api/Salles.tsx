@@ -32,7 +32,7 @@ export const getAllSallesExamens  = async (token : string ) => {
     return res.data.data
 }
 
-export const CreateSalles  = async (token : string,newUser : FormDataSalleType) => {
+export const CreateSalles  = async (token : string,newUser : any) => {
     const res = await axios.post( IP + "/salles", newUser , {
         headers : {
             "Authorization" : "Bearer " + token
@@ -41,7 +41,7 @@ export const CreateSalles  = async (token : string,newUser : FormDataSalleType) 
     return res.data.data
 }
 
-export const UpdateSalles  = async (token : string,newUser : FormDataSalleEditType,id : string) => {
+export const UpdateSalles  = async (token : string,newUser : any,id : string) => {
     const res = await axios.put( IP + "/salle/" + id , newUser , {
         headers : {
             "Authorization" : "Bearer " + token

@@ -1,6 +1,8 @@
 import z from "zod";
 
 export const CoursesSchema = z.object({
+    idEcole: z.string().min(1,"Ce champs est requise 🔺"),
+    idNiveau: z.string().min(1,"Ce champs est requise 🔺"),
     idClasse: z.string().min(1,"Ce champs est requise 🔺"),
     idSalle: z.string().min(1,"Ce champs est requise 🔺"),
     idTeacher: z.string().min(1, "Ce champs est requise🔺"),

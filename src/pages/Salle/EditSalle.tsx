@@ -10,51 +10,51 @@ import {  useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
-import {  getAllClasses} from "../../api/Classes"
-import { UpdateSalles, getOneSalles } from "../../api/Salles"
+import { UpdateSalles, getAllSallesExamens, getOneSalles } from "../../api/Salles"
 import { SalleEditSchema, type FormDataSalleEditType } from "../../Zod-Validation/Salles"
 import { setAlert } from "../../store/Users/Users"
-import type { EcoleType } from "../../typescript/Salle"
-import { MdNumbers, MdOutlineExploreOff } from "react-icons/md"
+import {  MdOutlineExploreOff } from "react-icons/md"
 import { BsHouse } from "react-icons/bs"
 import Validation from "../../Components/ui/Error/Validation"
 import Loading from "../../Components/ui/Loader/Loading"
+import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
+import ImgFontLogo from "../../assets/school-953123_1280.jpg"
+
 
 export default function EditSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const { id } = useParams()
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
-    const  [paramsPatient ] = useState( {
-        limit : 50,
-        page : 1,
-        sortBy : "nom",
-        order : "desc",
-        search : ""
-      } ) 
 
-    const {data,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataSalleEditType>({
-        queryKey: ["classes",token,id],
+    const {data : salles,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<FormDataSalleEditType>({
+        queryKey: ["salles",token,id],
         queryFn: () => getOneSalles(token!,id!),
     });
 
-    const {data : dataEcole,isLoading :EcoleIsLoading ,isError : EcoleIsError} = useQuery<EcoleType>({
-        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
-        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
-      });
+
+    const {data,isLoading,isError} = useQuery<any>({
+        queryKey : ["salle-include-examen" , token] ,
+        queryFn : () =>  getAllSallesExamens(token!)
+    })
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataSalleEditType>({
+    const { watch , register,setValue, formState: { errors }, handleSubmit } = useForm<FormDataSalleEditType>({
         resolver : zodResolver(SalleEditSchema)
     });
 
+    const watchEcole = watch("idEcole")
+    const watchNiveau = watch("idNiveau")
+    const watchClasse = watch("idClasse")
+
     useEffect(() => {
-    if (data) {
-        setValue("nom", data.nom);
-        setValue("effectif", data.effectif);
-        setValue("idClasse", data.idClasse);
+    if (salles) {
+        setValue("nom", salles.nom);
+        setValue("effectif", salles.effectif);
+        setValue("idClasse", salles.idClasse);
+        setValue("idNiveau", salles.Classe.idNiveau);
+        setValue("idEcole", salles.Classe.idEcole);
     }
-    }, [data, setValue]);
+    }, [salles, setValue]);
 
 
     const navigate = useNavigate();
@@ -91,44 +91,71 @@ export default function EditSalle() {
         mutation.mutate(formData);
     }
 
-    if ( userOneIsLoading || EcoleIsLoading ) return <Loading />
-    if ( userOneIsError || EcoleIsError) return <div>Error</div>
+    if ( userOneIsLoading || isLoading ) return <Loading />
+    if ( userOneIsError || isError) return <div>Error</div>
    
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
         <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Moifier Eleve" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
-                    {errorServer  && <Validation errorServer={errorServer} /> }
-                            <SelectCustomDataFields 
-                            icons={<MdNumbers size={24} />} 
-                            data={dataEcole?.data}
-                            register={register("idClasse",{
-                                valueAsNumber : true
-                            })}
-                            label="classe"
-                            error={errors.idClasse?.message}/> 
-                            <Fields 
-                            icons={<BsHouse size={24} />} 
-                            label="nom" 
-                            register={register("nom")}
-                            error={errors.nom?.message}/>
-                            <Fields 
-                            icons={<MdOutlineExploreOff size={24} />} 
-                            label="effectif" 
-                            type="number"
-                            register={register("effectif",{
-                                valueAsNumber : true
-                            })}
-                            error={errors.effectif?.message}/>
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Modification" type="submit" load={load} />
+            <div className="w-full h-[700px] mt-8 flex justify-center items-center" >
+                <form className="w-[600px] h-full bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="w-full  rounded-2xl pt-20 px-8">
+                        <TitleForm title="Modifier salle" />
+                        {errorServer  && <Validation errorServer={errorServer} /> }
+                        <div className="flex">
+                                <SelectCustomDataFieldsSimple 
+                                item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                register={register("idEcole")}
+                                label="Ecole"
+                                error={errors.idEcole?.message}
+                                />
+                            </div>
+                            <div className="flex">
+                                {
+                                    watchEcole && <SelectCustomDataFieldsSimple 
+                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idNiveau")}
+                                    label="Niveau"
+                                    error={errors.idNiveau?.message}
+                                    /> 
+                                } 
+                            </div>
+                            <div className="flex">
+                                {
+                                    ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idClasse")}
+                                    label="Classe"
+                                    error={errors.idClasse?.message}
+                                    /> 
+                                } 
+                            </div>
+                            {
+                                ( watchEcole && watchNiveau && watchClasse) && (
+                                        <div>
+                                            <Fields 
+                                            icons={<BsHouse size={24} />} 
+                                            label="nom" 
+                                            register={register("nom")}
+                                            error={errors.nom?.message}/>
+                                            <Fields 
+                                            icons={<MdOutlineExploreOff size={24} />} 
+                                            label="effectif" 
+                                            type="number"
+                                            register={register("effectif",{
+                                                valueAsNumber : true
+                                            })}
+                                            error={errors.effectif?.message}/>
+                                        </div>
+                                )
+                            }
+                        <div className="mt-8 lg:flex gap-8 justify-between items-start mb-8">
+                            <Button text="Ajouter" type="submit" load={load} />
                         </div>
                     </div>
                 </form>
+                <img src={ImgFontLogo} className="w-1/2 h-full  object-cover  rounded-e-3xl" alt="" />
             </div>
         </div>
     </div>

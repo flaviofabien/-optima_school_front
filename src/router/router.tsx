@@ -1,12 +1,8 @@
 import Profils from "../Components/header/Profils";
-import SortableList from "../Client";
 import Login from "../pages/Auth/Login";
 import PageLoadingResetPassword from "../pages/Auth/PageLoadingResetPassword";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import UpdatePassword from "../pages/Auth/UpdatePassword";
-import AddCategorie from "../pages/Categorie/AddCategorie";
-import CategorieContent from "../pages/Categorie/CategirieContent";
-import EditCategorie from "../pages/Categorie/EditCategorie";
 import AddClasse from "../pages/Classe/AddClasse";
 import ClasseContent from "../pages/Classe/ClasseContent";
 import EditClasse from "../pages/Classe/EditClasses";
@@ -47,6 +43,9 @@ import ClientPage from "../Client";
 import AnneeScolaireContent from "../pages/Annee Scolaire/AnneeScolaireContent";
 import AddAnneeScolaire from "../pages/Annee Scolaire/AddAnneeScolaire";
 import EditAnneeScolaire from "../pages/Annee Scolaire/EditAnneeScolaire";
+import AddPeriode from "../pages/Periode/AddPeriode";
+import EditPeriode from "../pages/Periode/EditPeriode";
+import PeriodeContent from "../pages/Periode/PeriodeContent";
 
 export const Router = [
     /****** Autentification ********/
@@ -224,18 +223,18 @@ export const Router = [
     element: <PrivateRoute element={EmploiDuTemps} />,
   },
 
-  /* Categorie */
+  /* Periode */
   {
-    path: "/admin/categories/add",
-    element: <PrivateRoute element={AddCategorie} />,
+    path: "/admin/periodes/add",
+    element: <PrivateRoute element={AddPeriode} />,
   },
   {
-    path: "/admin/categories",
-    element: <PrivateRoute element={CategorieContent} />,
+    path: "/admin/periodes",
+    element: <PrivateRoute element={PeriodeContent} />,
   },
   {
-    path: "/admin/categories/edit/:id",
-    element: <PrivateRoute element={EditCategorie} />,
+    path: "/admin/periodes/edit/:id",
+    element: <PrivateRoute element={EditPeriode} />,
   },
   /* Examen */
   {

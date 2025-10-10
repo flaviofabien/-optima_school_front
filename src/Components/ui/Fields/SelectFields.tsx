@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
@@ -8,10 +7,11 @@ type Props = {
     error ?: string
 }
 
-export default function SelectFields({data,error,register}: Props) {
+export default function SelectFields({data,error,register,label}: Props) {
   return (
     <div className="relative mt-4" >
-        <div className="group flex mt-4">
+        <label htmlFor="" className="font-light"> {label} </label>
+        <div className="group flex mt-2">
             <select  id="" {...register}
                     className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-7 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
                 {

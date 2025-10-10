@@ -13,7 +13,6 @@ import type { RootState } from "../../store/store"
 import { studentSchema, type FormDataStudentType } from "../../Zod-Validation/Students"
 import { CreateStudents,  } from "../../api/Student"
 import SelectFields from "../../Components/ui/Fields/SelectFields"
-import { getAllClasses } from "../../api/Classes"
 import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
 import { setAlert } from "../../store/Users/Users"
 import Loading from "../../Components/ui/Loader/Loading"
@@ -24,6 +23,7 @@ import { CgMail } from "react-icons/cg"
 import Validation from "../../Components/ui/Error/Validation"
 import FieldImage from "../../Components/ui/Fields/FieldImage"
 import ImgFontLogo from "../../assets/school-953123_1280.jpg"
+import { getAllSallesExamens } from "../../api/Salles"
 
 
 export default function AddStudent() {
@@ -32,22 +32,18 @@ export default function AddStudent() {
     const [load,setLoad] = useState(false);
     const [fileURLs, setFileURLs] = useState();
     const [file, setFile] = useState(); 
-    const {setValue , register, formState: { errors }, handleSubmit } = useForm<FormDataStudentType>({
+    
+    const {setValue , watch, register, formState: { errors }, handleSubmit } = useForm<FormDataStudentType>({
         resolver : zodResolver(studentSchema)
     });
 
-    const  [paramsPatient ] = useState( {
-        limit : 50,
-        page : 1,
-        sortBy : "nom",
-        order : "desc",
-        search : ""
-    })  
-
     const {data,isLoading,isError} = useQuery<any>({
-        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
-        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+        queryKey : ["salle-include-examen" , token] ,
+        queryFn : () =>  getAllSallesExamens(token!)
     })
+
+    const watchEcole = watch("idEcole");
+    const watchNiveau = watch("idNiveau");
 
     const navigate = useNavigate();
     const [errorServer, setErrorServer] = useState<string>("");
@@ -58,9 +54,10 @@ export default function AddStudent() {
         mutationFn: (newUser : FormData) => CreateStudents(token,newUser),
         onSuccess: async () => {
             setErrorServer("");
-            dispatch(setAlert({status : true,message : `Etudiant a ete Modifier avec succes`}))
+            dispatch(setAlert({status : true,message : `Etudiant a ete Cree avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['students'] });
             navigate("/admin/students");      
+            
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
@@ -79,12 +76,10 @@ export default function AddStudent() {
         if (file) {
             newFormData.append("img", file);
         }   
-        const Niveaux = data?.data.find( (i : any) => i.id == formData.idClasse )
-        
   
         newFormData.append("role","eleve");
         newFormData.append("idClasse",formData.idClasse);
-        newFormData.append("idNiveau",Niveaux.idNiveau);
+        newFormData.append("idNiveau",formData.idNiveau);
         newFormData.append("sex",formData.sex);
         newFormData.append("address",formData.address);
         newFormData.append("dateNaissance",formData.dateNaissance);
@@ -103,7 +98,7 @@ export default function AddStudent() {
     if (isError) return <div>Error</div>
 
   return (
-    <div className="bg-[var(--font)] h-full">
+    <div className="bg-[var(--font)] h-screen">
         <Header />
         <div className="mt-8 w-full flex justify-center px-8 lg:pl-60 items-center">
             <div className="w-full h-[700px] flex justify-center items-center" >
@@ -121,12 +116,30 @@ export default function AddStudent() {
                                 /> 
                             </div>
                             <div className="w-full">
+                                
                                 <SelectCustomDataFields  
-                                register={register("idClasse")}                            
-                                data={data?.data}
-                                error={errors.idClasse?.message}
-                                label="Classe"
+                                register={register("idEcole")}                            
+                                data={data?.ecole}
+                                error={errors.idEcole?.message}
+                                label="Ecole"
                                 />
+                                {watchEcole && 
+                                    <SelectCustomDataFields  
+                                    register={register("idNiveau")}                            
+                                    data={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) )}
+                                    error={errors.idNiveau?.message}
+                                    label="Niveau"
+                                    />
+                                }
+                                {
+                                    watchEcole && watchNiveau && 
+                                        <SelectCustomDataFields  
+                                        register={register("idClasse")}                            
+                                        data={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau )}
+                                        error={errors.idClasse?.message}
+                                        label="Classe"
+                                        />
+                                }
                                 <div className="gap-4 lg:flex justify-between items-end">
                                     <Fields 
                                     icons={<BsPerson size={24} />} 

@@ -23,7 +23,7 @@ const userColumns = [
   {
     header: 'Enseignant',
     accessor: 'Enseignant',
-    render: (item : any) => item.Teacher?.nom
+    render: (item : any) => item.Teacher?.User.nom
   },
   {
     header: 'Salle',
@@ -41,7 +41,7 @@ export default function CourseContent() {
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
-        <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
+        <div className="mt-8 flex justify-between px-8 lg:pl-64 items-center">
           <TextHeaderTable text="Les Course" />
           <ButtonLink link="/admin/courses/add" text="Ajoute +"  />
         </div>

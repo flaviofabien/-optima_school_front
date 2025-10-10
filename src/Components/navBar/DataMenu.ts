@@ -34,6 +34,11 @@ export const DataMenu = [
         icons : GiCalendarHalfYear,
     },
     
+    {
+        path : "/admin/periodes",
+        label : "Periode",
+        icons : SiLevelsdotfyi,
+    },
 
     {
         path : "/admin/classes",
@@ -62,9 +67,15 @@ export const DataMenu = [
     },
     
     {
-        path : "/admin/categories",
-        label : "Categorie",
-        icons : SiLevelsdotfyi,
+        path : "/admin/courses",
+        label : "Cours",
+        icons : SiCoursera,
+    },
+        
+    {
+        path : "/admin/temps",
+        label : "Emploi du temps",
+        icons : CgTime,
     },
     {
         path : "/admin/examens",
@@ -73,23 +84,12 @@ export const DataMenu = [
     },
     {
         path : "/admin/partition-salles",
-        label : "PartitionSalle",
+        label : "Partition Salle",
         icons : MdRoomPreferences,
-    },
-
-    {
-        path : "/admin/courses",
-        label : "Cours",
-        icons : SiCoursera,
     },
     {
         path : "/admin/notes",
         label : "Notes",
         icons : CgNotes,
-    },
-    {
-        path : "/admin/temps",
-        label : "Emploi du temps",
-        icons : CgTime,
     },
 ]

@@ -51,10 +51,10 @@ export default function TableMatiere({ columns , FnQueryGet , query ,title , fun
   if (isError) return <div>Error</div>;
 
   return (
-    <div className="lg:pl-60 lg:pr-8 ">
+    <div className="lg:pl-64 lg:pr-8 mt-8">
       <Filter data={dataFilterSelect} paramsPatient={paramsPatient} setParamsPatient={setParamsPatient} />
 
-      <div className="overflow-auto w-full max-h-[700px]">
+      <div className=" overflow-auto w-full max-h-[700px]">
         <div className="mt-8 ">
           <table className="overflow-auto w-full">
             <thead className="text-lg">

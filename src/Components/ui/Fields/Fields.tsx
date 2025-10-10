@@ -72,6 +72,7 @@ export default function Fields({icons,label,error,register,show,type,maxDate,tex
           className= {`text-sm text-gray-500 outline-0 w-full border-b-4 py-2 ${text ? ' pl-10' : ''}    border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)]`} />
              
       </div>
+      {  (show || generatePassword) &&
       <div className='absolute flex -top-0 gap-2 right-0 p-4 mt-4 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)]'>
         {
           generatePassword &&  <span className="hover:scale-110 cursor-pointer" onClick={handleCopy}  title="Copie"> <BsCopy /></span>
@@ -89,6 +90,8 @@ export default function Fields({icons,label,error,register,show,type,maxDate,tex
       }  
                 
       </div>
+
+      }
       {
         generatePassword &&  <button  type="button" onClick={GenerateFn} className=" w-full text-white py-2 text-sm bg-[var(--color-primary)]"> Generer mot de passe  </button>   
       }

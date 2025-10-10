@@ -1,7 +1,3 @@
-import Header from "../../Components/header/Header"
-import Fields from "../../Components/ui/Fields/Fields"
-import TitleForm from "../../Components/ui/Text/TitleForm"
-import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
@@ -10,38 +6,36 @@ import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
-import SelectCustomDataFields from "../../Components/ui/Fields/SelectCustomDataFields"
-import { getAllClasses } from "../../api/Classes"
-import { MatiereSchema, type FormDataMatiereType } from "../../Zod-Validation/Matiere"
+import { MatiereSchema } from "../../Zod-Validation/Matiere"
 import { CreateMatieres } from "../../api/Matieres"
 import { setAlert } from "../../store/Users/Users"
-import { MdNumbers, MdSubject } from "react-icons/md"
-import { BsType } from "react-icons/bs"
 import Loading from "../../Components/ui/Loader/Loading"
+import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
 import Validation from "../../Components/ui/Error/Validation"
+import TitleForm from "../../Components/ui/Text/TitleForm"
+import Header from "../../Components/header/Header"
+import ImgFontLogo from "../../assets/school-953123_1280.jpg"
+import Button from "../../Components/ui/Button/Button"
+import Fields from "../../Components/ui/Fields/Fields"
+import { getAllSallesExamens } from "../../api/Salles"
 
 export default function AddMatiere() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-    const  [paramsPatient ] = useState( {
-        limit : 50,
-        page : 1,
-        sortBy : "nom",
-        order : "desc",
-        search : ""
-      } )  
-
     const {data,isLoading,isError} = useQuery<any>({
-        queryKey : ["classes",token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
-        queryFn : () =>  getAllClasses(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
+        queryKey : ["salle-include-examen" , token] ,
+        queryFn : () =>  getAllSallesExamens(token!)
     })
-    
-    const { register, formState: { errors }, handleSubmit } = useForm<FormDataMatiereType>({
+
+    const { watch, register, formState: { errors }, handleSubmit } = useForm<any>({
         resolver : zodResolver(MatiereSchema)
     });
 
+    const watchEcole = watch("idEcole")
+    const watchNiveau = watch("idNiveau")
+    const watchClasse = watch("idClasse")
     const navigate = useNavigate();
 
     const [errorServer, setErrorServer] = useState<string>("");
@@ -49,7 +43,7 @@ export default function AddMatiere() {
 
     const mutation = useMutation(
         {
-        mutationFn: (newUser : FormDataMatiereType) => CreateMatieres(token,newUser),
+        mutationFn: (newUser : any) => CreateMatieres(token,newUser),
         onSuccess: () => {
             setErrorServer("");
             dispatch(setAlert({status : true,message : `Matiere a ete modifier avec succes`}))
@@ -69,10 +63,14 @@ export default function AddMatiere() {
         }
     });
 
-    const onSubmit = async (formData: FormDataMatiereType) => {
+    const onSubmit = async (formData: any) => {
         setLoad(true)        
         setErrorServer("");
-        mutation.mutate(formData);
+        mutation.mutate({
+            idClasse : formData.idClasse,
+            coefficiant : formData.idClasse,
+            nom : formData.nom
+        });
     }
 
     if (isLoading) return <Loading />
@@ -82,40 +80,65 @@ export default function AddMatiere() {
     <div className="bg-[var(--font)] h-screen">
         <Header />
         <div className="mt-8 flex justify-between px-8 lg:pl-60 items-center">
-            <div className="w-full mt-8 flex justify-center items-center" >
-                <form className="w-80 lg:w-[600px] bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <TitleForm title="Ajouter Matiere" />
-                    <div className="w-full  border-4 border-[var(--color-primary-transparent)] rounded-2xl pt-20 px-8">
+            <div className="w-full h-[700px] mt-8 flex justify-center items-center" >
+                <form className="w-[600px] h-full bg-white flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="w-full  rounded-2xl pt-20 px-8">
+                        <TitleForm title="Ajouter matiere" />
                         {errorServer  && <Validation errorServer={errorServer} /> }
-                        <SelectCustomDataFields 
-                        icons={<MdNumbers size={24} />} 
-                        data={data?.data}
-                        register={register("idClasse",{
-                            valueAsNumber : true
-                        })}
-                        label="classe"
-                        error={errors.idClasse?.message}/> 
-
-                        <Fields 
-                        icons={<MdSubject size={24} />} 
-                        label="nom" 
-                        register={register("nom")}
-                        error={errors.nom?.message}/>
-                        <Fields 
-                        icons={<BsType size={24} />} 
-                        label="coefficiant" 
-                        type="number"
-                        register={register("coefficiant",{
-                            valueAsNumber : true
-                        })}
-                        error={errors.coefficiant?.message}/>
-                        <div className="lg:flex gap-8 justify-between items-start mb-8">
+                        <div className="flex">
+                                <SelectCustomDataFieldsSimple 
+                                item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                register={register("idEcole")}
+                                label="Ecole"
+                                error={errors.idEcole?.message}
+                                />
+                            </div>
+                            <div className="flex">
+                                {
+                                    watchEcole && <SelectCustomDataFieldsSimple 
+                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idNiveau")}
+                                    label="Niveau"
+                                    error={errors.idNiveau?.message}
+                                    /> 
+                                } 
+                            </div>
+                            <div className="flex">
+                                {
+                                    ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idClasse")}
+                                    label="Classe"
+                                    error={errors.idClasse?.message}
+                                    /> 
+                                } 
+                            </div>
+                            {
+                                ( watchEcole && watchNiveau && watchClasse) && (
+                                        <div>
+                                                <Fields 
+                                                label="nom" 
+                                                register={register("nom")}
+                                                error={errors.nom?.message}/>
+                                                <Fields 
+                                                label="coefficiant" 
+                                                type="number"
+                                                register={register("coefficiant",{
+                                                    valueAsNumber : true
+                                                })}
+                                                error={errors.coefficiant?.message}/>
+                                        </div>
+                                )
+                            }
+                        <div className="mt-8 lg:flex gap-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load} />
                         </div>
                     </div>
                 </form>
+                <img src={ImgFontLogo} className="w-1/2 h-full  object-cover  rounded-e-3xl" alt="" />
             </div>
         </div>
     </div>
+
   )
 }

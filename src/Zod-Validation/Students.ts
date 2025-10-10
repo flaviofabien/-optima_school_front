@@ -18,6 +18,7 @@ export const studentSchema = z.object({
     prenom: z.string().min(1,"Ce champs est requise 🔺"),
     idClasse: z.string().min(1,"Ce champs est requise 🔺"),
     idNiveau: z.string().optional(),
+    idEcole: z.string().optional(),
     role: z.string().optional(),
 });
 export  type FormDataStudentType = z.infer<typeof studentSchema>;
@@ -34,10 +35,8 @@ export const studentEditSchema = z.object({
         message: "Numéro invalide. Utilisez 03X XX XX XXX ou 34 XX XXX XX",
     }),    
     status: z.string().min(1, "Ce champs est requise🔺"),
-    email: z.string().email("Email est invalid 🔺"),
-    nom: z.string().min(1, "Ce champs est requise🔺"),
-    prenom: z.string().min(1,"Ce champs est requise 🔺"),
     idClasse: z.string().min(1,"Ce champs est requise 🔺"),
     idNiveau: z.string().optional(),
+    idEcole: z.string().optional(),
 });
 export  type FormDataStudentEditType = z.infer<typeof studentEditSchema>;
