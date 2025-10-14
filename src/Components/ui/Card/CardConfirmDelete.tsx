@@ -43,7 +43,7 @@ export default function CardConfirmDelete({navigate,show,setShow,title,functionM
     }
 
     return (
-        <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-sm  top-0 left-0'>
+        <div className='h-screen w-full flex justify-center items-center fixed backdrop-blur-sm  top-0 left-0 z-[121212122121212]'>
             <div className="w-[400px] border-2 border-[var(--color-primary)] rounded-b-4xl bg-[var(--white)] ">
                 <Title title={title}  />
                 <br />

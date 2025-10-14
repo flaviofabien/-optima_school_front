@@ -23,6 +23,7 @@ function App() {
       };
     }
   }, [alert, dispatch]);
+
   return (
     <>
       <RouterProvider router={router}  />

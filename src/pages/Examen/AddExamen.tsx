@@ -49,7 +49,6 @@ export default function AddExamen() {
     const [value, setValue] = useState([]);
     const queryClient = useQueryClient();
     const [displayedUsers, setDisplayedUsers] = useState([]);
-
     const [items, setItems] = useState(value);    
 
     const handleOnDragEnd = (result : any) => {
@@ -93,7 +92,7 @@ export default function AddExamen() {
 
         const newUser = { 
             idSalle : formData.idSalle , 
-            nom : formData.nom  , 
+            idCategorie : formData.idCategorie  , 
             idEleves : value.map(i => i.id)
         }
         
@@ -132,6 +131,9 @@ export default function AddExamen() {
                 <form className="h-full w-[1500px]  bg-white relative rounded-3xl" onSubmit={handleSubmit(onSubmit)} >
                     <div className="w-full  rounded-2xl pt-8 px-4">
                         {errorServer  && <Validation errorServer={errorServer} /> }
+                        <h1 className="text-2xl font-semibold ">
+                            Selectionner les options suivants
+                        </h1>
                         <div className=" flex gap-8">
                             <div className="flex w-1/4">
                                 <SelectCustomDataFieldsSimple 
@@ -176,41 +178,46 @@ export default function AddExamen() {
                             {
                                  (watchEcole && watchClasse && watchSalle && watchNiveau) &&  <SelectCustomDataFieldsSimple 
                                  item={data?.categorie.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
-                                 register={register("nom")}
+                                 register={register("idCategorie")}
                                  label="Type"
-                                 error={errors.nom?.message}
+                                 error={errors.idCategorie?.message}
                                  />  
                             }
 
-                            <input onChange={(e) => setValueInput(e.target.value)} value={valueInput} type="text" className="border-2 border-gray-200 pl-4 w-full h-12 my-4" />
-                            
-                                <div className="max-h-96 border-2 overflow-auto  bg-white w-full absolute z-10 -translate-y-4">
-                                    {
-                                    valueInput && displayedUsers?.filter((i : any , index : any)  => 
-                                    ((i.nom).toLowerCase()).includes(valueInput.toLowerCase()) && (i.idNiveau == watchNiveau)  && (index  < Salle?.effectif) && !( (value).includes(i)) ).map( o => <p className="flex flex-col px-4 py-2 border-b-2 cursor-pointer hover:bg-slate-200" 
-                                    onClick={() => {
-                                            setValue( [...value , o] );
-                                            setValueInput("");
-                                    }}>  <span> {o.nom}</span> <span className="text-xs">{o.Classe.nom} </span> </p> )
-                                    }
-                                </div>
-                            
-                            <h2> nombre max : { Salle?.effectif} </h2>
-                            <div className="bg-slate-200 p-8 " >
-                               
-                                <DraggableUserList 
-                                items={value.filter((i: any,dex : any) => i.idNiveau == watchNiveau && ( dex < Salle?.effectif ))}
-                                setItems={setValue}
-                               />
-                            </div>
-                            <button type="button" className=" bg-[var(--color-primary)]  text-white px-8 py-2 rounded-4xl shadow-2xs" onClick={HandleClickAleatoire}>Changer aleatoire </button>
-                                {
-                                    (watchEcole && watchClasse && watchSalle && watchNiveau) && <div className="mt-8">
+                            {
+                                  (watchEcole && watchClasse && watchSalle && watchNiveau) && <div className="relative">
+                                        <input onChange={(e) => setValueInput(e.target.value)} value={valueInput} type="text" className="border-2 border-gray-200 pl-4 w-full h-12 my-4" />
+                                        
+                                            <div className="max-h-96 border-2 overflow-auto  bg-white w-full pr-20 absolute z-10 -translate-y-4">
+                                                {
+                                                    (valueInput && displayedUsers.length !== 0) && displayedUsers?.filter((i : any , index : any)  => 
+                                                    (
+                                                        (i.User?.nom).toLowerCase()
+                                                        ).includes(valueInput.toLowerCase()) && (i.idNiveau == watchNiveau)  && (index  < Salle?.effectif) && !( (value).includes(i)) ).map( o => <p className="flex flex-col px-4 py-2 border-b-2 cursor-pointer hover:bg-slate-200" 
+                                                    onClick={() => {
+                                                            setValue( [...value , o] );
+                                                            setValueInput("");
+                                                    }}>  <span> {o.User?.nom}</span> <span className="text-xs">{o.Classe.nom} </span> </p> )  
+                                                }
+                                            </div>
+                                        
+                                        <h2> nombre max : { Salle?.effectif} </h2>
+                                        <div className="bg-[var(--font)] p-8 " >
+                                        
+                                            <DraggableUserList 
+                                            items={value.filter((i: any,dex : any) => i.idNiveau == watchNiveau && ( dex < Salle?.effectif ))}
+                                            setItems={setValue}
+                                        />
+                                        </div>
+                                  </div>
+                            }
 
+                                {
+                                    (watchEcole && watchClasse && watchSalle && watchNiveau) && <div className="mt-8 w-full flex justify-between items-start">
                                             <div className="lg:flex gap-8 justify-between items-start mb-8">
                                                 <Button text="Ajouter" type="submit" load={load}  />
                                             </div>
-                                        
+                                            <Button  text="Changer aleatoire / Complete" type="button"  />
                                     </div>
                                 }
                             

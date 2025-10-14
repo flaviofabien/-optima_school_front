@@ -83,12 +83,15 @@ import {
                 style={style}
                 {...attributes}
                 {...listeners}
-                className= {`bg-white py-4 px-4 rounded shadow w-40 relative `} 
-            >
-               
-                <span>{item.nom}</span>
-                <div className="text-xs text-gray-500">{item.Classe?.nom}</div>
-            </li> <button
+                className= {`bg-white py-4 px-4 rounded shadow w-40 relative flex justify-center`} 
+            ><div>
+                <span>{item?.User?.nom}</span>
+                <div className="text-xs text-gray-500">
+                  {item.Classe?.nom}
+                </div>
+            </div>
+            </li> 
+                <button
                   onClick={(e) => {
                     e.stopPropagation(); 
                     e.preventDefault(); 
@@ -97,12 +100,11 @@ import {
                       prevItems.filter((i: any) => i.id !== id)
                     );
                   }}
-                  className="absolute top-1 right-1 text-red-500 hover:text-red-700 hover:scale-150 z-[2000] bg-white"
+                  className="absolute top-0 z-50 text-red-500 hover:text-red-700 hover:scale-110 cursor-pointer bg-white"
                   type="button"
                 >
                   ✕
                 </button>
-
             <div className={`${ ( (index + 1) % 2 === 0 && ((index + 1 ) % 8 !== 0)   ) && " ml-2 border-r-4 border-black" } `}  ></div>
         </div>
     );

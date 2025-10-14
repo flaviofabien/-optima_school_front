@@ -28,9 +28,8 @@ export default function CardNote({ FnQueryGet , query ,title , functionMutation}
       show: false,
       id: NaN
     });
-
-    console.log(data);
     
+    console.log(data)
   
     const navigate = useNavigate();
   
@@ -45,13 +44,15 @@ export default function CardNote({ FnQueryGet , query ,title , functionMutation}
                         <div className=" p-4">
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900"> {i.Student.nom} {i.Student.prenom}</h3>
+                                <span>{i.Salle.nom}</span>
+                                
                             </div>
 
                             <div className="space-y-2 text-sm text-gray-700">
-                            {i.notes.map( o => <div className="flex justify-between items-center ">
-                                <span>{o.matiere}</span>
-                                <span>{o.note}</span>
-                            </div>  )}
+                            <div className="flex justify-between items-center ">
+                                <span>{i.Matiere.nom}</span>
+                                <span>{i.note}</span>
+                            </div>  
                             
                                 <p className="">
                                     <BiEdit onClick={() => navigate(`/admin/${query}/edit/${i.id}`)} className="inline-block mr-4 text-2xl" />

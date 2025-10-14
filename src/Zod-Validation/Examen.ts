@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const ExamenSchema = z.object({
-    nom: z.string().min(1,"Ce champs est requise 🔺"),
+    idCategorie: z.string().min(1,"Ce champs est requise 🔺"),
     idEleves: z.custom().optional(),
     idEcole: z.string().min(1,"Ce champs est requise 🔺"),
     idSalle: z.string().min(1,"Ce champs est requise 🔺"),
@@ -11,7 +11,7 @@ export const ExamenSchema = z.object({
 export  type FormDataExamenType = z.infer<typeof ExamenSchema>;
 
 export const ExamenEditSchema = z.object({
-    nom: z.string().min(1,"Ce champs est requise 🔺"),
+    idCategorie: z.string().min(1,"Ce champs est requise 🔺"),
     idEleves: z.custom().optional(),
     idEcole: z.string().min(1,"Ce champs est requise 🔺"),
     idExamen: z.string().min(1,"Ce champs est requise 🔺"),

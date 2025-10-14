@@ -79,8 +79,9 @@ import {
                 {...listeners}
                 className= {`bg-white py-4 px-4 rounded shadow w-40  `} 
             >
-                <span>{item.nom}</span>
+                <span>{item.User.nom}</span>
                 <div className="text-xs text-gray-500">{item.Classe?.nom}</div>
+                <div className="text-xs text-gray-500">{item.Salle?.nom}</div>
             </li>
             <div className={`${ ( (index + 1) % 2 === 0 && ((index + 1 ) % 8 !== 0)   ) && " ml-2 border-r-4 border-black" } `}  ></div>
         </div>

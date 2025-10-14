@@ -185,7 +185,7 @@ export default function EmploiDuTemps() {
                                 </div>
                         }
                     </div>
-                        <div  className="bg-white p-8">
+                        <div  className="bg-white p-8 mt-8">
 
                             {
                                 dataInclude.salle.status && 

@@ -1,7 +1,7 @@
 import Header from "../../Components/header/Header"
 import TitleForm from "../../Components/ui/Text/TitleForm"
 import Button from "../../Components/ui/Button/Button"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ErrorServerForm } from "../../typescript/ErrorServer"
 import { useNavigate } from "react-router-dom"
@@ -19,7 +19,7 @@ import { getAllStudents } from "../../api/Student"
 import { NotesSchema } from "../../Zod-Validation/Notes"
 import { CreateNotes } from "../../api/Notes"
 import ImgFontLogo from "../../assets/pexels-camcasey-1722183.jpg"
-import FieldNotesAdd from "../../Components/ui/Fields/FieldNotesAdd"
+import Fields from "../../Components/ui/Fields/Fields"
 
 export default function AddNotes() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -33,23 +33,13 @@ export default function AddNotes() {
 
     const {data : students,isLoading : isLoadingStudent,isError : isErrorStudents} = useQuery<any>({
         queryKey : ["students" , token] ,
-        queryFn : () =>  getAllStudents(token!,1,100000,"","desc","nom")
+        queryFn : () =>  getAllStudents(token!,1,100000,"","desc","")
     })
  
-    const { watch , control, register, formState: { errors }, handleSubmit } = useForm<any>({
-        resolver : zodResolver(NotesSchema) ,
-        defaultValues : [{
-            notes : [
-                {note : " " , matiere : " "}
-            ]
-        }]  
-
+    const { watch , register, formState: { errors }, handleSubmit } = useForm<any>({
+        resolver : zodResolver(NotesSchema) , 
     });
 
-    const {fields ,  append  , remove} = useFieldArray({
-        name : "notes",
-        control , 
-    })
 
     const watchEcole = watch("idEcole")
     const watchNiveau = watch("idNiveau")
@@ -79,24 +69,22 @@ export default function AddNotes() {
             setErrorServer("An unexpected error occurred");
             }
             setLoad(false)        
-
         }
     });
 
-    const onSubmit = async (formData: any) => {
-        console.log(formData);
-        
+    const onSubmit = async (formData: any) => {        
         setLoad(true)        
         setErrorServer("");
         mutation.mutate({
             idStudent : formData.idStudent ,
-            notes : formData.notes
+            idMatiere : formData.idMatiere,
+            idSalle : formData.idSalle,
+            note : formData.note
         });
     }
 
     if (isLoading || isLoadingStudent ) return <Loading />
     if (isError || isErrorStudents) return <div>Error</div>
-
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
@@ -136,25 +124,44 @@ export default function AddNotes() {
                                     } 
                                 </div>
                             
+                            <div className="">
+                                    {
+                                        ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                        item={data?.salle.filter( (i : any) => i.idClasse == watchClasse).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        register={register("idSalle")}
+                                        label="Salle"
+                                        error={errors.idSalle?.message}
+                                        /> 
+                                    } 
+                                </div>
                             {
                                 ( watchEcole && watchNiveau && watchClasse) &&
                                     <SelectCustomDataFields 
                                         data={students?.data.filter( (i : any) =>  i.idClasse == watchClasse)}
                                         register={register("idStudent")}
-                                        label="etudiant"
+                                        label="Etudiant"
                                         error={errors.idStudent?.message}/> 
                             }
 
                             </div>
                             <div className="w-1/2">
-                                <FieldNotesAdd
-                                error={errors.notes?.message}
-                                label="Notes"
-                                append={append}
-                                remove={remove}
-                                register={register}
-                                fields={fields}
-                                />
+                           {
+                                ( watchEcole && watchNiveau && watchClasse) &&
+                                    <SelectCustomDataFields 
+                                        data={data?.matiere.filter( (i : any) =>  i.idClasse == watchClasse)}
+                                        register={register("idMatiere")}
+                                        label="Matiere"
+                                        error={errors.idMatiere?.message}/> 
+                            } 
+                            </div>
+                              <div className="w-1/2">
+                           {
+                                ( watchEcole && watchNiveau && watchClasse) &&
+                                    <Fields 
+                                        register={register("note")}
+                                        label="Note"
+                                        error={errors.note?.message}/> 
+                            } 
                             </div>
                         </div>
 
