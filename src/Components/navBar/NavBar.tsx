@@ -40,7 +40,7 @@ export default function NavBar() {
                                 return filtre
                             }
                         }).map( i =>  {
-                            const isActive = pathname === i.path
+                            const isActive = (pathname === i.path || pathname.includes(i.path)) 
                             const isLogout = pathname === "/login"
                             if (isLogout) {
                                 dispatch(setToken(""))

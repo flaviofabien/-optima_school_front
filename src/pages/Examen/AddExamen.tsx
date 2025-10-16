@@ -110,11 +110,7 @@ export default function AddExamen() {
               !value.some((v: any) => v.id == u.id) 
             )
             .slice(0, max - currentLength); 
-      
-            console.log(remaining);
-          setValue([...value, ...remaining]);
-          console.log(value);
-          
+          setValue([...value, ...remaining]);          
         } else {
           setValue(shuffleArray(value));
         }

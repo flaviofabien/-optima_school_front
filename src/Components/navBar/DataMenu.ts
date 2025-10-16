@@ -4,12 +4,12 @@ import { FaUserMd } from "react-icons/fa";
 import { GiCalendarHalfYear, GiLevelTwo, GiTeacher } from "react-icons/gi";
 import { GrDashboard, GrTest } from "react-icons/gr";
 import { MdEvent, MdRoom, MdRoomPreferences } from "react-icons/md";
-import { PiStudent } from "react-icons/pi";
+import { PiNewspaper, PiStudent } from "react-icons/pi";
 import { SiCoursera, SiLevelsdotfyi } from "react-icons/si";
 
 export const DataMenu = [
     {
-        path : "/admin",
+        path : "/admin/dashboard",
         label : "Dashboard",
         icons : GrDashboard,
     },
@@ -91,5 +91,10 @@ export const DataMenu = [
         path : "/admin/notes",
         label : "Notes",
         icons : CgNotes,
+    },
+     {
+        path : "/admin/bulletins",
+        label : "Bulletin",
+        icons : PiNewspaper,
     },
 ]

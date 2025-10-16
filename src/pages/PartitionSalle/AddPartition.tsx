@@ -17,6 +17,8 @@ import {  getAllStudentExtendExamen } from "../../api/Examen"
 import { shuffleArray } from "../../Utils/ArraySuffly"
 import { CreatePartitionSalle } from "../../api/PartitionSalle"
 import { PartitionSalleSchema } from "../../Zod-Validation/PartitionSalle"
+import DraggableUserList from "../../Drag"
+import { getAllStudents } from "../../api/Student"
 
 export default function AddPartitionSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -30,7 +32,7 @@ export default function AddPartitionSalle() {
 
     const {data : student,isLoading : isLoadingStudent,isError : isErrorStudent} = useQuery<any>({
         queryKey : ["students",token] ,
-        queryFn : () =>  getAllStudentExtendExamen(token!)
+        queryFn : () =>  getAllStudents(token!,1,100000,"","desc","")
     })
     
     const {watch , register, formState: { errors }, handleSubmit } = useForm<any>({
@@ -71,6 +73,7 @@ export default function AddPartitionSalle() {
 
      useEffect(() =>  {
         if (student?.data) setDisplayedUsers(student?.data)
+            //filter by salle
     } , [student?.data])
     
     const Salle = data?.salle.find((p : any) => p.id == watchSalle )
@@ -158,19 +161,21 @@ export default function AddPartitionSalle() {
                                 <div className="max-h-96 border-2 overflow-auto  bg-white w-full absolute z-10 -translate-y-4">
                                     {
                                     valueInput && displayedUsers?.filter((i : any , index : any)  => 
-                                    ((i.nom).toLowerCase()).includes(valueInput.toLowerCase()) && (i.idNiveau == watchNiveau)  && (index  < Salle?.effectif) && !( value.includes(i) ) ).map( (o : any) => <p className="flex flex-col px-4 py-2 border-b-2 cursor-pointer hover:bg-slate-200" 
+                                    ((i.User?.nom).toLowerCase()).includes(valueInput.toLowerCase()) && (i.idClasse == watchClasse)  && (index  < Salle?.effectif) && !( value.includes(i) ) ).map( (o : any) => <p className="flex flex-col px-4 py-2 border-b-2 cursor-pointer hover:bg-slate-200" 
                                     onClick={() => {
                                             setValue( [...value , o] );
                                             setValueInput("");
-                                    }}>  <span> {o.nom}</span> <span className="text-xs">{o.Classe.nom} </span> </p> )
+                                    }}>  <span> {o.User.nom}</span> <span className="text-xs">{o.Classe.nom} </span> </p> )
                                     }
                                 </div>
-                            
-                            <div className="bg-slate-200 p-8 flex gap-8 " >
-                                {
-                                    value?.filter(  (i : any , index : any)  => (i.idNiveau == watchNiveau)  && (index  < Salle?.effectif)   ).map((o : any) => <p className="px-4 py-2 bg-white flex flex-col max-w-20 w-full " > <span> {o.nom}</span> <span className="text-xs">{o.Classe.nom} </span> </p> )
-                                }
-                            </div>
+                        
+                             <h2> nombre max : { Salle?.effectif} </h2>
+                            <div className="bg-[var(--font)] p-8">
+                                                                    <DraggableUserList 
+                                                                        items={value.filter((i: any,dex : any) => i.idNiveau == watchNiveau && ( dex < Salle?.effectif ))}
+                                                                        setItems={setValue}
+                                                                    />
+                                                                    </div>
                             <button type="button" className=" bg-[var(--color-primary)]  text-white px-8 py-2 rounded-4xl shadow-2xs" onClick={HandleClickAleatoire}>Changer aleatoire </button>
                                 {
                                     (watchEcole && watchClasse && watchSalle && watchNiveau) && <div className="mt-8">

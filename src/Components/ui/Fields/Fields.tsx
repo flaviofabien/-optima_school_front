@@ -2,7 +2,6 @@
 import type { UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
 import { BsCopy, BsEyeFill } from "react-icons/bs";
 import { FaEyeSlash } from "react-icons/fa";
-import { PiSquareLight } from "react-icons/pi";
 import { generateSecurePassword } from "../../../Utils/GeneratePassword";
 
 type Props = {

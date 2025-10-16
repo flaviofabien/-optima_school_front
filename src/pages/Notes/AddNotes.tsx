@@ -15,7 +15,6 @@ import Loading from "../../Components/ui/Loader/Loading"
 import Validation from "../../Components/ui/Error/Validation"
 import { getAllSallesExamens } from "../../api/Salles"
 import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
-import { getAllStudents } from "../../api/Student"
 import { NotesSchema } from "../../Zod-Validation/Notes"
 import { CreateNotes } from "../../api/Notes"
 import ImgFontLogo from "../../assets/pexels-camcasey-1722183.jpg"
@@ -25,27 +24,28 @@ export default function AddNotes() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
-
+    
     const {data,isLoading,isError} = useQuery<any>({
       queryKey : ["salle-include-examen" , token] ,
       queryFn : () =>  getAllSallesExamens(token!)
     })
-
-    const {data : students,isLoading : isLoadingStudent,isError : isErrorStudents} = useQuery<any>({
-        queryKey : ["students" , token] ,
-        queryFn : () =>  getAllStudents(token!,1,100000,"","desc","")
-    })
  
-    const { watch , register, formState: { errors }, handleSubmit } = useForm<any>({
+    const { watch , setError , register, formState: { errors }, handleSubmit } = useForm<any>({
         resolver : zodResolver(NotesSchema) , 
     });
-
-
+    
     const watchEcole = watch("idEcole")
     const watchNiveau = watch("idNiveau")
     const watchClasse = watch("idClasse")
     const watchStudent = watch("idStudent")
+    const watchSalle = watch("idSalle")
+    const watchMatiere = watch("idMatiere")
+    const watchCategorie = watch("idCategorie")
+    const watchNote = watch("note")
 
+    
+    
+    
     const navigate = useNavigate();
 
     const [errorServer, setErrorServer] = useState<string>("");
@@ -72,30 +72,50 @@ export default function AddNotes() {
         }
     });
 
+
     const onSubmit = async (formData: any) => {        
+         const matiere = data?.matiere.find( (i : any ) => i.id == formData.idMatiere );
+        console.log(matiere);
+        
+
+        if (matiere && matiere.coefficiant) { // Assurez-vous que c'est bien 'coefficiant'
+            const maxNote = parseInt(matiere.coefficiant) * 20;
+
+            if (formData.note > maxNote) {
+                setError("note" , { 
+                    type: "manual", // Type d'erreur
+                    message : `La note ne peut pas être supérieure à ${maxNote} (Coefficient ${matiere.coefficiant * 20})`
+                }, { shouldFocus: true });
+                
+                // 3. 🛑 BLOCAGE DE LA SOUMISSION 🛑
+                return; // C'est le point crucial : on sort de la fonction si l'erreur est trouvée.
+            } 
+        }
+
         setLoad(true)        
         setErrorServer("");
         mutation.mutate({
             idStudent : formData.idStudent ,
             idMatiere : formData.idMatiere,
             idSalle : formData.idSalle,
+            idCategorie : formData.idCategorie,
             note : formData.note
         });
     }
 
-    if (isLoading || isLoadingStudent ) return <Loading />
-    if (isError || isErrorStudents) return <div>Error</div>
+    if (isLoading  ) return <Loading />
+    if (isError ) return <div>Error</div>
   return (
     <div className="bg-[var(--font)] h-screen">
         <Header />
         <div className="mt-8 w-full  flex justify-center px-8 lg:pl-64 items-center">
-            <div className="w-full max-w-[1500px] rounded-3xl bg-white mt-8 flex justify-center items-center" >
+            <div className="w-full h-[600px] rounded-3xl bg-white mt-8 flex justify-center items-center" >
                 <form className="h-full w-[1000px]  flex justify-center items-center relative rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
                     <div className="w-full  rounded-2xl pt-20 px-8">
                         <TitleForm title="Ajouter Notes" />
                         {errorServer  && <Validation errorServer={errorServer} /> }
-                        <div className="flex w-full">
-                            <div className="w-1/2">
+                        <div className=" w-full border-b pb-8">
+                            <div className="">
                                 <SelectCustomDataFieldsSimple 
                                     item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idEcole")}
@@ -124,9 +144,9 @@ export default function AddNotes() {
                                     } 
                                 </div>
                             
-                            <div className="">
+                                <div className="">
                                     {
-                                        ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                        ( watchEcole && watchNiveau && watchClasse) && <SelectCustomDataFieldsSimple 
                                         item={data?.salle.filter( (i : any) => i.idClasse == watchClasse).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                         register={register("idSalle")}
                                         label="Salle"
@@ -134,35 +154,51 @@ export default function AddNotes() {
                                         /> 
                                     } 
                                 </div>
-                            {
-                                ( watchEcole && watchNiveau && watchClasse) &&
-                                    <SelectCustomDataFields 
-                                        data={students?.data.filter( (i : any) =>  i.idClasse == watchClasse)}
-                                        register={register("idStudent")}
-                                        label="Etudiant"
-                                        error={errors.idStudent?.message}/> 
-                            }
 
                             </div>
-                            <div className="w-1/2">
-                           {
-                                ( watchEcole && watchNiveau && watchClasse) &&
+                        </div>
+                        <div className="w-full flex gap-8 items-end mt-8">
+                                <div className="">
+                                {
+                                    (watchEcole && watchClasse && watchSalle && watchNiveau) &&  <SelectCustomDataFieldsSimple 
+                                        item={data?.student.map(  (u : any) => <option value={u?.id} > {u?.User?.nom}    </option>)}
+                                        register={register("idStudent")}
+                                        label="Etudiant"
+                                        error={errors.idStudent?.message}
+                                        />  
+                                }
+                                </div>
+                                <div className="">
+                                {
+                                    (watchEcole && watchClasse && watchSalle && watchNiveau && watchStudent ) &&  <SelectCustomDataFieldsSimple 
+                                        item={data?.categorie.map(  (u : any) => <option value={u?.id} > {u.nom}    </option>)}
+                                        register={register("idCategorie")}
+                                        label="Periode"
+                                        error={errors.idCategorie?.message}
+                                        />  
+                                }
+                                </div>
+
+                                <div className="">
+                                {
+                                    (watchEcole && watchNiveau && watchClasse && watchSalle && watchStudent && watchCategorie) &&
                                     <SelectCustomDataFields 
                                         data={data?.matiere.filter( (i : any) =>  i.idClasse == watchClasse)}
                                         register={register("idMatiere")}
                                         label="Matiere"
                                         error={errors.idMatiere?.message}/> 
-                            } 
-                            </div>
-                              <div className="w-1/2">
-                           {
-                                ( watchEcole && watchNiveau && watchClasse) &&
+                                } 
+                                </div>
+                                <div className="">
+                                {
+                                    (watchEcole && watchNiveau && watchClasse && watchSalle && watchStudent && watchMatiere) &&
                                     <Fields 
-                                        register={register("note")}
+                                        // type='number'
+                                        register={register("note",{valueAsNumber : true})}
                                         label="Note"
                                         error={errors.note?.message}/> 
-                            } 
-                            </div>
+                                } 
+                                </div>
                         </div>
 
                         
@@ -171,7 +207,7 @@ export default function AddNotes() {
                         </div>
                     </div>
                 </form>
-                <img src={ImgFontLogo} className="w-[1000px] h-[662px]  object-cover  rounded-e-3xl" alt="" />
+                <img src={ImgFontLogo} className="w-[600px] h-full object-cover  rounded-e-3xl" alt="" />
 
             </div>
         </div>

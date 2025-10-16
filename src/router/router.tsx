@@ -46,6 +46,8 @@ import EditAnneeScolaire from "../pages/Annee Scolaire/EditAnneeScolaire";
 import AddPeriode from "../pages/Periode/AddPeriode";
 import EditPeriode from "../pages/Periode/EditPeriode";
 import PeriodeContent from "../pages/Periode/PeriodeContent";
+import EditNotes from "../pages/Notes/EditsNotes";
+import Bulletin from "../pages/Bulletin/Bulletin";
 
 export const Router = [
     /****** Autentification ********/
@@ -260,10 +262,17 @@ export const Router = [
     path: "/admin/notes/add",
     element: <PrivateRoute element={AddNotes} />,
   },
+   {
+    path: "/admin/notes/edit/:id",
+    element: <PrivateRoute element={EditNotes} />,
+  },
   {
     path: "/admin/notes",
     element: <PrivateRoute element={NotesContent} />,
   },
-
-
+// Bulletin
+  {
+    path: "/admin/bulletins",
+    element: <PrivateRoute element={Bulletin} />,
+  },
 ]

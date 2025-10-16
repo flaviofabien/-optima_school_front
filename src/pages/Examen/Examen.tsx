@@ -10,7 +10,6 @@ import { getAllSallesExamens } from "../../api/Salles";
 import { useEffect, useState } from "react";
 import DraggableUserListGet from "../../DragGet";
 import Button from "../../Components/ui/Button/Button";
-import { BiEdit } from "react-icons/bi";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { setAlert } from "../../store/Users/Users";
 import { useNavigate } from "react-router-dom";
@@ -18,23 +17,22 @@ import CardConfirmDelete from "../../Components/ui/Card/CardConfirmDelete";
 
 export default function Examen() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
-        const dispatch = useDispatch(); 
-
+    const dispatch = useDispatch(); 
     const [valueInput, setValueInput] = useState<string>("");
     const [edit, setEdit] = useState(false);
     const [load,setLoad] = useState(false);
     const [errorServer, setErrorServer] = useState<string>("");
-  const [show, setShow] = useState({
-    show: false,
-    id: NaN
-  });  
+    const [show, setShow] = useState({
+        show: false,
+        id: NaN
+    });  
 
 
     const {data : student,isLoading : isLoadingStudent,isError : isErrorStudent} = useQuery<any>({
         queryKey : ["students",token] ,
         queryFn : () =>  getAllStudentExtendExamen(token!)
     })
-        const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
     
     const [dataInclude,setrDataInclude] = useState({
         ecole : { status : false , id : 0},
@@ -42,6 +40,8 @@ export default function Examen() {
         niveau : { status : false , id : 0 },
         salle : { status : false , id : 0 },
     })
+
+    
     const [displayedUsers, setDisplayedUsers] = useState([]);
 
     const { 
@@ -229,7 +229,7 @@ export default function Examen() {
                            <h2 className="text-lg text-center bg-[var(--color-primary)] text-white p-4"> {studentsByTitleExamId} </h2>
                            <div className= {`bg-[var(--font)] relative group`}>
                                 {
-                                    edit === false && <div className= {`  z-[122334] absolute top-0 left-0  flex w-full h-full justify-end items-center`}>
+                                    edit === false && <div className= {`bg-black bg-opacity-20  z-[122334] absolute top-0 left-0  flex w-full h-full justify-end items-center`}>
                                    { // <Button text="Modifier" style={1} type="button"   />
                                    }
                                    <span onClick={() => setEdit(true) }>
