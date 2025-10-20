@@ -1,10 +1,10 @@
-import { BiAnalyse, BiCalendar} from "react-icons/bi";
+import { BiAnalyse, BiCalendar, BiMoney} from "react-icons/bi";
 import {  CgNotes, CgTime } from "react-icons/cg";
-import { FaUserMd } from "react-icons/fa";
+import { FaSms, FaUserMd } from "react-icons/fa";
 import { GiCalendarHalfYear, GiLevelTwo, GiTeacher } from "react-icons/gi";
 import { GrDashboard, GrTest } from "react-icons/gr";
 import { MdEvent, MdRoom, MdRoomPreferences } from "react-icons/md";
-import { PiNewspaper, PiStudent } from "react-icons/pi";
+import { PiEmpty, PiNewspaper, PiStudent } from "react-icons/pi";
 import { SiCoursera, SiLevelsdotfyi } from "react-icons/si";
 
 export const DataMenu = [
@@ -96,5 +96,20 @@ export const DataMenu = [
         path : "/admin/bulletins",
         label : "Bulletin",
         icons : PiNewspaper,
+    },
+    {
+        path : "/admin/absences",
+        label : "Absence",
+        icons : PiEmpty,
+    },
+    {
+        path : "/admin/payements",
+        label : "Payement",
+        icons : BiMoney,
+    },
+     {
+        path : "/admin/messages",
+        label : "Message",
+        icons : FaSms,
     },
 ]

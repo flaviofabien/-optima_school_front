@@ -37,7 +37,7 @@ export default function CardUser({ FnQueryGet , query ,title , functionMutation}
 <div className=' w-full lg:pl-64 pt-8 pr-8  '>
         <div className='flex flex-wrap gap-8 '>
           {
-              data?.map( i => (
+              data?.filter((o) => o.role == "admin"  ).map( i => (
                   <div className="flex  w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
                       <div className=" p-4">
                           <img className='w-20 h-20   object-cover rounded-full' src={IPLocal  + i.img} alt={IPLocal + "/" + i.img} />

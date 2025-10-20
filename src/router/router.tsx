@@ -48,6 +48,13 @@ import EditPeriode from "../pages/Periode/EditPeriode";
 import PeriodeContent from "../pages/Periode/PeriodeContent";
 import EditNotes from "../pages/Notes/EditsNotes";
 import Bulletin from "../pages/Bulletin/Bulletin";
+import AbsenceContent from "../pages/Absence/AbsenceContent";
+import AddAbsence from "../pages/Absence/AddAbsence";
+import EditAbsence from "../pages/Absence/EditsAbsence";
+import PayementContent from "../pages/Payement/PayementContent";
+import AddPayement from "../pages/Payement/AddPayement";
+import EditPayement from "../pages/Payement/EditPayement";
+import Message from "../pages/Message/Message";
 
 export const Router = [
     /****** Autentification ********/
@@ -72,7 +79,7 @@ export const Router = [
       element: <ClientPage />
     },
     {
-      path: "/admin",
+      path: "/admin/dashboard",
       element: <PrivateRoute element={Dashboard}   />
     },
     {
@@ -270,9 +277,44 @@ export const Router = [
     path: "/admin/notes",
     element: <PrivateRoute element={NotesContent} />,
   },
+
 // Bulletin
   {
     path: "/admin/bulletins",
     element: <PrivateRoute element={Bulletin} />,
   },
+
+  /* absences */
+  {
+    path: "/admin/absences/add",
+    element: <PrivateRoute element={AddAbsence} />,
+  },
+   {
+    path: "/admin/absences/edit/:id",
+    element: <PrivateRoute element={EditAbsence} />,
+  },
+  {
+    path: "/admin/absences",
+    element: <PrivateRoute element={AbsenceContent} />,
+  },
+
+    /* payement */
+    {
+      path: "/admin/payements/add",
+      element: <PrivateRoute element={AddPayement} />,
+    },
+     {
+      path: "/admin/payements/edit/:id",
+      element: <PrivateRoute element={EditPayement} />,
+    },
+    {
+      path: "/admin/payements",
+      element: <PrivateRoute element={PayementContent} />,
+    },
+
+    //    
+     {
+      path: "/admin/messages",
+      element: <PrivateRoute element={Message} />,
+    },
 ]

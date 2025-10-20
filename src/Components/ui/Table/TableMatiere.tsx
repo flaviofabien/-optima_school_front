@@ -25,10 +25,13 @@ type Props = {
 
 export default function TableMatiere({ columns , FnQueryGet , query ,title , functionMutation ,dataFilterSelect }: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
+    const user = useSelector((state: RootState) => state.dataStorage.user);
+
+
     const  [paramsPatient ,setParamsPatient] = useState( {
       limit : 5,
       page : 1,
-      sortBy : "nom",
+      sortBy : "",
       order : "desc",
       search : ""
     } )   
@@ -37,8 +40,7 @@ export default function TableMatiere({ columns , FnQueryGet , query ,title , fun
     {
       queryKey : [query,token,paramsPatient.page,paramsPatient.limit,paramsPatient.search,paramsPatient.order,paramsPatient.sortBy] ,
       queryFn : () =>  FnQueryGet(token! , paramsPatient.page!,paramsPatient.limit!,paramsPatient.search!,paramsPatient.order!,paramsPatient.sortBy!)
-    })
-    
+    })    
 
   const [show, setShow] = useState({
     show: false,
@@ -64,21 +66,27 @@ export default function TableMatiere({ columns , FnQueryGet , query ,title , fun
                     {column.header}
                   </td>
                 ))}
-                <td className="lg:px-6 px-4 py-4  font-medium"></td>
+                {
+                  user.role === "admin" && 
+                  <td className="lg:px-6 px-4 py-4  font-medium"></td>
+                }
               </tr>
             </thead>
             <tbody>
               {data?.data.map((item: any) => (
                 <tr key={item.id} className="w-96 border-b-2 border-[var(--color-primary-transparent)] bg-[var(--white)]">
                   {columns.map((column, index) => (
-                    <td key={index} className="lg:px-6 px-4 py-4">
+                    <td key={index} className="lg:px-6 px-4 py-4 max-w-96">
                       {column.render(item)}
                     </td>
                   ))}
-                  <td className="lg:px-6 px-4 py-4">
-                    <BiEdit onClick={() => navigate(`/admin/${query}/edit/${item.id}`)} className="inline-block mr-4 text-2xl cursor-pointer scale-110" />
-                    <MdDelete onClick={() => setShow({ id: item.id, show: true })} className="inline-block text-2xl cursor-pointer scale-110" />
-                  </td>
+                  {
+                    user.role === "admin" && 
+                    <td className="lg:px-6 px-4 py-4">
+                      <BiEdit onClick={() => navigate(`/admin/${query}/edit/${item.id}`)} className="inline-block mr-4 text-2xl cursor-pointer scale-110" />
+                      <MdDelete onClick={() => setShow({ id: item.id, show: true })} className="inline-block text-2xl cursor-pointer scale-110" />
+                    </td>
+                  }
                   
                 </tr>
               ))}

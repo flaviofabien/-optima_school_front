@@ -39,7 +39,7 @@ export default function Login() {
         dispatch(setToken(value.token))
         dispatch(setUsers(value.user))
         dispatch(setAlert({status : true,message : "Utilisateur a ete connecter avec succes"}))
-        navigate("/admin");
+        navigate("/admin/dashboard");
         setLoad(false)
       },
       onError: (error : ErrorServerForm ) => {

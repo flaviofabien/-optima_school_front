@@ -17,7 +17,7 @@ export default function NavBar() {
     const { pathname } = useLocation()
 
     return (
-        <div className='bg-white text-zinc-500 py-4 px-4 absolute left-0 top-0 h-screen'>
+        <div className='bg-white text-zinc-500 py-4 px-4 absolute left-0 top-0 h-screen max-h-screen overflow-auto'>
             <div className='flex border-b-2 border-gray-200 items-center py-4 mb-4'>
             {
                 menu ? <img src={ImgLogo} className= 'w-40  object-cover' alt="" />:<img src={ImgLogoPetit} className= 'w-16  object-cover' alt="" />
@@ -36,6 +36,10 @@ export default function NavBar() {
                                 return  (filtre.label !== "Utilisateur")  && (filtre.label !== "Niveaux")
                             } else if (token && users.role === "superAdmin") {
                                 return (filtre.label === "Niveaux") || (filtre.label === "Utilisateur") || (filtre.label === "Dashboard")
+                            }else if (token && users.role === "eleve") {
+                                return (filtre.label === "Bulletin") || (filtre.label === "Absence") ||(filtre.label === "Message") ||(filtre.label === "Emploi du temps") || (filtre.label === "Notes") || (filtre.label === "Dashboard")
+                            }else if (token && users.role === "Enseignant") {
+                                return  (filtre.label === "Message") ||(filtre.label === "Emploi du temps") || (filtre.label === "Notes") || (filtre.label === "Dashboard")
                             } else {
                                 return filtre
                             }

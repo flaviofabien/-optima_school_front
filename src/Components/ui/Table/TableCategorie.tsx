@@ -24,6 +24,9 @@ export default function TableCategorie({ columns , FnQueryGet , query ,title , f
       queryFn : () =>  FnQueryGet(token! )
     })
 
+    console.log(data);
+    
+
   const [show, setShow] = useState({
     show: false,
     id: NaN
