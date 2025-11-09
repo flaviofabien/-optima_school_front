@@ -1,0 +1,42 @@
+import ButtonLink from "../../Components/ui/Button/ButtonLink";
+import { dataFilterMatiere } from "../../Components/ui/FilterData";
+import TableMatiere from "../../Components/ui/Table/TableMatiere";
+import TextHeaderTable from "../../Components/ui/Text/TextinTable";
+import { DeleteMatieres, getAllMatieres } from "../../api/Matieres";
+
+const userColumns = [
+  {
+    header: 'Nom',
+    accessor: 'nom',
+    render: (item : any) => item.nom
+  },
+  {
+    header: 'Coefficiant',
+    accessor: 'coefficiant',
+    render: (item : any) => item.coefficiant
+  },
+  {
+    header: 'Classe',
+    accessor: 'classe',
+    render: (item : any) => item?.Classe?.nom
+  },
+
+];
+
+export default function MatiereContent() {
+  return (
+    <div className="">
+        <div className="flex justify-between  items-center">
+          <TextHeaderTable text="Les Matieres" />
+          <ButtonLink link="/admin/matieres/add" text="Ajoute +"  />
+        </div>
+        <TableMatiere
+         dataFilterSelect={dataFilterMatiere}
+          functionMutation={DeleteMatieres}
+          title="Matiere" 
+          FnQueryGet={getAllMatieres} 
+          columns={userColumns} 
+          query="matieres" />
+    </div>
+  )
+}

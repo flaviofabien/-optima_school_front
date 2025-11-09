@@ -1,0 +1,23 @@
+import ButtonLink from "../../Components/ui/Button/ButtonLink";
+import { dataFilterStudent } from "../../Components/ui/FilterData";
+import CardContainer from "../../Components/ui/Table/CardContainer";
+import TextHeaderTable from "../../Components/ui/Text/TextinTable";
+import { DeleteStudents, getAllStudents } from "../../api/Student";
+
+
+export default function StudentContent() {
+  return (
+    <div className="">
+        <div className=" flex justify-between  items-center">
+          <TextHeaderTable text="Les eleves" />
+          <ButtonLink link="/admin/students/add" text="Ajoute +"  />
+        </div>
+        <CardContainer
+          functionMutation={DeleteStudents}
+          title="Eleve" 
+          FnQueryGet={getAllStudents}
+          dataFilter={dataFilterStudent} 
+          query="students" />
+    </div>
+  )
+}
