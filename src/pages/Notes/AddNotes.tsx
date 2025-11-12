@@ -23,7 +23,6 @@ export default function AddNotes() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const user = useSelector((state: RootState) => state.dataStorage.user);
 
-
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
     
@@ -73,7 +72,7 @@ export default function AddNotes() {
 
     const onSubmit = async (formData: any) => {        
          const matiere = data?.matiere.find( (i : any ) => i.id == formData.idMatiere );
-        console.log(formData,"FORMDATA",formData.idSousPeriode);
+         const Categorie = data?.categorie.find( (i : any ) => i.id == formData.idCategorie );
         
 
         if (matiere && matiere.coefficiant) { 
@@ -88,6 +87,9 @@ export default function AddNotes() {
             } 
         }
 
+        console.log(Categorie);
+        
+
         setLoad(true)        
         setErrorServer("");
         mutation.mutate({
@@ -96,6 +98,7 @@ export default function AddNotes() {
             idSalle : formData.idSalle,
             idCategorie : formData.idCategorie,
             idSousPeriode : formData.idSousPeriode,
+            idAnneeScolaire :Categorie.idAnneeScolaire,
             note : formData.note
         });
     }
