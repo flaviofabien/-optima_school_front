@@ -129,14 +129,14 @@ export default function EditCourse({}: Props) {
                             } 
                         </div>
                         <div className="flex">
-                            {
-                                ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
-                                register={register("idClasse")}
-                                label="Classe"
-                                error={errors.idClasse?.message}
-                                /> 
-                            } 
+                                {
+                                    ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idClasse")}
+                                    label="Classe"
+                                    error={errors.idClasse?.message}
+                                    /> 
+                                } 
                         </div>
                         <div className="flex">
                             {

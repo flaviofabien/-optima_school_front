@@ -45,17 +45,15 @@ export default function EditMatiere({}: Props) {
         setValue("nom", dataMatiere.nom);
         setValue("coefficiant", dataMatiere.coefficiant);
         setValue("idClasse", dataMatiere.idClasse);
-        setValue("idNiveau", dataMatiere.Classe.idNiveau);
-        setValue("idEcole", dataMatiere.Classe.idEcole);
+        setValue("idNiveau", String(dataMatiere.Classe?.idNiveau));
+        setValue("idEcole", String(dataMatiere.Classe.idEcole) );
     }
     }, [dataMatiere, setValue]);
 
 
     const navigate = useNavigate();
-
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
-    
     const watchEcole = watch("idEcole")
     const watchNiveau = watch("idNiveau")
     const watchClasse = watch("idClasse")
@@ -108,7 +106,7 @@ export default function EditMatiere({}: Props) {
                             <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}
@@ -118,7 +116,7 @@ export default function EditMatiere({}: Props) {
                             <div className="flex">
                                 {
                                     ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idClasse")}
                                     label="Classe"
                                     error={errors.idClasse?.message}
@@ -143,7 +141,7 @@ export default function EditMatiere({}: Props) {
                                 )
                             }
                         <div className="mt-8 lg:flex gap-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" load={load} />
+                            <Button text="Modification" type="submit" load={load} />
                         </div>
                     </div>
                 </form>

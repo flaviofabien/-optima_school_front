@@ -25,21 +25,22 @@ export default function EditPeriode() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
 
-
+    
     const {data,isLoading,isError} = useQuery<any>({
         queryKey : ["salle-include-examen" , token] ,
         queryFn : () =>  getAllSallesExamens(token!)
-      })
-
+    })
+    
     const {data :periodes,isLoading : userOneIsLoading ,isError : userOneIsError} = useQuery<any>({
         queryKey: ["periodes",token,id],
         queryFn: () => getOneCategorie(token!,id!),
     });
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<any>({
+    const { register,setValue, formState: { errors }, handleSubmit, watch } = useForm<any>({
         resolver : zodResolver(PeriodeEditSchema)
     });
-
+    
+    const watchDateDebut = watch('dateDebut')
     useEffect(() => {
     if (periodes) {
         setValue("nom", periodes?.data.nom);
@@ -105,13 +106,19 @@ export default function EditPeriode() {
                         type="date"
                         register={register("dateDebut")}
                         error={errors.dateDebut?.message}/>
-                        <Fields 
-                        label="dateFin" 
-                        type="date"
-                        register={register("dateFin")}
-                        error={errors.dateFin?.message}/>
+                        {
+                            watchDateDebut && (
+                                <Fields 
+                                    label="dateFin" 
+                                    type={'date'}
+                                    register={register("dateFin")}
+                                    minDate={watchDateDebut}
+                                    error={errors.dateFin?.message}/>
+
+                            ) 
+                        }
                         <SelectCustomDataFieldsSimple 
-                        item={['Vacance','Examen','Paque'].map(  (u : any) => <option value={u} > {u}</option>)}
+                        item={['Vacance','Examen','Paque',"Interrogation"].map(  (u : any) => <option value={u} > {u}</option>)}
                         register={register("type")}
                         label="Type"
                         error={errors.type?.message}

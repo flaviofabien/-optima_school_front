@@ -13,40 +13,48 @@ export default function LenuLinkButtonPlus({data,dataInclude,setrDataInclude}: P
 
     const HandleButton = (id : number ,event : any) => {
         if (event === "ecole") {
-            setrDataInclude( (prev : any) => ( {...prev , ecole :  {
-                id:id,
-                status:true
-            }}))
+            setrDataInclude({
+                ecole :  { id:id , status:true },
+                niveau :  { id:id ,  status:false } ,
+                classe :  { id:id , status:false },
+                salle :  { id:id , status:false },
+                matiere :  { id:id , status:false },
+            })
         }else if (event === "niveau") {
-            setrDataInclude( (prev : any) => ( {...prev , niveau :  {
-                id:id,
-                status:true
-            }}))
+            setrDataInclude( (prev : any) => ( {...prev , 
+                niveau :  { id:id ,  status:true } ,
+                classe :  { id:id , status:false },
+                salle :  { id:id , status:false },
+                matiere :  { id:id , status:false },
+        }))
         }else if (event === "classe") {
-            setrDataInclude( (prev : any) => ( {...prev , classe :  {
-                id:id,
-                status:true
-            }}))
-        }else if (event === "salle") {
-            setrDataInclude( (prev : any) => ( {...prev , salle :  {
-                id:id,
-                status:true
-            }}))
+            setrDataInclude( (prev : any) => ( {...prev ,  
+                classe :  { id:id , status:true },
+                salle :  { id:id , status:false },
+                matiere :  { id:id , status:false },
+        }))
+        }
+        else if (event === "salle") {
+            setrDataInclude( (prev : any) => ( {...prev , 
+                salle :  { id:id , status:true },
+                matiere :  { id:id , status:false }
+        }))
         }
         else if (event === "matiere") {
-            setrDataInclude( (prev : any) => ( {...prev , matiere :  {
-                id:id,
-                status:true
-            }}))
+            setrDataInclude( (prev : any) => ( {...prev , 
+                matiere :  { id:id , status:true }
+        }))
         }
-    }
-    const Teacher = data?.teacher.find(i  => i.User.id == user.id  )
+      }
+    
+
+    const Teacher = data?.teacher.find( (i : any)  => i.User.id == user.id  )
     
     
     return (
     <div>
-        <div className="flex w-full bg-white">
-            <div className="p-4 w-1/4">
+        <div className="flex w-full bg-white p-4 rounded-xl">
+            <div className=" w-1/4">
                 <h2>Ecole</h2>
                 <div className=" flex flex-col justify-start items-start">
                 {
@@ -60,12 +68,12 @@ export default function LenuLinkButtonPlus({data,dataInclude,setrDataInclude}: P
             </div>
             {
                 dataInclude.ecole.status && 
-                    <div className="p-4 w-1/4">
+                    <div className="w-1/4">
                         <h2>Niveau</h2>
                         <div className=" flex flex-col justify-start items-start">
                         {
-                            data?.niveau.filter( (i : any) => i.ecoles.filter((o : any)  =>  o.id == dataInclude.ecole.id ) ).map((e : any) => {
-                                const isActive = (e.id == dataInclude.niveau.id) && (dataInclude.niveau.status) ; 
+                            data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  um.id ).includes(dataInclude.ecole.id) ).map((e : any) => {
+                                const isActive = (e.id === dataInclude.niveau.id) && (dataInclude.niveau.status) ; 
                                 return <button className= {` mt-4 px-4 py-2 rounded-md  ${isActive ? " bg-[var(--color-primary)] text-white " : "bg-gray-200" }  `}  type="button" onClick={ () => HandleButton(e.id,"niveau")}> {e.nom} </button>
                             }   )
                         }
@@ -74,12 +82,11 @@ export default function LenuLinkButtonPlus({data,dataInclude,setrDataInclude}: P
             }
             {
                 dataInclude.niveau.status && 
-                    <div className="p-4 w-1/4">
+                    <div className="w-1/4">
                         <h2>Classe</h2>
                         <div className=" flex flex-col justify-start items-start">
                         {
-                            data?.classe.filter( (i : any) =>  i.idNiveau == dataInclude.niveau.id 
-                             ).map((e : any) => {
+                            data?.classe.filter( (i : any) =>  (i.idNiveau == dataInclude.niveau.id && i.idEcole == dataInclude.ecole.id) ).map((e : any) => {
                                 const isActive = (e.id === dataInclude.classe.id) && (dataInclude.classe.status) ; 
                                 return <button className= {` mt-4 px-4 py-2 rounded-md  ${isActive ? " bg-[var(--color-primary)] text-white " : "bg-gray-200" }  `}  type="button" onClick={ () => HandleButton(e.id,"classe")}> {e.nom} </button>
                             }    )
@@ -87,9 +94,9 @@ export default function LenuLinkButtonPlus({data,dataInclude,setrDataInclude}: P
                         </div>
                     </div>
             }
-            {
+                    {
                 dataInclude.classe.status && 
-                    <div className="p-4 w-1/4">
+                    <div className=" w-1/4">
                         <h2>Salle</h2>
                         <div className=" flex flex-col justify-start items-start">
                         {

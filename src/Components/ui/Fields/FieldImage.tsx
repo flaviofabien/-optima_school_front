@@ -6,9 +6,10 @@ type Props = {
     fileURLs : string,
     setFileURLs :any
     setFile :any
+    errorFile ?:any
 }
 
-export default function FieldImage({fileURLs,setFileURLs,setFile}: Props) {
+export default function FieldImage({fileURLs,setFileURLs,setFile,errorFile}: Props) {
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file : any = acceptedFiles[0];
         if (file) {
@@ -41,7 +42,9 @@ export default function FieldImage({fileURLs,setFileURLs,setFile}: Props) {
                 </div>
                 )
             }
+
         </div>
+        { errorFile && <p className='text-center max-w-64 text-xs text-red-500'>{errorFile} </p>  }
     </div>
   )
 }

@@ -71,9 +71,10 @@ export default function AddClasse() {
             setLoad(false)
         }
     });
+
     const watchEcole = watch("idEcole")
     const watchNiveaux = watch("idNiveau");
-    const Niveaux = dataNiveau?.data.find( i => i.id == watchNiveaux )
+    const Niveaux = dataNiveau?.data.find(  (i : any) => i.id == watchNiveaux )
 
     const [newArray , setNewArray]  = useState([]) ;
 
@@ -83,6 +84,7 @@ export default function AddClasse() {
     
 
     const onSubmit = async (formData: FormDataClasseType) => {
+
         setLoad(true)
         setErrorServer("");
         const newUser = {...formData }
@@ -96,9 +98,9 @@ export default function AddClasse() {
   return (
     <div className="">
         <div className="w-full flex justify-center px-8  items-center">
-            <div className=" w-[800px] h-[600px] mt-8 rounded-l-3xl flex justify-center items-center" >
-                <form className="w-1/2 h-full bg-white  flex justify-center items-center relative lg:rounded-l-2xl rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
-                    <div className="  rounded-2xl pt-20 px-8">
+            <div className=" w-full h-[600px] mt-8 rounded-l-3xl flex justify-center items-center" >
+                <form className="w-[90%] h-full bg-white  flex justify-center items-center relative lg:rounded-l-2xl rounded-2xl" onSubmit={handleSubmit(onSubmit)} >
+                    <div className="  rounded-2xl pt-20 px-8 w-full">
                     <TitleForm title="Ajouter Classe" />
                     {errorServer  && <Validation errorServer={errorServer} /> }
                             <SelectCustomDataFields 
@@ -108,18 +110,23 @@ export default function AddClasse() {
                             })}
                             label="ecole"
                             error={errors.idEcole?.message}/> 
-                            <SelectCustomDataFields 
-                            data={dataNiveau?.data.filter( (i : any) => i?.ecoles?.some((ecole: any) => ecole.id === watchEcole)  )}
-                            register={register("idNiveau",{
-                                valueAsNumber : true
-                            })}
-                            label="Niveau"
-                            error={errors.idNiveau?.message}/> 
+                            {
+                                watchEcole && <div>
+                                    <SelectCustomDataFields 
+                                    data={dataNiveau?.data.filter( (i : any) => i?.ecoles?.some((ecole: any) => ecole.id === watchEcole)  )}
+                                    register={register("idNiveau")}
+                                    label="Niveau"
+                                    error={errors.idNiveau?.message}/> 
+                                </div>
+                            }
+                            {
+                                watchEcole && watchNiveaux && 
                             <SelectFields
                             data={newArray?.map( (i :any) => i.nom)}
                             label="nom" 
                             register={register("nom")}
                             error={errors.nom?.message}/>
+                            }
                         <div className="lg:flex mt-8 gap-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load}  />
                         </div>

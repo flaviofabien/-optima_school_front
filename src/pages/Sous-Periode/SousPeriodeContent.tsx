@@ -25,8 +25,8 @@ const userColumns = [
     render: (item : any) => item.type
   },
   {
-    header: 'Categorie',
-    accessor: 'Categorie',
+    header: 'Periodes',
+    accessor: 'Periodes',
     render: (item : any) => item.Categorie?.nom
   },
 ];

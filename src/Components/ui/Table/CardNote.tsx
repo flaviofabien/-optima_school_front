@@ -12,9 +12,9 @@ import LenuLinkButtonPlus from "../Menu/LenuLinkButtonPlus";
 
 type Props = {
     FnQueryGet: (token: string) => Promise<any>;
-      query : string
-      title : string
-      functionMutation :  (id: number, token: string) => Promise<any>  ;
+    query : string
+    title : string
+    functionMutation :  (id: number, token: string) => Promise<any>  ;
 }
 
 export default function CardNote({ FnQueryGet , query ,title , functionMutation}: Props) {
@@ -22,8 +22,6 @@ export default function CardNote({ FnQueryGet , query ,title , functionMutation}
     const user = useSelector((state: RootState) => state.dataStorage.user);
 
     const [value,setValue] = useState("");
-    // const [categorie,setCatgorie] = useState();
-
     const [dataInclude,setrDataInclude] = useState({
         ecole : { status : false , id : 0},
         classe : { status : false , id : 0},
@@ -48,30 +46,6 @@ export default function CardNote({ FnQueryGet , query ,title , functionMutation}
     });
 
     const navigate = useNavigate();
-    let DataNotesFilterByStudent : any = [];
-    let NotesfilteredByEcole : any = notes?.data.filter(( o : any ) =>  o.Student.User.id == user.id  );
-    let CategorieGlobalVariable : any = [];
-    let PeriodeGlobalVariable : any = [];
-    
-    
-    const FunctionDataNotesFilterByStudent = ( data : any) => {
-        data?.forEach( (element : any) => {
-        console.log(element.idCategorie);
-        
-            if(! ( CategorieGlobalVariable.includes(element.idCategorie) ) ) {
-                CategorieGlobalVariable.push(element.idCategorie);
-                
-            } 
-
-
-            if(! (PeriodeGlobalVariable.includes(element?.idSousPeriode))  && element?.idSousPeriode ) {
-                PeriodeGlobalVariable.push(element.idSousPeriode);
-            }
-        });
-    }
-    
-    DataNotesFilterByStudent = FunctionDataNotesFilterByStudent(NotesfilteredByEcole)
-    console.log(NotesfilteredByEcole,"NotesfilteredByEcole \n",CategorieGlobalVariable,"CategorieGlobalVariable  \n",PeriodeGlobalVariable,"PeriodeGlobalVariable \n");
 
   
     if (isLoading  || isLoadingNotes) return <Loading />;
@@ -99,8 +73,8 @@ export default function CardNote({ FnQueryGet , query ,title , functionMutation}
 
                                         <span>{i.Matiere.nom}</span>
                                         <span className={` text-xl `}>  
-                                            <span className={`${i.Matiere.coefficiant * 10 > i.note ? "text-red-500" : "text-blue-500"} text-4xl font-semibold`}> {i.note} </span> 
-                                            <span> / {i.Matiere.coefficiant * 20} </span> 
+                                            <span className={`${ i.note <= 10  ? "text-red-500" : "text-blue-500"} text-4xl font-semibold`}> {i.note} </span> 
+                                            <span> / 20 </span> 
                                         </span>
                                     </div>  
                                     <span className="text-sm"> Salle <b>{i.Salle.nom}</b> </span>

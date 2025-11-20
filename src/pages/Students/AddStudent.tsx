@@ -23,6 +23,7 @@ import Validation from "../../Components/ui/Error/Validation"
 import FieldImage from "../../Components/ui/Fields/FieldImage"
 import ImgFontLogo from "../../assets/school-953123_1280.jpg"
 import { getAllSallesExamens } from "../../api/Salles"
+import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
 
 export default function AddStudent() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -30,7 +31,8 @@ export default function AddStudent() {
     const [load,setLoad] = useState(false);
     const [fileURLs, setFileURLs] = useState();
     const [file, setFile] = useState(); 
-    
+    const [errorFile, setErrorFile] = useState<any>(); 
+
     const {setValue , watch, register, formState: { errors }, handleSubmit } = useForm<any>({
         resolver : zodResolver(studentSchema)
     });
@@ -39,6 +41,8 @@ export default function AddStudent() {
         queryKey : ["salle-include-examen" , token] ,
         queryFn : () =>  getAllSallesExamens(token!)
     })
+    console.log(data?.niveau);
+    
 
     const watchEcole = watch("idEcole");
     const watchNiveau = watch("idNiveau");
@@ -55,26 +59,29 @@ export default function AddStudent() {
             dispatch(setAlert({status : true,message : `Etudiant a ete Cree avec succes`}))
             queryClient.invalidateQueries({ queryKey: ['students'] });
             navigate("/admin/students");      
-            
+            setLoad(false)        
+
         },
         onError: (error : ErrorServerForm ) => {
             if (error.response && error.response.data) {
-            setErrorServer(error.response.data.message);
+                setErrorServer(error.response.data.message);
             } else {
-            setErrorServer("An unexpected error occurred");
+                setErrorServer("An unexpected error occurred");
             }
-            setLoad(false)        
-        }
-    });
+            setLoad(false)             
+    }
+    });    
 
-    const onSubmit = async (formData: any) => {
-        setLoad(true) 
-               
+    const onSubmit = async (formData: any) => {         
         const newFormData = new FormData();
+        setLoad(true) 
         if (file) {
             newFormData.append("img", file);
-        }   
-  
+        }else {
+            setErrorFile("Choissir un image")
+            setLoad(false) 
+            return 
+        }
         newFormData.append("role","eleve");
         newFormData.append("idClasse",formData.idClasse);
         newFormData.append("idNiveau",formData.idNiveau);
@@ -110,6 +117,7 @@ export default function AddStudent() {
                                 fileURLs={fileURLs!} 
                                 setFileURLs={setFileURLs} 
                                 setFile={setFile}
+                                errorFile={errorFile}
                                 /> 
                             </div>
                             <div className="w-full">
@@ -120,23 +128,26 @@ export default function AddStudent() {
                                 error={errors.idEcole?.message}
                                 label="Ecole"
                                 />
-                                {watchEcole && 
-                                    <SelectCustomDataFields  
-                                    register={register("idNiveau")}                            
-                                    data={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) )}
-                                    error={errors.idNiveau?.message}
-                                    label="Niveau"
-                                    />
-                                }
+                                 <div className="flex">
+                                    {
+                                        watchEcole && <SelectCustomDataFieldsSimple 
+                                        item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        register={register("idNiveau")}
+                                        label="Niveau"
+                                        error={errors.idNiveau?.message}
+                                        /> 
+                                    } 
+                                </div>
+                                <div className="flex">
                                 {
-                                    watchEcole && watchNiveau && 
-                                        <SelectCustomDataFields  
-                                        register={register("idClasse")}                            
-                                        data={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau )}
-                                        error={errors.idClasse?.message}
-                                        label="Classe"
-                                        />
-                                }
+                                    ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    register={register("idClasse")}
+                                    label="Classe"
+                                    error={errors.idClasse?.message}
+                                    /> 
+                                } 
+                                </div>
                                 <div className="gap-4 lg:flex justify-between items-end">
                                     <Fields 
                                     icons={<BsPerson size={24} />} 

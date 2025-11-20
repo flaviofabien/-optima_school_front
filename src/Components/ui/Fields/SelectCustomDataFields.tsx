@@ -16,7 +16,7 @@ export default function SelectCustomDataFields({data,error,register,disabled,lab
                         className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-7 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
                     <option value={""} className="" selected> Selectionner un {label}  </option>
                     {
-                        data?.map( (item : any) => <option value={item.id} className=""> {item.nom}  {item.prenom}  </option> )
+                        data?.map( (item : any) => <option value={item.id} className="py-2"> {item.nom}  {item.prenom}  </option> )
                     }
                 </select>
             </div>

@@ -71,23 +71,15 @@ export default function AddNotes() {
 
 
     const onSubmit = async (formData: any) => {        
-         const matiere = data?.matiere.find( (i : any ) => i.id == formData.idMatiere );
          const Categorie = data?.categorie.find( (i : any ) => i.id == formData.idCategorie );
         
-
-        if (matiere && matiere.coefficiant) { 
-            const maxNote = parseInt(matiere.coefficiant) * 20;
-
-            if (formData.note > maxNote) {
+            if (formData.note > 20) {
                 setError("note" , { 
                     type: "manual", 
-                    message : `La note ne peut pas être supérieure à ${maxNote} (Coefficient ${matiere.coefficiant })`
+                    message : `La note ne peut pas être supérieure à 20 `
                 }, { shouldFocus: true });
                 return; 
             } 
-        }
-
-        console.log(Categorie);
         
 
         setLoad(true)        
@@ -126,20 +118,20 @@ export default function AddNotes() {
                                     error={errors.idEcole?.message}
                                     />
                                 
-                                <div className="">
+                                <div className="flex">
                                     {
                                         watchEcole && <SelectCustomDataFieldsSimple 
-                                        item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                         register={register("idNiveau")}
                                         label="Niveau"
                                         error={errors.idNiveau?.message}
                                         /> 
                                     } 
                                 </div>
-                                <div className="">
+                                <div className="flex">
                                     {
                                         ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                        item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                         register={register("idClasse")}
                                         label="Classe"
                                         error={errors.idClasse?.message}
@@ -181,9 +173,6 @@ export default function AddNotes() {
                                         />  
                                 }
                                 </div>
-
-
-
                                 <div className="">
                                 {
                                     (watchEcole && watchClasse && watchSalle && watchNiveau && watchStudent && watchCategorie && SousPeriode )  &&  <SelectCustomDataFieldsSimple 

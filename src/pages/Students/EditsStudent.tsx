@@ -19,6 +19,7 @@ import ImgFontLogo from "../../assets/school-953123_1280.jpg"
 import Validation from "../../Components/ui/Error/Validation"
 import { SiDatefns } from "react-icons/si"
 import { getAllSallesExamens } from "../../api/Salles"
+import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
 
 export default function EditStudent() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -119,23 +120,26 @@ export default function EditStudent() {
                                         error={errors.idEcole?.message}
                                         label="Ecole"
                                         />
-                                        {watchEcole && 
-                                            <SelectCustomDataFields  
-                                            register={register("idNiveau")}                            
-                                            data={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) )}
-                                            error={errors.idNiveau?.message}
-                                            label="Niveau"
-                                            />
-                                        }
-                                        {
-                                            watchEcole && watchNiveau && 
-                                                <SelectCustomDataFields  
-                                                register={register("idClasse")}                            
-                                                data={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau )}
-                                                error={errors.idClasse?.message}
-                                                label="Classe"
-                                                />
-                                        }
+                                <div className="flex">
+                                    {
+                                        watchEcole && <SelectCustomDataFieldsSimple 
+                                        item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        register={register("idNiveau")}
+                                        label="Niveau"
+                                        error={errors.idNiveau?.message}
+                                        /> 
+                                    } 
+                                </div>
+                                <div className="flex">
+                                    {
+                                        ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
+                                        item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                        register={register("idClasse")}
+                                        label="Classe"
+                                        error={errors.idClasse?.message}
+                                        /> 
+                                    } 
+                                </div>
                                     <SelectFields 
                                     label="status" 
                                     data={["Passant","Redoublant","Renvoyer","Nouveau"]} 

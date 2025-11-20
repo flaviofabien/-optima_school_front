@@ -24,7 +24,7 @@ export default function AddSousPeriode() {
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
     
-    const { register, formState: { errors }, handleSubmit } = useForm<any>({
+    const { register, formState: { errors }, handleSubmit,watch } = useForm<any>({
         resolver : zodResolver(SousPeriodeSchema)
     });
 
@@ -34,6 +34,7 @@ export default function AddSousPeriode() {
     })
 
     const navigate = useNavigate();
+    const watchDateDebut = watch('dateDebut')
 
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
@@ -69,7 +70,7 @@ export default function AddSousPeriode() {
 
   return (
     <div className="">
-        <div className="mt-4 w-full flex justify-center px-8 lg:pl-[280px] items-center">
+        <div className="mt-4 w-full flex justify-center px-8 items-center">
             <div className="w-full max-w-[1200px] rounded-3xl bg-white mt-8 flex justify-center items-center" >
                 <form className=" h-full w-[500px] relative rounded-s-3xl" onSubmit={handleSubmit(onSubmit)} >
                     <div className="w-full   rounded-2xl pt-20 px-8">
@@ -86,14 +87,20 @@ export default function AddSousPeriode() {
                         register={register("dateDebut")}
                         error={errors.dateDebut?.message}/>
 
-                        <Fields 
-                        label="dateFin" 
-                        type="date"
-                        register={register("dateFin")}
-                        error={errors.dateFin?.message}/>
+                        {
+                            watchDateDebut && (
+                                <Fields 
+                                    label="dateFin" 
+                                    type={'date'}
+                                    register={register("dateFin")}
+                                    minDate={watchDateDebut}
+                                    error={errors.dateFin?.message}/>
+
+                            ) 
+                        }
 
                         <SelectCustomDataFieldsSimple 
-                        item={['Vacance','Examen','Paque'].map(  (u : any) => <option value={u} > {u}</option>)}
+                        item={['Vacance','Examen','Paque',"Interrogation"].map(  (u : any) => <option value={u} > {u}</option>)}
                         register={register("type")}
                         label="Type"
                         error={errors.type?.message}

@@ -45,13 +45,15 @@ export default function EditSalle() {
     const watchNiveau = watch("idNiveau")
     const watchClasse = watch("idClasse")
 
+    
     useEffect(() => {
-    if (salles) {
+        if (salles) {
+        console.log(salles.Classe.idNiveau ,data?.niveau );
         setValue("nom", salles.nom);
         setValue("effectif", salles.effectif);
         setValue("idClasse", salles.idClasse);
-        setValue("idNiveau", salles.Classe.idNiveau);
-        setValue("idEcole", salles.Classe.idEcole);
+        setValue("idNiveau", String(salles.Classe?.idNiveau));
+        setValue("idEcole", String(salles.Classe.idEcole) );
     }
     }, [salles, setValue]);
 
@@ -112,7 +114,7 @@ export default function EditSalle() {
                             <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}

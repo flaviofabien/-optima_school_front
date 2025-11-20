@@ -16,7 +16,7 @@ function App() {
     if (alert.status) {
       const timer = setTimeout(() => {
         dispatch(setAlert({message : "" , status : false}));
-      }, 5000); 
+      }, 3000); 
       
       return () => {
         clearTimeout(timer);

@@ -15,6 +15,7 @@ import { CgChevronUp } from "react-icons/cg";
 export default function Header() {
   const user = useSelector((state: RootState) => state.dataStorage.user);
   const token = useSelector((state: RootState) => state.dataStorage.token);
+  
   const navigate = useNavigate();
   const [show, setShow] = useState({
     show: false,

@@ -18,6 +18,7 @@ import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCusto
 import { UpdateAnneeScolaire, getOneAnneeScolaire } from "../../api/AnneeScolaire"
 import { getAllSallesExamens } from "../../api/Salles"
 import { AnneeScolaireEditSchema } from "../../Zod-Validation/AnneeScolaire"
+import { AnneeScolaireDataYears } from "../../Utils/AnneeScolaire"
 
 export default function EditAnneeScolaire() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
@@ -35,10 +36,10 @@ export default function EditAnneeScolaire() {
         queryFn : () =>  getAllSallesExamens(token!)
     })
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<any>({
+    const { register,setValue, formState: { errors }, handleSubmit,watch} = useForm<any>({
         resolver : zodResolver(AnneeScolaireEditSchema)
     });
-
+    const watchDateDebut = watch('dateDebut')
     useEffect(() => {
     if (user) {
         setValue("nom", user?.data.nom);
@@ -95,20 +96,26 @@ export default function EditAnneeScolaire() {
                     <TitleForm title="Modifier annee scolaire" />
                     {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFieldsSimple 
-                            item={["2024-2025","2025-2026","2026-2027"].map(  (u : any) => <option value={u} > {u}    </option>)}
+                            item={AnneeScolaireDataYears.map(  (u : any) => <option value={u} > {u}    </option>)}
                             label="nom" 
                             register={register("nom")}
                             error={errors.nom?.message}/>
                         <Fields 
-                            label="dateDebut" 
-                            register={register("dateDebut")}
-                            type={'date'}
-                            error={errors.dateDebut?.message}/>
-                        <Fields 
-                            label="dateFin" 
-                            type={'date'}
-                            register={register("dateFin")}
-                            error={errors.dateFin?.message}/>
+                        label="dateDebut" 
+                        register={register("dateDebut")}
+                        type={'date'}
+                        error={errors.dateDebut?.message}/>
+                        {
+                            watchDateDebut && (
+                                <Fields 
+                                    label="dateFin" 
+                                    type={'date'}
+                                    register={register("dateFin")}
+                                    minDate={watchDateDebut}
+                                    error={errors.dateFin?.message}/>
+
+                            ) 
+                        }
                         <SelectCustomDataFieldsSimple 
                             item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                             register={register("idEcole")}
@@ -116,7 +123,7 @@ export default function EditAnneeScolaire() {
                             error={errors.idEcole?.message}
                             />
                         <div className="lg:flex gap-8 mt-8 justify-between items-start mb-8">
-                            <Button text="Ajouter" type="submit" load={load}  />
+                            <Button text="Modification" type="submit" load={load}  />
                         </div>
                     </div>
                 </form>

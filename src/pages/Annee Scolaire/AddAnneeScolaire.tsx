@@ -19,28 +19,26 @@ import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCusto
 import { CreateAnneeScolaire } from "../../api/AnneeScolaire"
 import { AnneeScolaireSchema } from "../../Zod-Validation/AnneeScolaire"
 import ButtonLink from "../../Components/ui/Button/ButtonLink"
+import { AnneeScolaireDataYears } from "../../Utils/AnneeScolaire"
 
-type Props = {}
-
-export default function AddAnneeScolaire({}: Props) {
+export default function AddAnneeScolaire() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
-    
-    const { register, formState: { errors }, handleSubmit } = useForm<any>({
+    const navigate = useNavigate();
+    const [errorServer, setErrorServer] = useState<string>("");
+    const queryClient = useQueryClient();
+
+    const { register, formState: { errors }, handleSubmit,watch } = useForm<any>({
         resolver : zodResolver(AnneeScolaireSchema)
-      });
+    });
     
     const {data,isLoading,isError} = useQuery<any>({
       queryKey : ["salle-include-examen" , token] ,
       queryFn : () =>  getAllSallesExamens(token!)
     })
-
-    const navigate = useNavigate();
-
-    const [errorServer, setErrorServer] = useState<string>("");
-    const queryClient = useQueryClient();
-
+    const watchDateDebut = watch('dateDebut')
+    
     const mutation = useMutation(
         {
         mutationFn: (newUser : any) => CreateAnneeScolaire(token,newUser),
@@ -69,7 +67,6 @@ export default function AddAnneeScolaire({}: Props) {
 
     if (isLoading ) return <Loading  />
     if (isError) return <div>Error</div>
-
   return (
     <div className="">
         <div className="mt-4 w-full flex justify-center px-2 lg:px-8  items-center">
@@ -79,7 +76,7 @@ export default function AddAnneeScolaire({}: Props) {
                     <TitleForm title="Annee Scolaire" />
                     {errorServer  && <Validation errorServer={errorServer} /> }
                         <SelectCustomDataFieldsSimple 
-                        item={["2024-2025","2025-2026","2026-2027"].map(  (u : any) => <option value={u} > {u}    </option>)}
+                        item={AnneeScolaireDataYears.map(  (u : any) => <option value={u} > {u}    </option>)}
                         label="nom" 
                         register={register("nom")}
                         error={errors.nom?.message}/>
@@ -88,18 +85,24 @@ export default function AddAnneeScolaire({}: Props) {
                         register={register("dateDebut")}
                         type={'date'}
                         error={errors.dateDebut?.message}/>
-                        <Fields 
-                        label="dateFin" 
-                        type={'date'}
-                        register={register("dateFin")}
-                        error={errors.dateFin?.message}/>
+                        {
+                            watchDateDebut && (
+                                <Fields 
+                                    label="dateFin" 
+                                    type={'date'}
+                                    register={register("dateFin")}
+                                    minDate={watchDateDebut}
+                                    error={errors.dateFin?.message}/>
+
+                            ) 
+                        }
                         <SelectCustomDataFieldsSimple 
                         item={data?.ecole.map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                         register={register("idEcole")}
                         label="Ecole"
                         error={errors.idEcole?.message}
                         />
-                        <div className="w-full lg:flex gap-8 mt-8 justify-between items-start mb-8 border-2">
+                        <div className="w-full lg:flex gap-8 mt-8 justify-between items-start mb-8">
                             <Button text="Ajouter" type="submit" load={load}  />
                             <ButtonLink text="Retour" link="/admin/annee-scolaires" style={1}  />
                         </div>

@@ -35,9 +35,10 @@ export default function EditSousPeriode() {
         queryFn: () => getOneSousPeriode(token!,id!),
     });
     
-    const { register,setValue, formState: { errors }, handleSubmit } = useForm<any>({
+    const { register,setValue, formState: { errors }, handleSubmit,watch } = useForm<any>({
         resolver : zodResolver(SousPeriodeEditSchema)
     });
+    const watchDateDebut = watch('dateDebut')
 
     useEffect(() => {
     if (periodes) {
@@ -105,11 +106,17 @@ export default function EditSousPeriode() {
                            register={register("dateDebut")}
                            error={errors.dateDebut?.message}/>
    
-                           <Fields 
-                           label="dateFin" 
-                           type="date"
-                           register={register("dateFin")}
-                           error={errors.dateFin?.message}/>
+                            {
+                                watchDateDebut && (
+                                    <Fields 
+                                        label="dateFin" 
+                                        type={'date'}
+                                        register={register("dateFin")}
+                                        minDate={watchDateDebut}
+                                        error={errors.dateFin?.message}/>
+
+                                ) 
+                            }
    
                            <SelectCustomDataFieldsSimple 
                            item={['Vacance','Examen','Paque'].map(  (u : any) => <option value={u} > {u}</option>)}

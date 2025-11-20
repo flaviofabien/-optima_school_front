@@ -30,7 +30,7 @@ export default function AddCourse() {
       queryFn : () =>  getAllSallesExamens(token!)
     })   
     
-    const { watch , register, formState: { errors }, handleSubmit } = useForm<FormDataCoursesType>({
+    const { watch , register, formState: { errors }, handleSubmit ,setError} = useForm<FormDataCoursesType>({
         resolver : zodResolver(CoursesSchema),
       });
 
@@ -59,7 +59,6 @@ export default function AddCourse() {
 
         }
     });
-
 
     const watchEcole = watch("idEcole");
     const watchNiveau = watch("idNiveau");
@@ -96,7 +95,7 @@ export default function AddCourse() {
                             <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}
@@ -106,7 +105,7 @@ export default function AddCourse() {
                             <div className="flex">
                                 {
                                     ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idClasse")}
                                     label="Classe"
                                     error={errors.idClasse?.message}
@@ -159,8 +158,10 @@ export default function AddCourse() {
                                     type="time"
                                     register={register("heureDebut")}
                                     error={errors.heureDebut?.message}/>
+
                                     <Fields 
                                     type="time"
+                                    minDate="watchHeureDebut"
                                     icons={<BsHourglass size={24} />} 
                                     label="heureFin" 
                                     register={register("heureFin")}

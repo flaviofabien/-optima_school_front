@@ -35,8 +35,6 @@ export const getOneUsers  = async (token : string , id : any) => {
             "Authorization" : "Bearer " + token
         }
     })
-        console.log(res , "resDATA");
-
     return res.data.data
 }
 

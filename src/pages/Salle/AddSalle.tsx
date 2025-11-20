@@ -19,9 +19,7 @@ import Validation from "../../Components/ui/Error/Validation"
 import ImgFontLogo from "../../assets/school-953123_1280.jpg"
 import SelectCustomDataFieldsSimple from "../../Components/ui/Fields/SelectCustomDataFieldsSimple"
 
-type Props = {}
-
-export default function AddSalle({}: Props) {
+export default function AddSalle() {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     const dispatch = useDispatch(); 
     const [load,setLoad] = useState(false);
@@ -33,13 +31,12 @@ export default function AddSalle({}: Props) {
 
     const { watch , register, formState: { errors }, handleSubmit } = useForm<FormDataSalleType>({
         resolver : zodResolver(SalleSchema)
-      });
+    });
 
     const watchEcole = watch("idEcole")
     const watchNiveau = watch("idNiveau")
     const watchClasse = watch("idClasse")
     const navigate = useNavigate();
-
     const [errorServer, setErrorServer] = useState<string>("");
     const queryClient = useQueryClient();
 
@@ -96,7 +93,7 @@ export default function AddSalle({}: Props) {
                             <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}
@@ -106,7 +103,7 @@ export default function AddSalle({}: Props) {
                             <div className="flex">
                                 {
                                     ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idClasse")}
                                     label="Classe"
                                     error={errors.idClasse?.message}

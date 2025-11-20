@@ -67,7 +67,7 @@ export default function AddMatiere() {
         setErrorServer("");
         mutation.mutate({
             idClasse : formData.idClasse,
-            coefficiant : formData.idClasse,
+            coefficiant : formData.coefficiant,
             nom : formData.nom
         });
     }
@@ -94,7 +94,7 @@ export default function AddMatiere() {
                             <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}
@@ -104,7 +104,7 @@ export default function AddMatiere() {
                             <div className="flex">
                                 {
                                     ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idClasse")}
                                     label="Classe"
                                     error={errors.idClasse?.message}

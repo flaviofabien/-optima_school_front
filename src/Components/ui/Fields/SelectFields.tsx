@@ -13,7 +13,9 @@ export default function SelectFields({data,error,register,label}: Props) {
         <label htmlFor="" className="font-light"> {label} </label>
         <div className="group flex mt-2">
             <select  id="" {...register}
-                    className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-7 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
+                    className="text-sm text-gray-500 outline-0 w-full border-b-4 py-2 pl-2 border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)] " >                 
+                <option selected disabled value={""}> selectionner un {label} </option> 
+
                 {
                     data?.map(item => <option value={item}> {item} </option> )
                 }

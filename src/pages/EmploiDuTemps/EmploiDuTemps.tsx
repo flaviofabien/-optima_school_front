@@ -59,7 +59,6 @@ export default function EmploiDuTemps() {
         queryFn : () =>  getAllSallesExamens(token!)
     }) 
 
-    console.log(dataCourse);
     
     const Student = data?.student?.find((i : any) => i.idUser ==  user.id  )
     const Teach = data?.teacher?.find((i : any) => i.idUser ==  user.id  )
@@ -108,7 +107,7 @@ export default function EmploiDuTemps() {
     
             setEvents(formattedEvents);
         }
-    }, [dataCourse, currentViewDate]);
+    }, [dataCourse,dataInclude, currentViewDate]);
 
    
     const handleDatesSet = (info : any) => {
@@ -120,7 +119,7 @@ export default function EmploiDuTemps() {
 
     return (
         <div className="">
-                <div className="overflow-auto  items-start w-full h-screen">
+                <div className=" items-start w-full h-screen">
                 <TextHeaderTable text="Emploi du temps" />
              
                         {

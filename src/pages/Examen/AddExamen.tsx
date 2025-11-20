@@ -139,10 +139,10 @@ export default function AddExamen() {
                                 error={errors.idEcole?.message}
                                 />
                             </div>
-                            <div className="flex w-1/4">
+                            <div className="flex">
                                 {
                                     watchEcole && <SelectCustomDataFieldsSimple 
-                                    item={data?.niveau.filter( (i : any) =>  (i?.ecoles).filter(   (p : any) => p.id == watchEcole) ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.niveau.filter( (i : any) =>  i.ecoles?.map( (um : any) =>  String(um.id) ).includes(watchEcole)).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idNiveau")}
                                     label="Niveau"
                                     error={errors.idNiveau?.message}
@@ -152,7 +152,7 @@ export default function AddExamen() {
                             <div className="flex w-1/4">
                                 {
                                     ( watchEcole && watchNiveau) && <SelectCustomDataFieldsSimple 
-                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
+                                    item={data?.classe.filter( (i : any) => i.idNiveau == watchNiveau && i.idEcole == watchEcole ).map(  (u : any) => <option value={u.id} > {u.nom}    </option>)}
                                     register={register("idClasse")}
                                     label="Classe"
                                     error={errors.idClasse?.message}

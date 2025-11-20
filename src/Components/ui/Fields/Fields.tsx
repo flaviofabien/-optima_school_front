@@ -13,12 +13,13 @@ type Props = {
   show?: boolean;
   type?: string;
   maxDate?: string;
+  minDate?: string;
   text?: string;
   generatePassword?: boolean;
   name?: string;
 }
 
-export default function Fields({icons,label,error,register,show,type,maxDate,text,generatePassword,name,setValue}: Props) {
+export default function Fields({icons,label,error,register,show,type,maxDate,text,generatePassword,name,setValue,minDate}: Props) {
   let [TypeRealy,setChange] = useState(type);
   const [generate,setGenerate] = useState("")
   const [copied, setCopied] = useState(false); 
@@ -65,8 +66,9 @@ export default function Fields({icons,label,error,register,show,type,maxDate,tex
           id={label}
             disabled={generatePassword}
             max={maxDate} 
+            min={minDate} 
             type={`${TypeRealy}`} 
-            // placeholder={label} 
+            placeholder={label} 
             {...register}  
           className= {`text-sm text-gray-500 outline-0 w-full border-b-4 py-2 ${text ? ' pl-10' : ''}    border-[var(--color-primary-transparent)] focus:border-[var(--color-primary)]`} />
              
