@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import AOS from 'aos';
+import {  useState } from 'react';
+// import AOS from 'aos';
 import 'aos/dist/aos.css';
 import logo from './assets/logo.png';
 import clientPP from './assets/book-3964050_1920.jpg';
@@ -18,16 +18,16 @@ export default function ClientPage() {
     { name: 'C', mois: 30.99 },
   ];
 
-  const setHideIntro = useState(false);
+  // const setHideIntro = useState(false);
 
-  useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-    const handleScroll = () => {
-      setHideIntro(window.scrollY > 1000);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // useEffect(() => {
+  //   AOS.init({ duration: 800, once: true });
+  //   const handleScroll = () => {
+  //     setHideIntro(window.scrollY > 1000);
+  //   };
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

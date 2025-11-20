@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { getAllMatieres } from "../../../api/Matieres"
 import { useQuery } from "@tanstack/react-query"
 import type { RootState } from "../../../store/store"
@@ -15,7 +14,7 @@ type Props = {
     error : any
 }
 
-export default function FieldNotesAdd({label ,append , remove, fields , register  , error}: Props) {
+export default function FieldNotesAdd({label ,append , remove, fields , register  }: Props) {
     const token = useSelector((state: RootState) => state.dataStorage.token);
     
     const {data,isLoading,isError} = useQuery<any>({
@@ -36,7 +35,7 @@ export default function FieldNotesAdd({label ,append , remove, fields , register
                 <select className="w-1/3 border-b-2 border-[var(--color-primary)] h-12"  {...register( `notes.${index}.matiere` )} >
                     <option  defaultValue={"choissir matiere"}></option>
                     {
-                        data?.data.map((j : any,i : any) => <option value={j.nom}> {j.nom} </option>)
+                        data?.data.map((j : any) => <option value={j.nom}> {j.nom} </option>)
                     }
                 </select>
                 <input className="w-2/3 border-b-2 border-[var(--color-primary)] mt-4 " type="text" {...register( `notes.${index}.note` )} />

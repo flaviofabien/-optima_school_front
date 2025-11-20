@@ -6,10 +6,6 @@ import { useNavigate } from "react-router-dom"
 import { setToken } from "../../../store/Users/Users"
 
 type Props = {
-    show : {
-        show: boolean;
-        id: number;
-    }
     setShow :  React.Dispatch<React.SetStateAction<{
         show: boolean;
         id: number;
@@ -17,7 +13,7 @@ type Props = {
 
 }
 
-export default function CardConfirmDeconnexion({show,setShow}: Props) {
+export default function CardConfirmDeconnexion({setShow}: Props) {
     const navigation = useNavigate();
     
     const dispatch = useDispatch(); 

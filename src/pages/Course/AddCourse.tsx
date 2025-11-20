@@ -30,7 +30,7 @@ export default function AddCourse() {
       queryFn : () =>  getAllSallesExamens(token!)
     })   
     
-    const { watch , register, formState: { errors }, handleSubmit ,setError} = useForm<FormDataCoursesType>({
+    const { watch , register, formState: { errors }, handleSubmit } = useForm<FormDataCoursesType>({
         resolver : zodResolver(CoursesSchema),
       });
 

@@ -97,6 +97,7 @@ export default function Fields({icons,label,error,register,show,type,maxDate,tex
         generatePassword &&  <button  type="button" onClick={GenerateFn} className=" w-full text-white py-2 text-sm bg-[var(--color-primary)]"> Generer mot de passe  </button>   
       }
       { error && <p className=' max-w-64 text-xs text-red-500'>{error} </p>  }
+      <div className="hidden"> {icons} </div>
     </div>
   )
 }

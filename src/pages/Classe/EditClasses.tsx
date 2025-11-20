@@ -1,4 +1,3 @@
-import Header from "../../Components/header/Header"
 import TitleForm from "../../Components/ui/Text/TitleForm"
 import Button from "../../Components/ui/Button/Button"
 import { useForm } from "react-hook-form"
@@ -99,7 +98,7 @@ export default function EditClasse() {
     }
     const watchEcole = watch("idEcole")
     const watchNiveaux = watch("idNiveau");
-    const Niveaux = dataNiveau?.data.find( i => i.id == watchNiveaux )
+    const Niveaux = dataNiveau?.data.find(  (i : any) => i.id == watchNiveaux )
 
     const [newArray , setNewArray]  = useState([]) ;
 

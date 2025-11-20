@@ -72,7 +72,6 @@ export default function Header() {
          
       {show.show && (
             <CardConfirmDeconnexion
-            show={show}
             setShow={setShow}
             />
         )}
